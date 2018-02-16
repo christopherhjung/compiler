@@ -2,12 +2,10 @@ package therms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import builder.AdditionalBuilder;
-import builder.ThermBuilder;
 import parser.ThermStringify;
 import tools.ListComparer;
 

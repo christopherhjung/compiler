@@ -1,17 +1,12 @@
 import java.util.Arrays;
 
-import matrix.MultiplyMatrix;
-import matrix.IgnoreMatrix;
-import matrix.Matrix;
-import matrix.NumberMatrix;
-import matrix.TransposedMatrix;
+import network.Network;
+import trainer.NetworkTrainer;
 import trainer.TrainResult;
 import trainer.TrainingLesson;
 
-
 public class Main {
 
-	
 	public static void main( String[] args )
 	{
 		Network network = new Network(4,2,1);
@@ -40,12 +35,11 @@ public class Main {
 			
 		TrainingLesson lession = new TrainingLesson( samples, targets, 0.1 );
 		
-		TrainResult result = network.train( lession, 0.001 );
+		TrainResult result = NetworkTrainer.train( network, lession, 0.0001 );
 
 		System.out.println( result );
 		
 		double[][] target = network.propagate( samples );
 		System.out.println( Arrays.deepToString( target ) );
 	}
-
 }

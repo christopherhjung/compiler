@@ -1,19 +1,8 @@
 package core;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
-import functions.Function;
-import neuron.NeuralNetwork;
 import parser.MathEngine;
-import parser.ThermStringify;
-import therms.Const;
-import therms.Therm;
-import therms.VarSet;
-import therms.Variable;
-import trainer.ErrorMeasurement;
-import trainer.NetworkTrainer;
-import trainer.TrainingLesson;
 
 public class Engine4 {
 

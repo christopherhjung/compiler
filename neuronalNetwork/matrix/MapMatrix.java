@@ -26,15 +26,15 @@ public class MapMatrix extends Matrix{
 	}
 
 	@Override
-	public int rowSize()
+	public int rows()
 	{
-		return matrix.rowSize();
+		return matrix.rows();
 	}
 
 	@Override
-	public int colSize()
+	public int cols()
 	{
-		return matrix.colSize();
+		return matrix.cols();
 	}
 	
 	

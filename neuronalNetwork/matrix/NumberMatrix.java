@@ -1,45 +1,43 @@
 package matrix;
-import java.util.Arrays;
-import java.util.function.BiFunction;
 
 public class NumberMatrix extends Matrix{
 
-	private final int columns;
+	private final int cols;
 	private final int rows;
 	
 	private final double values[][];
 	
-	public NumberMatrix( int rows , int columns ){
+	NumberMatrix( int rows , int cols ){
 		this.rows = rows;
-		this.columns = columns;
-		values = new double[rows][columns];
+		this.cols = cols;
+		values = new double[rows][cols];
 	}
 	
-	public NumberMatrix( Matrix matrix )
+	NumberMatrix( Matrix matrix )
 	{
-		this.rows = matrix.rowSize();
-		this.columns = matrix.colSize();
-		values = new double[this.rows][this.columns];
+		this.rows = matrix.rows();
+		this.cols = matrix.cols();
+		values = new double[this.rows][this.cols];
 		matrix.forEach( (row,col,val) -> values[row][col] = val );
 	}
 	
-	public NumberMatrix( double[][] matrix )
+	NumberMatrix( double[][] matrix )
 	{
 		this.rows = matrix.length;
-		this.columns = matrix[0].length;
-		values = new double[this.rows][this.columns];
+		this.cols = matrix[0].length;
+		values = new double[this.rows][this.cols];
 		
 		for( int row = 0 ; row < rows ; row++ ){
-			System.arraycopy( matrix, 0, values[row], 0, columns );
+			System.arraycopy( matrix, 0, values[row], 0, cols );
 		}
 	}
 
-	public NumberMatrix( double[] row )
+	NumberMatrix( double[] row )
 	{
-		this.columns = row.length;
+		this.cols = row.length;
 		this.rows = 1;
-		values = new double[this.rows][this.columns];
-		System.arraycopy( row, 0, values[0], 0, columns );
+		values = new double[this.rows][this.cols];
+		System.arraycopy( row, 0, values[0], 0, cols );
 	}
 	
 	@Override
@@ -55,13 +53,13 @@ public class NumberMatrix extends Matrix{
 	}
 	
 	@Override
-	public int colSize()
+	public int cols()
 	{
-		return columns;
+		return cols;
 	}
 	
 	@Override
-	public int rowSize()
+	public int rows()
 	{
 		return rows;
 	}

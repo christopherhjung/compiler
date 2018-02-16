@@ -22,15 +22,15 @@ public class TransposedMatrix extends Matrix{
 	}
 
 	@Override
-	public int rowSize()
+	public int rows()
 	{
-		return matrix.colSize();
+		return matrix.cols();
 	}
 
 	@Override
-	public int colSize()
+	public int cols()
 	{
-		return matrix.rowSize();
+		return matrix.rows();
 	}
 
 }

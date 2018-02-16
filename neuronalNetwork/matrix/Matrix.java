@@ -12,6 +12,10 @@ public abstract class Matrix {
 		return new NumberMatrix( matrix );
 	}
 	
+	public static Matrix ofSize( int rows){
+		return new NumberMatrix( rows, 1 );
+	}
+	
 	public static Matrix ofSize( int rows, int cols ){
 		return new NumberMatrix( rows, cols );
 	}
@@ -21,6 +25,10 @@ public abstract class Matrix {
 	}
 	
 	public abstract double get( int row , int col );
+	
+	public double get( int row ){
+		return get(row,0);
+	};
 	
 	public abstract void set( int row, int col, double value );
 	
@@ -36,14 +44,14 @@ public abstract class Matrix {
 		map((row,col)->0.0);
 	}
 	
-	public abstract int rowSize();
+	public abstract int rows();
 	
-	public abstract int colSize();
+	public abstract int cols();
 		
 	public void forEach( BiConsumer<Integer, Integer> func )
 	{
-		int rows = rowSize();
-		int columns = colSize();
+		int rows = rows();
+		int columns = cols();
 		
 		for( int row = 0 ; row < rows ; row++ ){
 			for( int col = 0 ; col < columns ; col++ ){
@@ -54,8 +62,8 @@ public abstract class Matrix {
 	
 	public void forEach( TriConsumer<Integer, Integer, Double> func )
 	{
-		int rows = rowSize();
-		int columns = colSize();
+		int rows = rows();
+		int columns = cols();
 		
 		for( int row = 0 ; row < rows ; row++ ){
 			for( int col = 0 ; col < columns ; col++ ){
@@ -66,8 +74,8 @@ public abstract class Matrix {
 	
 	public void map( BiFunction<Integer, Integer, Double> func )
 	{
-		int rows = rowSize();
-		int columns = colSize();
+		int rows = rows();
+		int columns = cols();
 		
 		for( int row = 0 ; row < rows ; row++ ){
 			for( int col = 0 ; col < columns ; col++ ){
@@ -78,8 +86,8 @@ public abstract class Matrix {
 	
 	public double sum( BiFunction<Integer,Integer, Double> func )
 	{
-		int rows = rowSize();
-		int columns = colSize();
+		int rows = rows();
+		int columns = cols();
 		
 		double sum = 0;
 		
@@ -94,8 +102,8 @@ public abstract class Matrix {
 	
 	public void inc( BiFunction<Integer, Integer, Double> func )
 	{
-		int rows = rowSize();
-		int columns = colSize();
+		int rows = rows();
+		int columns = cols();
 		
 		for( int row = 0 ; row < rows ; row++ ){
 			for( int col = 0 ; col < columns ; col++ ){
@@ -106,8 +114,8 @@ public abstract class Matrix {
 	
 	public void dec( BiFunction<Integer, Integer, Double> func )
 	{
-		int rows = rowSize();
-		int columns = colSize();
+		int rows = rows();
+		int columns = cols();
 		
 		for( int row = 0 ; row < rows ; row++ ){
 			for( int col = 0 ; col < columns ; col++ ){
@@ -125,11 +133,11 @@ public abstract class Matrix {
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append( "[" );
-		for( int row = 0 ; row < rowSize() ; row++ ){
+		for( int row = 0 ; row < rows() ; row++ ){
 			//if(row>0)
 			//	sb.append( "" );
 			sb.append( "[" );
-			for( int col = 0 ; col < colSize() ; col++ ){
+			for( int col = 0 ; col < cols() ; col++ ){
 				if(col > 0)
 					sb.append( "," );
 				sb.append( get( row, col ) );

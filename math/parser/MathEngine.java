@@ -1,7 +1,6 @@
 package parser;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,11 +13,9 @@ import functions.Function;
 import functions.Functions;
 import matrix.Matrix;
 import matrix.Vector;
-import therms.Additional;
 import therms.Chain;
 import therms.Const;
 import therms.Equation;
-import therms.Multiply;
 import therms.Therm;
 import therms.Variable;
 

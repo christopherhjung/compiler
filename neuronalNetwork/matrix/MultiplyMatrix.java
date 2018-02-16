@@ -6,7 +6,7 @@ public class MultiplyMatrix extends Matrix{
 	private Matrix right;
 	
 	public MultiplyMatrix( Matrix left, Matrix right ){
-		if(left.colSize() != right.rowSize()){
+		if(left.cols() != right.rows()){
 			throw new RuntimeException("Matrices are not for multiply");
 		}
 		
@@ -18,7 +18,7 @@ public class MultiplyMatrix extends Matrix{
 	public double get( int row, int col )
 	{
 		double result = 0;
-		for( int i = left.colSize() - 1 ; i >= 0 ; i-- ){
+		for( int i = left.cols() - 1 ; i >= 0 ; i-- ){
 			result += left.get( row, i ) * right.get( i, col );
 		}
 		
@@ -32,14 +32,14 @@ public class MultiplyMatrix extends Matrix{
 	}
 
 	@Override
-	public int rowSize()
+	public int rows()
 	{
-		return left.rowSize();
+		return left.rows();
 	}
 
 	@Override
-	public int colSize()
+	public int cols()
 	{
-		return right.colSize();
+		return right.cols();
 	}
 }

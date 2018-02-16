@@ -1,0 +1,37 @@
+//x*(a + b + c + ...) = x*a + x*b + x*c  + x*...
+//a+b+c = a + ( b+ c)
+
+
+//Potenzregeln
+a*x + b*x = (a+b)*x
+x^a*x^b = x^(a+b)
+a^x*b^x=(a*b)^x
+
+(x^a)^b = x^(a*b)
+x^0 = 1 
+x^1 = x
+
+//Logarythmen
+//log(x) = log(e,x)
+log(1) = 0
+e^log(x) = x
+log(e^x) = x
+log(x^n) = n*log(x)
+//log(a,x^n) = n*log(a,x)
+-log(x) = log(1/x)
+
+log(x) - log(y) = log(x/y)
+log(x) + log(y) = log(x*y)
+//log(x) / log(a) = log(a,x)
+
+//Cosinus und Sinus
+sin(x)^2 + cos(x)^2 = 1
+sin(a+b) = sin(a)*cos(b) + cos(a)*sin(b)
+cos(a+b) = cos(a)*cos(b) - sin(a)*sin(b)
+tan(a+b) = (tan(a)-tan(b))/(1+tan(a)*tan(b))
+sin(-a) = -sin(a)
+cos(-a) = cos(a)
+
+//Summen
+
+//a*sum(0,infinity,q^n) =  (1-q^(n+1))/(1-q)

@@ -3,11 +3,7 @@ package core;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import neuron.NeuralNetwork;
 import parser.MathEngine;
-import trainer.ErrorMeasurement;
-import trainer.NetworkTrainer;
-import trainer.TrainingLesson;
 
 public class Engine2 {
 

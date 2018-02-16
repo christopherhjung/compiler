@@ -149,7 +149,7 @@ public class Vector extends Therm implements RowHandler {
 	{
 		if ( dest == null )
 		{
-			dest = new Vector( matrix.rowSize() );
+			dest = new Vector( matrix.rows() );
 		}
 
 		dest.set( multiply( matrix.getValues(), vector.values ) );

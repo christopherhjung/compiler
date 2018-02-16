@@ -3,8 +3,6 @@
  */
 package trainer;
 
-import neuron.NeuralNetwork;
-
 public class ErrorMeasurement {
 	
 	public static double squared( double[][] current, double[][] targets )

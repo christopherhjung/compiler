@@ -1,5 +1,5 @@
 package neuronbehavior;
-public class SigmoidBehavior implements ActivationBehavior{
+public class SigmoidBehavior implements NeuronBehavior{
 
 	@Override
 	public double calcActivation( double value )
@@ -8,7 +8,7 @@ public class SigmoidBehavior implements ActivationBehavior{
 	}
 
 	@Override
-	public double calcBackwardDeriavte( double value )
+	public double calcDerivateFromOutput( double value )
 	{
 		return value * (1 - value);
 	}

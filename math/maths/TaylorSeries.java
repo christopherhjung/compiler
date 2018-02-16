@@ -6,8 +6,6 @@ import java.util.function.Predicate;
 
 import builder.AdditionalBuilder;
 import builder.ThermBuilder;
-import therms.Additional;
-import therms.ArrayPolynom;
 import therms.Const;
 import therms.ListPolynom;
 import therms.Polynom;

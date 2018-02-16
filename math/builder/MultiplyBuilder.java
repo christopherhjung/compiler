@@ -1,7 +1,6 @@
 package builder;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import therms.Const;
 import therms.Multiply;

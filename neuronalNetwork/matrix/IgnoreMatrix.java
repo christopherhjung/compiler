@@ -41,9 +41,9 @@ public class IgnoreMatrix extends Matrix{
 	}
 	
 	@Override
-	public int rowSize()
+	public int rows()
 	{
-		int parentRows = matrix.rowSize();
+		int parentRows = matrix.rows();
 		if( 0 <= ignoreRow && ignoreRow < parentRows ){
 			parentRows--;
 		}
@@ -52,9 +52,9 @@ public class IgnoreMatrix extends Matrix{
 	}
 	
 	@Override
-	public int colSize()
+	public int cols()
 	{
-		int parentColumns = matrix.colSize();
+		int parentColumns = matrix.cols();
 		if( 0 <= ignoreColumn && ignoreColumn < parentColumns ){
 			parentColumns--;
 		}
