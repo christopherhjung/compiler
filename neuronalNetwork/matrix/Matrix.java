@@ -4,6 +4,22 @@ import java.util.function.BiFunction;
 
 public abstract class Matrix {
 
+	public static Matrix fromArray( double[] array ){
+		return new NumberMatrix( array );
+	}
+	
+	public static Matrix fromArray( double[][] matrix ){
+		return new NumberMatrix( matrix );
+	}
+	
+	public static Matrix ofSize( int rows, int cols ){
+		return new NumberMatrix( rows, cols );
+	}
+	
+	public static Matrix copy( Matrix matrix ){
+		return new NumberMatrix( matrix );
+	}
+	
 	public abstract double get( int row , int col );
 	
 	public abstract void set( int row, int col, double value );

@@ -2,26 +2,55 @@ package trainer;
 
 public class TrainingLesson {
 
-	private double[][] inputs;
-	private double[][] desire;
+	private double[][] samples;
+	private double[][] targets;
 	private double lernRate;
-	
-	public TrainingLesson(double[][] inputs, double[][] desire, double learnRate) {
-		this.inputs = inputs;
-		this.desire = desire;
+	private int maxLernSteps = 5000000;
+
+	public TrainingLesson( double[][] samples, double[][] targets, double learnRate )
+	{
+		if ( samples.length != targets.length )
+		{
+			throw new IllegalArgumentException( "samples.length != targets.length" );
+		}
+
+		this.samples = samples;
+		this.targets = targets;
 		this.lernRate = learnRate;
 	}
 
-	public double getKonvergenz() {
+	public double getLearningRate()
+	{
 		return lernRate;
 	}
 
-	public double[][] getInputs() {
-		return inputs;
+	public double[][] getSamples()
+	{
+		return samples;
 	}
 
-	public double[][] getDesiredOutputs() {
-		return desire;
+	public double[] getSampel( int index )
+	{
+		return samples[index];
 	}
 
+	public double[][] getTargets()
+	{
+		return targets;
+	}
+
+	public double[] getTarget( int index )
+	{
+		return targets[index];
+	}
+
+	public int size()
+	{
+		return samples.length;
+	}
+
+	public int maxLernSteps()
+	{
+		return maxLernSteps;
+	}
 }

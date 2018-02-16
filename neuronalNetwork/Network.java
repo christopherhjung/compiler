@@ -2,43 +2,48 @@ import matrix.MapMatrix;
 import matrix.Matrix;
 import matrix.MultiplyMatrix;
 import matrix.NumberMatrix;
+import neuronbehavior.ActivationBehavior;
+import neuronbehavior.SigmoidBehavior;
+import trainer.ErrorMeasurement;
+import trainer.TrainResult;
+import trainer.TrainingLesson;
 
 public class Network {
 
 	private Matrix[] weights;
 	private double[] bias;
-	private ActivationFunction activationFunction = new Sigmoid();
-	
-	public Network( int ... layerSizes )
+	private ActivationBehavior neuronBehaviour = new SigmoidBehavior();
+
+	public Network( int... layerSizes )
 	{
 		weights = new Matrix[layerSizes.length - 1];
 
 		for ( int i = 0 ; i < layerSizes.length - 1 ; i++ )
 		{
-			weights[i] = new NumberMatrix(layerSizes[i],layerSizes[i + 1]);
-			weights[i].map( (row,col) -> Math.random() );
+			weights[i] = Matrix.ofSize( layerSizes[i], layerSizes[i + 1] );
+			weights[i].map( ( row, col ) -> Math.random() );
 		}
 
 		bias = new double[layerSizes.length - 1];
 	}
-	
+
 	public Matrix propagate( Matrix input )
 	{
-		Matrix result = new NumberMatrix(input);
+		Matrix result = Matrix.copy( input );
 
 		for ( int layerIndex = 0 ; layerIndex < weights.length ; layerIndex++ )
 		{
 			Matrix layer = weights[layerIndex];
 			double bia = bias[layerIndex];
-			
+
 			result = new MultiplyMatrix( result, layer );
-			result = new MapMatrix( result, val -> activationFunction.eval( val + bia ) );
+			result = new MapMatrix( result, val -> neuronBehaviour.calcActivation( val + bia ) );
 		}
 
 		return result;
 	}
-	
-	public double[] propagate( double ... input )
+
+	public double[] propagate( double... input )
 	{
 		double[] tempResults = input;
 
@@ -54,7 +59,7 @@ public class Network {
 					nextTempResult[v] += layer.get( u, v ) * tempResults[u];
 				}
 
-				nextTempResult[v] = activationFunction.eval( nextTempResult[v] + bias[layerIndex] );
+				nextTempResult[v] = neuronBehaviour.calcActivation( nextTempResult[v] + bias[layerIndex] );
 			}
 
 			tempResults = nextTempResult;
@@ -62,7 +67,7 @@ public class Network {
 
 		return tempResults;
 	}
-	
+
 	public double[][] propagate( double[][] input )
 	{
 		double[][] result = new double[input.length][];
@@ -73,7 +78,7 @@ public class Network {
 
 		return result;
 	}
-	
+
 	public double[][] propagateAll( double[] input )
 	{
 		double[][] result = new double[weights.length + 1][];
@@ -89,10 +94,10 @@ public class Network {
 				for ( int u = 0 ; u < layer.rowSize() ; u++ )
 				{
 
-					nextTempResult[v] += layer.get(u,v) * result[layerIndex][u];
+					nextTempResult[v] += layer.get( u, v ) * result[layerIndex][u];
 				}
 
-				nextTempResult[v] = activationFunction.eval( nextTempResult[v] + bias[layerIndex] );
+				nextTempResult[v] = neuronBehaviour.calcActivation( nextTempResult[v] + bias[layerIndex] );
 			}
 
 			result[layerIndex + 1] = nextTempResult;
@@ -100,20 +105,25 @@ public class Network {
 
 		return result;
 	}
-	
-	public void train( double[][] samples, double[][] targets, double lernRate, double targetError )
-	{		
+
+	public TrainResult train( TrainingLesson lession, double targetError )
+	{
+		double lernRate = lession.getLearningRate();
+
 		int iteration = 0;
+		double error = 1;
 		Matrix[] derivates = new Matrix[weights.length];
 		double[] biasDerivatives = new double[weights.length];
-		
+
 		for ( ;; iteration++ )
 		{
-			if ( error( targets, propagate( samples ) ) <= targetError || iteration >= 5000000 ) break;
+			error = ErrorMeasurement.squared( lession.getTargets(), propagate( lession.getSamples() ) );
 
-			for ( int sampleIndex = 0 ; sampleIndex < samples.length ; sampleIndex++ )
+			if ( error <= targetError || iteration >= lession.maxLernSteps() ) break;
+
+			for ( int sampleIndex = 0 ; sampleIndex < lession.size() ; sampleIndex++ )
 			{
-				double[][] singleOut = propagateAll( samples[sampleIndex] );
+				double[][] singleOut = propagateAll( lession.getSampel( sampleIndex ) );
 				double[] previousGradients = null;
 				for ( int currentLayer = weights.length - 1 ; currentLayer >= 0 ; currentLayer-- )
 				{
@@ -125,7 +135,7 @@ public class Network {
 
 						if ( currentLayer == weights.length - 1 )
 						{
-							factor = -(targets[sampleIndex][neuronIndex]
+							factor = -(lession.getTarget( sampleIndex )[neuronIndex]
 									- singleOut[singleOut.length - 1][neuronIndex]);
 						}
 						else
@@ -133,66 +143,47 @@ public class Network {
 							for ( int nextNeuronIndex = 0 ; nextNeuronIndex < previousGradients.length ; nextNeuronIndex++ )
 							{
 								factor += previousGradients[nextNeuronIndex]
-										* weights[currentLayer + 1].get( neuronIndex, nextNeuronIndex);
+										* weights[currentLayer + 1].get( neuronIndex, nextNeuronIndex );
 							}
 						}
 
 						nextGradients[neuronIndex] = factor
-								* activationFunction.derivate( singleOut[currentLayer + 1][neuronIndex] );
-						
+								* neuronBehaviour.calcBackwardDeriavte( singleOut[currentLayer + 1][neuronIndex] );
 
-						if(sampleIndex == 0 && neuronIndex == 0)
+						if ( sampleIndex == 0 && neuronIndex == 0 )
 						{
 							biasDerivatives[currentLayer] = nextGradients[neuronIndex];
 						}
 						else
 						{
 							biasDerivatives[currentLayer] += nextGradients[neuronIndex];
-						}					
+						}
 					}
-					
+
 					previousGradients = nextGradients;
 
 					if ( derivates[currentLayer] == null )
 					{
-						derivates[currentLayer] = new NumberMatrix(singleOut[currentLayer].length,nextGradients.length);
+						derivates[currentLayer] = Matrix.ofSize( singleOut[currentLayer].length, nextGradients.length );
 					}
-					else if( sampleIndex == 0 )
+					else if ( sampleIndex == 0 )
 					{
 						derivates[currentLayer].zero();
 					}
 
 					double[] layerOutput = singleOut[currentLayer];
-					derivates[currentLayer].inc( (u,v) -> nextGradients[v] * layerOutput[u] );
+					derivates[currentLayer].inc( ( u, v ) -> nextGradients[v] * layerOutput[u] );
 				}
 			}
 
-			
 			for ( int layer = 0 ; layer < weights.length ; layer++ )
 			{
 				Matrix layerMatrix = weights[layer];
-				derivates[layer].forEach( (u,v,value) -> layerMatrix.dec( u, v, lernRate * value ) );
+				derivates[layer].forEach( ( u, v, value ) -> layerMatrix.dec( u, v, lernRate * value ) );
 				bias[layer] -= lernRate * biasDerivatives[layer];
 			}
 		}
-		System.out.println( "Iterationen: " + iteration );
-	}
-	
-	public static double error( double[][] current, double[][] targets )
-	{
-		double error = 0;
 
-		for ( int sampleIndex = 0 ; sampleIndex < current.length ; sampleIndex++ )
-		{
-			for ( int index = 0 ; index < current[sampleIndex].length ; index++ )
-			{
-				error += 0.5 * (targets[sampleIndex][index] - current[sampleIndex][index])
-						* (targets[sampleIndex][index] - current[sampleIndex][index]);
-			}
-		}
-
-		return error;
+		return new TrainResult( error, iteration );
 	}
-	
 }
-

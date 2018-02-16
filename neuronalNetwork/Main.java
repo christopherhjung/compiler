@@ -5,9 +5,11 @@ import matrix.IgnoreMatrix;
 import matrix.Matrix;
 import matrix.NumberMatrix;
 import matrix.TransposedMatrix;
+import trainer.TrainResult;
+import trainer.TrainingLesson;
 
 
-public class Core3 {
+public class Main {
 
 	
 	public static void main( String[] args )
@@ -35,20 +37,15 @@ public class Core3 {
 			{0.6},
 			{0.7},
 			{0.8}};
+			
+		TrainingLesson lession = new TrainingLesson( samples, targets, 0.1 );
 		
-		network.train( samples, targets, 0.1, 0.001 );
+		TrainResult result = network.train( lession, 0.001 );
 
+		System.out.println( result );
+		
 		double[][] target = network.propagate( samples );
 		System.out.println( Arrays.deepToString( target ) );
-		
-		long start = System.nanoTime();
-		double[] test = network.propagate( 1,0,0,1 );
-		long end = System.nanoTime();
-		
-		System.out.println( end - start );
-		
-		
-		System.out.println( Arrays.toString( test ) );
 	}
 
 }
