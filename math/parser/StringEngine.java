@@ -55,7 +55,7 @@ public abstract class StringEngine<T> {
 
 	protected boolean hasNext( char cha )
 	{
-		return hasNext() && chars[position] == cha;
+		return hasNext() && getChar() == cha;
 	}
 
 	protected boolean eatNext( char cha )
@@ -73,11 +73,13 @@ public abstract class StringEngine<T> {
 	{
 		if ( hasNext( cha ) )
 		{
-			do
+			do{
 				position++;
-			while ( hasNext( cha ) );
+			}while ( hasNext( cha ) );
+			
 			return true;
 		}
+		
 		return false;
 	}
 
@@ -93,10 +95,8 @@ public abstract class StringEngine<T> {
 
 	protected String readFor( Pattern pattern )
 	{
-		char[] subChars = new char[chars.length - position];
-		System.arraycopy( chars, position, subChars, 0, subChars.length );
-		String subStr = new String( subChars );
-		Matcher matcher = pattern.matcher( subStr );
+		Matcher matcher = pattern.matcher( new String(chars) );
+		matcher.region( getPosition(), chars.length - 1 );	
 		matcher.find( position );
 		if ( matcher.find() )
 		{
@@ -109,15 +109,5 @@ public abstract class StringEngine<T> {
 	protected boolean matches( String regex )
 	{
 		return Character.toString( getChar() ).matches( regex );
-	}
-
-	public static class ParseException extends RuntimeException {
-		protected ParseException()
-		{}
-
-		protected ParseException( String comment )
-		{
-			super( comment );
-		}
 	}
 }

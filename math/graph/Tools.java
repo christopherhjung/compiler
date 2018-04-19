@@ -2,9 +2,9 @@ package graph;
 
 public class Tools {
 
-	public static void swap( Object[] array, int a, int b )
+	public static <T> void swap( T[] array, int a, int b )
 	{
-		Object temp = array[a];
+		T temp = array[a];
 		array[a] = array[b];
 		array[b] = temp;
 	}

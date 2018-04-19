@@ -6,10 +6,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import builder.AdditionalBuilder;
 import builder.MultiplyBuilder;
-import functions.Function;
+import functions.EngineExecute;
+import functions.EnginePlugin;
 import functions.Functions;
 import matrix.Matrix;
 import matrix.Vector;
@@ -18,6 +20,7 @@ import therms.Const;
 import therms.Equation;
 import therms.Therm;
 import therms.Variable;
+import tools.ReflectionUtils;
 
 public class MathEngine extends StringEngine<Therm> {
 
@@ -35,12 +38,13 @@ public class MathEngine extends StringEngine<Therm> {
 	public static final char DIV = '/';
 	public static final char MUL = '*';
 
-	private Map<String , Function> a = new HashMap<>();
-	
-	public void installPlugin(String str,Function func){
-		a.put(str,func);
+	private Map<String, EnginePlugin> plugins = new HashMap<>();
+
+	public MathEngine( Map<String, EnginePlugin> plugins )
+	{
+		this.plugins = plugins;
 	}
-	
+
 	@Override
 	protected Therm parse()
 	{
@@ -200,121 +204,77 @@ public class MathEngine extends StringEngine<Therm> {
 
 	private Therm parseMethod( String methodName )
 	{
-		
-		
 		Therm therm = null;
+
 		try
 		{
-			Therm function = Functions.valueOf( methodName.toUpperCase() ).getTherm();
-			next();
-			therm = new Chain( function, parseAdditional() );
-			next();
-		}
-		catch ( IllegalArgumentException e )
-		{
+			List<Therm> therms = new ArrayList<>();
+
+			for ( ; hasNext() && nextChar() != PARENTHESIS_RIGHT ; )
+			{
+				therms.add( parseEquation() );
+			}
+
+			Class<?>[] classes = new Class<?>[therms.size()];
+			Object[] thermsArr = new Therm[therms.size()];
+
+			for ( int i = 0 ; i < therms.size() ; i++ )
+			{
+				thermsArr[i] = therms.get( i );
+				classes[i] = thermsArr[i].getClass();
+			}
+
 			try
 			{
-				String className = "modifier." + Character.toUpperCase( methodName.charAt( 0 ) )
-						+ methodName.substring( 1 ).toLowerCase();
+				Therm function = plugins.get( methodName.toLowerCase() );
 
-				List<Therm> therms = new ArrayList<>();
-
-				for ( ; hasNext() && nextChar() != PARENTHESIS_RIGHT ; )
-				{
-					therms.add( parseEquation() );
-				}
-
-				Class<?>[] classes = new Class<?>[therms.size()];
-				Therm[] thermsArr = new Therm[therms.size()];
-
-				for ( int i = 0 ; i < therms.size() ; i++ )
-				{
-					thermsArr[i] = therms.get( i );
-					classes[i] = thermsArr[i].getClass();
-				}
-
+				int[] test = new int[]{2};
+				
+				Arrays.stream( test ).asLongStream();
+				
 				try
 				{
-					Class<?> type = Class.forName( className );
+					List<Method> methods = ReflectionUtils.getMethodsAnnotatedWith( function.getClass(), EngineExecute.class );
+					Method method = ReflectionUtils.findBestMethod( methods, classes );
 
 					try
 					{
-						Method method = findMethod( type, "modify", classes );
-						
-						try
+						Object result = method.invoke( function, thermsArr );
+
+						if ( result instanceof Therm )
 						{
-							return (Therm) method.invoke( null, thermsArr );
-						}
-						catch ( Throwable excp )
-						{
-							throw new ParseException( "Failure while running method " + methodName );
+							return (Therm) result;
 						}
 					}
 					catch ( Throwable excp )
 					{
-						excp.printStackTrace();
-						
-						throw new ParseException(
-								"No Matching Method found for " + methodName + " with " + Arrays.toString( classes ) );
+						throw new ParseException( "Failure while running method " + methodName );
 					}
 				}
 				catch ( Throwable excp )
 				{
-					if ( thermsArr.length != 1 )
-					{
-						throw new ParseException(
-								"No Matching Method found for " + methodName + " with " + Arrays.toString( classes ) );
-					}
-
-					therm = new Variable( methodName ).mul( thermsArr[0] );
+					throw new ParseException(
+							"No Matching Method found for " + methodName + " with " + Arrays.toString( classes ) );
 				}
-
 			}
-			catch ( IllegalArgumentException e2 )
+			catch ( Throwable excp )
 			{
-				therm = new Variable( methodName );
-			}
-		}
-		return therm;
-	}
-
-	private static Method findMethod( Class<?> type, String methodName, Class<?>[] types )
-	{
-		int bestMatches = -1;
-		Method bestMatch = null;
-
-		Method[] methods = type.getMethods();
-		loop: for ( Method method : methods )
-		{
-			if ( method.getName().equals( methodName ) )
-			{
-				Class<?>[] methodTypes = method.getParameterTypes();
-
-				if ( methodTypes.length == types.length )
+				if ( thermsArr.length != 1 )
 				{
-					int currentMatching = 0;
-					for ( int i = 0 ; i < types.length ; i++ )
-					{
-						if ( !methodTypes[i].isAssignableFrom( types[i] ) )
-						{
-							System.out.println( types[i] );
-							continue loop;
-						}
-						if ( methodTypes[i].equals( types[i] ) ) currentMatching++;
-					}
-
-					if ( currentMatching > bestMatches )
-					{
-						bestMatches = currentMatching;
-						bestMatch = method;
-					}
+					throw new ParseException(
+							"No Matching Method found for " + methodName + " with " + Arrays.toString( classes ) );
 				}
+
+				therm = new Variable( methodName ).mul( (Therm) thermsArr[0] );
 			}
+
+		}
+		catch ( IllegalArgumentException e2 )
+		{
+			therm = new Variable( methodName );
 		}
 
-		if ( bestMatch == null ) throw new NoClassDefFoundError();
-
-		return bestMatch;
+		return therm;
 	}
 
 	protected Therm parseVectorOrMatrix()
@@ -426,12 +386,19 @@ public class MathEngine extends StringEngine<Therm> {
 		StringBuilder builder = new StringBuilder();
 
 		while ( isDigit() )
+		{
+			builder.append( nextChar() );
+		}
+
+		if ( hasNext( DOT ) )
+		{
 			builder.append( nextChar() );
 
-		if ( hasNext( DOT ) ) builder.append( nextChar() );
-
-		while ( isDigit() )
-			builder.append( nextChar() );
+			while ( isDigit() )
+			{
+				builder.append( nextChar() );
+			}
+		}
 
 		return new Const( Double.parseDouble( builder.toString() ) * (invert ? -1 : 1) );
 	}
@@ -441,7 +408,9 @@ public class MathEngine extends StringEngine<Therm> {
 		StringBuilder builder = new StringBuilder();
 
 		while ( isDigit() )
+		{
 			builder.append( nextChar() );
+		}
 
 		return new Const( Integer.parseInt( builder.toString() ) * (invert ? -1 : 1) );
 	}

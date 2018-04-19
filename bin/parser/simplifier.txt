@@ -1,6 +1,8 @@
 //x*(a + b + c + ...) = x*a + x*b + x*c  + x*...
 //a+b+c = a + ( b+ c)
 
+//sinus als taylor
+//sin(x) = taylor(0,infinity,sin(x))(x%pi)
 
 //Potenzregeln
 a*x + b*x = (a+b)*x

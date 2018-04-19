@@ -1,23 +1,28 @@
 package modifier;
 
+import functions.EngineExecute;
+import functions.EnginePlugin;
 import parser.ThermStringify;
 import therms.Const;
 import therms.Therm;
 import therms.VarSet;
 import therms.Variable;
 
-public class Derivate extends Therm {
+public class Derivate extends EnginePlugin {
 
+	@EngineExecute
 	public static Therm modify( Therm therm )
 	{
 		return modify( therm, Variable.X );
 	}
 
+	@EngineExecute
 	public static Therm modify( Therm therm, Variable var )
 	{
 		return therm.derivate( var );
 	}
 
+	@EngineExecute
 	public static Therm modify( Therm therm, Variable var, Const times )
 	{
 		return modify( therm, var, times.getValue() );
@@ -35,6 +40,7 @@ public class Derivate extends Therm {
 		return therm;
 	}
 
+	@EngineExecute
 	public static Therm modify( Therm therm, Variable var, Therm times )
 	{
 		return new Derivate( therm, var, times );
@@ -44,12 +50,13 @@ public class Derivate extends Therm {
 	private Therm times;
 	private Therm therm;
 
+	/*
 	public Derivate( Therm therm, Variable var, Therm times )
 	{
 		this.therm = therm;
 		this.var = var;
 		this.times = times;
-	}
+	}*/
 
 	@Override
 	public Therm replace( Therm replacer, Therm replacement )

@@ -1,5 +1,6 @@
 package functions;
 
+import parser.MathEngine;
 import parser.ThermStringify;
 import therms.Const;
 import therms.Exponenional;
@@ -8,87 +9,9 @@ import therms.VarSet;
 import therms.Variable;
 
 public enum Functions {
-	SIN(new Function() {
-
-		@Override
-		public Therm derivate( Variable name )
-		{
-			return Functions.COS.getTherm();
-		}
-
-		@Override
-		public double valueAt( VarSet varSet )
-		{
-			return Math.sin( varSet.getValue( Variable.X ) );
-		}
-
-		@Override
-		public boolean contains( Therm var )
-		{
-			return var.equals( Variable.X );
-		}
-
-		@Override
-		public void toString( ThermStringify builder )
-		{
-			builder.append( "sin( x )" );
-		}
-	}), COS(new Function() {
-
-		Therm therm = Const.MINUS_ONE.mul( Functions.SIN.getTherm() );
-
-		@Override
-		public Therm derivate( Variable name )
-		{
-			return therm;
-		}
-
-		@Override
-		public double valueAt( VarSet varSet )
-		{
-			return Math.cos( varSet.getValue( Variable.X ) );
-		}
-
-		@Override
-		public boolean contains( Therm var )
-		{
-			return var.equals( Variable.X );
-		}
-
-		@Override
-		public void toString( ThermStringify builder )
-		{
-			builder.append( "cos( x )" );
-		}
-	}),
-
-	TAN(new Function() {
-		Therm therm = Functions.COS.getTherm().pow( Const.MINUS_TWO );
-
-		@Override
-		public Therm derivate( Variable name )
-		{
-			return therm;
-		}
-
-		@Override
-		public double valueAt( VarSet varSet )
-		{
-			return Math.tan( varSet.getValue( Variable.X ) );
-		}
-
-		@Override
-		public boolean contains( Therm var )
-		{
-			return var.equals( Variable.X );
-		}
-
-		@Override
-		public void toString( ThermStringify builder )
-		{
-			builder.append( "tan( x )" );
-		}
-	}), SQRT(new Exponenional( Variable.X, new Const( 0.5 ) )), EXP(new Function() {
+	SQRT(new Exponenional( Variable.X, new Const( 0.5 ) )), 
+	
+	EXP(new EnginePlugin() {
 
 		@Override
 		public Therm derivate( Variable name )
@@ -113,12 +36,12 @@ public enum Functions {
 		{
 			builder.append( "exp( x )" );
 		}
-	}), LOG(new Function() {
+	}), LOG(new EnginePlugin() {
 
 		@Override
 		public Therm derivate( Variable name )
 		{
-			return Const.ONE.div( Variable.X );
+			return new MathEngine().eval("1/x");
 		}
 
 		@Override

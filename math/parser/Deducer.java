@@ -39,7 +39,10 @@ public class Deducer {
 		if ( !line.startsWith( COMMENT_START ) && !line.trim().isEmpty() )
 		{
 			Therm therm = engine.eval( line );
-			if ( therm instanceof Equation ) compute( (Equation) therm );
+			if ( therm instanceof Equation )
+			{
+				compute( (Equation) therm );
+			}
 		}
 	}
 

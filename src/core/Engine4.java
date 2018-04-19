@@ -1,14 +1,36 @@
 package core;
 
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Scanner;
 
+import functions.Cos;
+import functions.EngineExecute;
+import functions.EnginePlugin;
+import functions.Functions;
+import functions.Sin;
+import functions.Tan;
+import modifier.Derivate;
 import parser.MathEngine;
+import parser.MathProgram;
+import parser.ThermStringify;
+import therms.Therm;
+import therms.VarSet;
+import therms.Variable;
+import tools.ReflectionUtils;
 
 public class Engine4 {
 
-	public static void main( String[] args )
+	public static void main( String[] args ) throws Exception
 	{
-		MathEngine engine = new MathEngine();
+		MathProgram program = new MathProgram();
+		
+		program.installPlugin( "sin", Sin.class);
+		program.installPlugin( "cos", Cos.class);
+		program.installPlugin( "tan", Tan.class);
+		program.installPlugin( "derivate" , Derivate.class );
+		
+		MathEngine engine = program.start();
 		
 		Scanner scanner = new Scanner( System.in );
 		while ( true )
@@ -31,6 +53,6 @@ public class Engine4 {
 				System.out.println( t.getMessage() );
 			}
 		}
+		
 	}
-
 }
