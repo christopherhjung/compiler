@@ -8,10 +8,10 @@ import functions.Cos;
 import functions.EngineExecute;
 import functions.EnginePlugin;
 import functions.Functions;
-import functions.Sin;
+import functions.SinPlugin;
 import functions.Tan;
 import modifier.Derivate;
-import parser.MathEngine;
+import parser.MathParser;
 import parser.MathProgram;
 import parser.ThermStringify;
 import therms.Therm;
@@ -25,12 +25,12 @@ public class Engine4 {
 	{
 		MathProgram program = new MathProgram();
 		
-		program.installPlugin( "sin", Sin.class);
+		program.installPlugin( "sin", SinPlugin.class);
 		program.installPlugin( "cos", Cos.class);
 		program.installPlugin( "tan", Tan.class);
 		program.installPlugin( "derivate" , Derivate.class );
 		
-		MathEngine engine = program.start();
+		MathParser engine = program.start();
 		
 		Scanner scanner = new Scanner( System.in );
 		while ( true )

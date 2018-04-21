@@ -1,6 +1,6 @@
 package functions;
 
-import parser.MathEngine;
+import parser.MathParser;
 import parser.ThermStringify;
 import therms.Const;
 import therms.Exponenional;
@@ -41,7 +41,7 @@ public enum Functions {
 		@Override
 		public Therm derivate( Variable name )
 		{
-			return new MathEngine().eval("1/x");
+			return new MathParser().eval("1/x");
 		}
 
 		@Override

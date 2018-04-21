@@ -22,7 +22,7 @@ import therms.Therm;
 import therms.Variable;
 import tools.ReflectionUtils;
 
-public class MathEngine extends StringEngine<Therm> {
+public class MathParser extends StringParser<Therm> {
 
 	public static final char PARENTHESIS_LEFT = '(';
 	public static final char PARENTHESIS_RIGHT = ')';
@@ -40,7 +40,7 @@ public class MathEngine extends StringEngine<Therm> {
 
 	private Map<String, EnginePlugin> plugins = new HashMap<>();
 
-	public MathEngine( Map<String, EnginePlugin> plugins )
+	public MathParser( Map<String, EnginePlugin> plugins )
 	{
 		this.plugins = plugins;
 	}
@@ -163,7 +163,7 @@ public class MathEngine extends StringEngine<Therm> {
 					therm = new Const( Double.POSITIVE_INFINITY );
 				}
 			}
-			else if ( str.equals( "e" ) )
+			/*else if ( str.equals( "e" ) )
 			{
 				therm = Functions.EXP.getTherm();
 
@@ -175,7 +175,7 @@ public class MathEngine extends StringEngine<Therm> {
 				{
 					therm = new Chain( therm, Const.ONE );
 				}
-			}
+			}*/
 			else if ( hasNext( PARENTHESIS_LEFT ) )
 			{
 				therm = parseMethod( str );

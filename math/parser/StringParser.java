@@ -3,7 +3,7 @@ package parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class StringEngine<T> {
+public abstract class StringParser<T> {
 
 	private int position;
 	private char[] chars;
@@ -12,17 +12,17 @@ public abstract class StringEngine<T> {
 
 	public T eval( char[] chars )
 	{
-		init( chars );
+		reset( chars );
 		return parse();
 	}
 
 	public T eval( String str )
 	{
-		init( str.toCharArray() );
+		reset( str.toCharArray() );
 		return parse();
 	}
 
-	private final void init( char[] chars )
+	private final void reset( char[] chars )
 	{
 		position = 0;
 		this.chars = chars;

@@ -1,7 +1,7 @@
 package parser;
 
 public class ParseException extends RuntimeException {
-	protected ParseException( MathEngine engine )
+	protected ParseException( MathParser engine )
 	{
 		this("Unknow Signs left :" + engine.getChar() );
 	}

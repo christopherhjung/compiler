@@ -15,7 +15,7 @@ public class MathProgram {
 		plugins.put( str.toLowerCase(), plugin );
 	}
 
-	public MathEngine start() throws Exception
+	public MathParser start() throws Exception
 	{
 		Map<String, EnginePlugin> plugins = new HashMap<String, EnginePlugin>();
 
@@ -24,7 +24,7 @@ public class MathProgram {
 			plugins.put( plugin.getKey(), plugin.getValue().newInstance() );
 		}
 
-		MathEngine engine = new MathEngine( plugins );
+		MathParser engine = new MathParser( plugins );
 
 		for ( EnginePlugin plugin : plugins.values() )
 		{

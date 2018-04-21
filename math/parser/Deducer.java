@@ -13,7 +13,7 @@ public class Deducer {
 	private static final String FILE = "simplifier.txt";
 	private static final String COMMENT_START = "//";
 	
-	private MathEngine engine = new MathEngine();
+	private MathParser engine = new MathParser();
 
 	public void parse()
 	{

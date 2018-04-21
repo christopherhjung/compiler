@@ -1,6 +1,6 @@
 package functions;
 
-import parser.MathEngine;
+import parser.MathParser;
 import parser.ThermStringify;
 import therms.Therm;
 import therms.VarSet;
@@ -12,7 +12,7 @@ public class Tan extends EnginePlugin {
 	private Therm derivate = null;
 	
 	@Override
-	public void enable( MathEngine engine )
+	public void enable( MathParser engine )
 	{
 		derivate = engine.eval( "cos(x) ^ -2" );
 	}

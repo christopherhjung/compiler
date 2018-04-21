@@ -1,7 +1,8 @@
 package functions;
 
-import parser.MathEngine;
+import parser.MathParser;
 import parser.ThermStringify;
+import therms.Chain;
 import therms.Const;
 import therms.Therm;
 import therms.VarSet;
@@ -12,7 +13,7 @@ public class Cos extends EnginePlugin {
 	private Therm derivate = null;
 
 	@Override
-	public void enable( MathEngine engine )
+	public void enable( MathParser engine )
 	{
 		derivate = engine.eval( "-sin(x)" );
 	}
@@ -27,6 +28,12 @@ public class Cos extends EnginePlugin {
 	public static Const execute( Const a )
 	{
 		return new Const( Math.cos( a.getValue() ) );
+	}
+
+	@EngineExecute
+	public Therm execute( Therm var )
+	{
+		return new Chain(this, var);
 	}
 
 	@Override

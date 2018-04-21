@@ -1,20 +1,76 @@
 //x*(a + b + c + ...) = x*a + x*b + x*c  + x*...
 //a+b+c = a + ( b+ c)
 
+//N: natürliche
+//Z: ganzen zahlen
+//Q: rationale 
+//R: relelle zahlen
+
+(a+b)^2 = a^2 + 2ab + b^2
+(a-b)^2 = a^2 - 2ab + b^2
+(a-b)(a+b) = a^2 - b^2
+
 //sinus als taylor
 //sin(x) = taylor(0,infinity,sin(x))(x%pi)
+taylor(a,d,f) := sum(n=0,d,derivate(f,n)(a)/n!*(x-a)^n)
+
+//sin.derivate = cos
+//derivate(sin(x)) = cos(x)
+//integrate(sin(x)) = -cos(x)
+//derivate(f(g(x))) = derivate(f)(g(x)) * derivate(g)(x) : x elementof Therm
+
+//intgrate(x^n, x) = 1/(n+1)*x^(n+1) + c : x elementof R
+//integrate( c * f(x), x ) = c * integrate(f(x),x)
+//integrate(f(x) + g(x), x ) = integrate(f(x),x) + integrate(g(x),x)
+
+//Fourier
+fourier(function f){
+	a[k] := 1/pi * integrate(-pi,pi,f(t)*cos(k*t),t) for k >= 0
+	b[k] := 1/pi * integrate(-pi,pi,f(t)*sin(k*t),t) for k>= 1	
+	return a,b
+}
+
+fourier(function f){
+	r(t) := a[0]/2 + sum( k=1 , k==infinity , a[k]*cos(k*t) + b[k]*sin(k*t) )
+	
+	return fourier;
+} 
+
+{
+	integrate(derivate(f) * g) = f*g - integrate(f * derivate(g))
+	f: x -> ?
+	g: x -> ?
+	x elementof R
+}
+sin(0) = 0
+sin(pi/2) = 1
+sin(pi) = 0;
+sin( 3 * pi / 2 ) = -1
+sin(x) = sin( k * 2 * pi + x)
+
+cos(0) = 1
+cos(pi/2) = 0
+cos(pi) = -1
+cos(3 * pi / 2 ) = 0
+cos(x) = cos( k * 2 * pi + x)
 
 //Potenzregeln
 a*x + b*x = (a+b)*x
-x^a*x^b = x^(a+b)
-a^x*b^x=(a*b)^x
+x^a * x^b = x^(a+b)
+a^x * b^x=(a*b)^x
 
 (x^a)^b = x^(a*b)
-x^0 = 1 
-x^1 = x
+x^0 = 1 , x elementof C
+x^1 = x , x elementof C
+
+{
+	x^0 = 1;
+	x elementof C;
+}
 
 //Logarythmen
-//log(x) = log(e,x)
+log(x) = log(e,x)
+e^x = exp(x)
 log(1) = 0
 e^log(x) = x
 log(e^x) = x
@@ -35,5 +91,4 @@ sin(-a) = -sin(a)
 cos(-a) = cos(a)
 
 //Summen
-
 //a*sum(0,infinity,q^n) =  (1-q^(n+1))/(1-q)

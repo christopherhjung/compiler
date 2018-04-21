@@ -3,7 +3,7 @@ package core;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import parser.MathEngine;
+import parser.MathParser;
 
 public class Engine2 {
 
@@ -250,7 +250,7 @@ public class Engine2 {
 		 * { // TODO Auto-generated catch block e.printStackTrace(); }
 		 */
 
-		MathEngine engine = new MathEngine();
+		MathParser engine = new MathParser();
 
 		Scanner scanner = new Scanner( System.in );
 		while ( true )

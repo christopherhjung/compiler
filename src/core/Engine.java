@@ -3,7 +3,7 @@ package core;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import parser.MathEngine;
+import parser.MathParser;
 
 public class Engine {
 
@@ -292,7 +292,7 @@ public class Engine {
 		System.out.println( "Gewichte nach Lernen" + Arrays.deepToString( weights ) );
 		System.out.println( Arrays.deepToString( propagate( input, weights, bias ) ) );
 
-		MathEngine engine = new MathEngine();
+		MathParser engine = new MathParser();
 
 		Scanner scanner = new Scanner( System.in );
 		while ( true )
