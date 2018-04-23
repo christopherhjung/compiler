@@ -96,7 +96,7 @@ public class TaylorSeries {
 		double factorial = 1;
 		for ( int i = 0 ;; )
 		{
-			double factor = therm.valueAt( position ) / factorial;
+			double factor = therm.reduce( position ) / factorial;
 
 			values.add( factor );
 			if ( position != 0 && i != 0 )

@@ -1,7 +1,8 @@
 package therms;
 
-import functions.Functions;
-import parser.ThermStringify;
+import java.io.IOException;
+
+import parser.ThermStringifier;
 
 public class Exponenional extends Therm {
 
@@ -27,99 +28,13 @@ public class Exponenional extends Therm {
 	@Override
 	public Therm derivate( Variable name )
 	{
-		if ( exponent.contains( name ) )
-		{
-			return mul( exponent.mul( new Chain( Functions.LOG.getTherm(), basis ) ).derivate( name ) );
-		}
-		else
-		{
-			return exponent.mul( basis.derivate( name ) ).mul( basis.pow( exponent.add( Const.MINUS_ONE ) ) );
-		}
-	}
+		/*
+		 * if ( false && exponent.contains( name ) ) { //return mul(
+		 * exponent.mul( new Chain( Functions.LOG.getTherm(), basis )
+		 * ).derivate( name ) ); } else { }
+		 */
 
-	@Override
-	public Therm replace( Therm replacer, Therm replacement )
-	{
-		if ( equals( replacer ) )
-		{
-			return replacement;
-		}
-		
-		Therm newBasis;
-		Therm newExponent;
-
-		if ( basis.equals( replacer ) )
-		{
-			newBasis = replacement;
-		}
-		else
-		{
-			newBasis = basis.replace( replacer, replacement );
-		}
-
-		if ( exponent.equals( replacer ) )
-		{
-			newExponent = replacement;
-		}
-		else
-		{
-			newExponent = exponent.replace( replacer, replacement );
-		}
-
-		if ( basis == newBasis && exponent == newExponent ) return this;
-
-		
-		return newBasis.pow( newExponent );
-	}
-
-	@Override
-	public Therm contractMultiply( Therm therm )
-	{
-		if ( therm instanceof Exponenional )
-		{
-			Exponenional other = (Exponenional) therm;
-			if ( basis.equals( other.basis ) )
-			{
-				return basis.pow( exponent.add( other.exponent ) );
-			}
-			else if ( exponent.equals( other.exponent ) )
-			{
-				return basis.mul( other.basis ).pow( exponent );
-			}
-		}
-		else if ( therm instanceof Variable )
-		{
-			Variable other = (Variable) therm;
-			if ( basis.equals( other ) ) return therm.pow( Const.ONE.add( exponent ) );
-		}
-
-		return super.contractMultiply( therm );
-	}
-
-	@Override
-	public boolean contains( Therm var )
-	{
-		return basis.contains( var ) || exponent.contains( var );
-	}
-
-	@Override
-	public Therm simplify()
-	{
-		Therm simplifiedBasis = basis.simplify();
-		Therm simplifiedExponent = exponent.simplify();
-
-		if ( simplifiedBasis instanceof Const && simplifiedExponent instanceof Const )
-		{
-			return new Const(
-					Math.pow( ((Const) simplifiedBasis).getValue(), ((Const) simplifiedExponent).getValue() ) );
-		}
-
-		if ( simplifiedBasis == basis && simplifiedExponent == exponent )
-		{
-			return this;
-		}
-
-		return simplifiedBasis.pow( simplifiedExponent );
+		return exponent.mul( basis.derivate( name ) ).mul( basis.pow( exponent.add( Const.MINUS_ONE ) ) );
 	}
 
 	@Override
@@ -133,24 +48,32 @@ public class Exponenional extends Therm {
 	}
 
 	@Override
-	public double valueAt( VarSet varSet )
+	public Therm reduce( VarSet varSet, Therm... therms )
 	{
-		return Math.pow( basis.valueAt( varSet ), exponent.valueAt( varSet ) );
+		Therm reducedBasis = basis.reduce( varSet );
+		Therm reducedExponent = exponent.reduce( varSet );
+
+		if ( therms.length == 0 )
+		{
+			if ( reducedBasis instanceof Const && reducedExponent instanceof Const )
+			{
+				Const basisValue = (Const) reducedBasis;
+				Const exponentValue = (Const) reducedExponent;
+				return new Const( Math.pow( basisValue.getValue(), exponentValue.getValue() ) );
+			}
+
+			return new Exponenional( reducedBasis, reducedExponent );
+		}
+
+		throw new IllegalArgumentException( "Wrong Arguments" );
 	}
-	
+
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
-		if ( exponent.equals( Const.ONE ) )
-		{
-			builder.append( basis );
-		}
-		else
-		{
-			builder.append( basis );
-			builder.append( " ^ " );
-			builder.append( exponent );
-		}
+		builder.append( basis );
+		builder.append( " ^ " );
+		builder.append( exponent );
 	}
 
 	@Override

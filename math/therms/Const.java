@@ -1,6 +1,6 @@
 package therms;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
 
 public class Const extends Therm {
 
@@ -30,19 +30,13 @@ public class Const extends Therm {
 	}
 	
 	@Override
-	public double valueAt( VarSet varSet )
+	public Therm reduce( VarSet varSet, Therm... therms )
 	{
-		return value;
+		return this;
 	}
-
+	
 	@Override
-	public boolean contains( Therm var )
-	{
-		return false;
-	}
-
-	@Override
-	public Therm contractAdditional( Therm therm )
+	public Therm add( Therm therm )
 	{
 		if ( therm instanceof Const )
 		{
@@ -50,11 +44,11 @@ public class Const extends Therm {
 			return new Const( value + other.value );
 		}
 		
-		return super.contractAdditional( therm );
+		return super.add( therm );
 	}
 
 	@Override
-	public Therm contractMultiply( Therm therm )
+	public Therm mul( Therm therm )
 	{
 		if ( therm instanceof Const )
 		{
@@ -62,8 +56,9 @@ public class Const extends Therm {
 			return new Const( value * other.value );
 		}
 		
-		return super.contractMultiply( therm );
+		return super.mul( therm );
 	}
+
 
 	@Override
 	public boolean equals( Object obj )
@@ -72,7 +67,7 @@ public class Const extends Therm {
 	}
 	
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
 		builder.append( value );
 	}

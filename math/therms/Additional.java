@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import builder.AdditionalBuilder;
-import parser.ThermStringify;
+import parser.ThermStringifier;
 import tools.ListComparer;
 
 public class Additional extends Therm implements Iterable<Therm> {
@@ -51,126 +51,26 @@ public class Additional extends Therm implements Iterable<Therm> {
 	}
 
 	@Override
-	public double valueAt( VarSet varSet )
+	public Therm reduce( VarSet varSet, Therm... therms )
 	{
-		double result = 0;
+		Therm result = null;
 		for ( Therm therm : this )
 		{
-			result += therm.valueAt( varSet );
+			Therm next = therm.reduce( varSet );
+
+			if ( result == null )
+			{
+				result = next;
+			}
+			else
+			{
+				result = result.add( next );
+			}
 		}
+		
+		if(result == null) return new Neutral();
+		
 		return result;
-	}
-
-	@Override
-	public Therm replace( Therm replacer, Therm replacement )
-	{
-		if ( equals( replacer ) ) return replacement;
-
-		AdditionalBuilder builder = new AdditionalBuilder( therms );
-
-		for ( int i = 0 ; i < therms.size() ; i++ )
-		{
-			builder.set( i, therms.get( i ).replace( replacer, replacement ) );
-		}
-
-		return builder.build();
-	}
-
-	@Override
-	public Therm simplify()
-	{
-		List<Therm> newTherms = new ArrayList<>( 3 );
-
-		compute( therms, newTherms );
-
-		if ( newTherms.size() == 0 ) return Const.ZERO;
-		if ( newTherms.size() == 1 ) return newTherms.get( 0 );
-
-		return new Additional( newTherms );
-	}
-
-	private static void compute( List<Therm> oldTherms, List<Therm> newTherms )
-	{
-		loop: for ( Therm therm : oldTherms )
-		{
-			therm = therm.simplify();
-
-			if ( therm instanceof Additional )
-			{
-				compute( ((Additional) therm).therms, newTherms );
-			}
-			else if ( !therm.equals( Const.ZERO ) )
-			{
-				for ( int i = 0 ; i < newTherms.size() ; i++ )
-				{
-					Therm smaller = newTherms.get( i ).contractAdditional( therm );
-					if ( smaller != null )
-					{
-						newTherms.set( i, smaller.simplify() );
-						continue loop;
-					}
-				}
-
-				newTherms.add( therm );
-			}
-		}
-	}
-
-	@Override
-	public boolean contains( Therm var )
-	{
-		for ( Therm therm : this )
-		{
-			if ( therm.contains( var ) )
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public Therm contractAdditional( Therm therm )
-	{
-		if ( therm instanceof Additional )
-		{
-			Additional other = (Additional) therm;
-			List<Therm> therms = new ArrayList<>( this.therms );
-			therms.addAll( other.therms );
-			return new Additional( therms );
-		}
-
-		return super.contractAdditional( therm );
-	}
-
-	@Override
-	public Therm contractMultiply( Therm therm )
-	{
-		if ( therm instanceof Additional )
-		{
-			Additional other = (Additional) therm;
-			List<Therm> newTherms = new ArrayList<>();
-
-			for ( Therm element : therms )
-			{
-				for ( Therm otherElement : other )
-				{
-					newTherms.add( element.mul( otherElement ) );
-				}
-			}
-			return new Additional( newTherms );
-		}
-		else
-		{
-			List<Therm> newTherms = new ArrayList<>();
-			for ( Therm element : therms )
-			{
-				newTherms.add( element.mul( therm ) );
-			}
-			return new Additional( newTherms );
-		}
-
-		// return super.multiplyTherm( therm );
 	}
 
 	@Override
@@ -190,13 +90,9 @@ public class Additional extends Therm implements Iterable<Therm> {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
-		for ( int i = 0 ; i < therms.size() ; i++ )
-		{
-			if ( i != 0 ) builder.append( " + " );
-			builder.append( therms.get( i ) );
-		}
+		builder.append( therms, " + " );
 	}
 
 	@Override

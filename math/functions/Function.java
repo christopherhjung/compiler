@@ -1,6 +1,6 @@
 package functions;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
 import therms.Therm;
 import therms.VarSet;
 import therms.Variable;
@@ -22,14 +22,14 @@ public class Function extends Therm {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public double valueAt( VarSet varSet )
+	public double reduce( VarSet varSet )
 	{
 		// TODO Auto-generated method stub
 		return 0;

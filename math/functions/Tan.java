@@ -1,7 +1,7 @@
 package functions;
 
 import parser.MathParser;
-import parser.ThermStringify;
+import parser.ThermStringifier;
 import therms.Therm;
 import therms.VarSet;
 import therms.Variable;
@@ -36,7 +36,7 @@ public class Tan extends EnginePlugin {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
 		builder.append( "tan( x )" );
 	}

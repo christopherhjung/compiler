@@ -4,23 +4,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VarSet {
-	private final Map<Variable, Double> valueSet;
+	private final Map<Variable, Therm> valueSet;
 
-	public VarSet( Variable var, double value )
+	public VarSet()
+	{
+		valueSet = new HashMap<>();
+	}
+	
+	public VarSet( Variable var, Therm value )
 	{
 		valueSet = new HashMap<>();
 		valueSet.put( var, value );
 	}
 
-	public VarSet( Map<Variable, Double> valueSet )
+	public VarSet( Map<Variable, Therm> valueSet )
 	{
 		this.valueSet = new HashMap<>( valueSet );
 	}
 
-	public double getValue( Variable var )
+	public Therm getValue( Variable var )
 	{
-		Double value = valueSet.get( var );
-		if ( value == null ) throw new ArithmeticException( var + " not found" );
+		Therm value = valueSet.get( var );
 		return value;
 	}
 

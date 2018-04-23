@@ -1,128 +1,42 @@
 package therms;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
+import tools.Utils;
 
 public class Chain extends Therm {
 
 	private final Therm outer;
-	private final Therm inner;
-	private final Variable outerReplace;
+	private final Therm[] inner;
 
-	public Chain( Therm outer, Therm inner )
-	{
-		this( outer, inner, Variable.X );
-	}
-
-	public Chain( Therm outer, Therm inner, Variable outerReplace )
+	public Chain( Therm outer, Therm... inner )
 	{
 		this.outer = outer;
 		this.inner = inner;
-		this.outerReplace = outerReplace;
-	}
-
-	@Override
-	public Therm replace( Therm replacer, Therm replacement )
-	{
-		Therm newOuter = outerReplace.equals( replacer ) ? outer : outer.replace( replacer, replacement );
-		Therm newInner = inner.replace( replacer, replacement );
-
-		if ( !newOuter.contains( outerReplace ) ) return newOuter;
-		if ( newOuter == outer && newInner == inner ) return this;
-		return new Chain( newOuter, newInner );
 	}
 
 	@Override
 	public Therm derivate( Variable name )
 	{
-		return inner.derivate( name ).mul( outer.derivate( outerReplace ).replace( outerReplace, inner ) );
+		return inner[0].derivate( name ).mul( new Chain( outer.derivate( null ), inner[0] ) );
 	}
 
 	@Override
-	public double valueAt( VarSet varSet )
+	public Therm reduce( VarSet varSet, Therm... therms )
 	{
-		return outer.valueAt( varSet.extend( outerReplace, inner.valueAt( varSet ) ) );
-	}
+		Therm[] newInner = new Therm[inner.length];
 
-	@Override
-	public Therm simplify()
-	{
-		Therm simplifiedOuter = outer.simplify();
-		Therm simplifiedInner = inner.simplify();
-
-		if ( !simplifiedOuter.contains( outerReplace ) )
+		for ( int i = 0 ; i < inner.length ; i++ )
 		{
-			return simplifiedOuter;
+			newInner[i] = inner[i].reduce( varSet );
 		}
-		else if ( simplifiedInner instanceof Const )
-		{
-			return new Const(
-					simplifiedOuter.valueAt( new VarSet( outerReplace, ((Const) simplifiedInner).getValue() ) ) );
-		}
-		else if ( simplifiedOuter instanceof Multiply )
-		{
-			Multiply multiply = (Multiply) simplifiedOuter;
-			List<Therm> consts = new ArrayList<>();
-			List<Therm> variables = new ArrayList<>();
-
-			for ( Therm therm : multiply )
-			{
-				if ( therm.contains( outerReplace ) )
-				{
-					variables.add( therm );
-				}
-				else
-				{
-					consts.add( therm );
-				}
-			}
-
-			Therm newChain = new Chain( new Multiply( variables ), simplifiedInner, outerReplace );
-			if ( consts.isEmpty() )
-			{
-				return newChain;
-			}
-			else
-			{
-				consts.add( newChain );
-				return new Multiply( consts );
-			}
-		}
-		else if ( simplifiedOuter instanceof Additional )
-		{
-			Additional additional = (Additional) simplifiedOuter;
-			List<Therm> consts = new ArrayList<>();
-			List<Therm> variables = new ArrayList<>();
-
-			for ( Therm therm : additional )
-			{
-				if ( therm.contains( outerReplace ) )
-				{
-					variables.add( therm );
-				}
-				else
-				{
-					consts.add( therm );
-				}
-			}
-
-			consts.add( new Chain( new Additional( variables ), simplifiedInner, outerReplace ) );
-			return new Additional( consts );
-		}
-		else if ( simplifiedOuter instanceof Exponenional && simplifiedInner.equals( outerReplace ) )
-		{
-			return simplifiedOuter;
-		}
-
-		return new Chain( simplifiedOuter, simplifiedInner, outerReplace );
-	}
-
-	@Override
-	public boolean contains( Therm str )
-	{
-		return inner.contains( str ) && outer.contains( outerReplace );
+		
+		return outer.reduce( varSet, newInner );
 	}
 
 	@Override
@@ -136,19 +50,10 @@ public class Chain extends Therm {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
-		if ( true )
-		{
-			builder.append( outer.toString().replaceAll( "(?<=[^A-Za-z]|^)" + outerReplace + "(?=[^A-Za-z]|$)",
-					inner.toString() ) );
-		}
-		else
-		{
-			builder.append( "{" + outer.toString().replaceAll( "(?<=[^A-Za-z]|^)" + outerReplace + "(?=[^A-Za-z]|$)",
-					inner.toString() ) + "}" );
-		}
-
+		outer.toString( builder );
+		builder.append( inner, "," );
 	}
 
 	@Override

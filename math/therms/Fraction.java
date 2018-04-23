@@ -1,6 +1,6 @@
 package therms;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
 
 public class Fraction extends Therm{
 	private final int upper;
@@ -19,13 +19,13 @@ public class Fraction extends Therm{
 	}
 	
 	@Override
-	public double valueAt( VarSet varSet )
+	public double reduce( VarSet varSet )
 	{
 		return (double)upper/lower;
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
 		builder.append( upper );
 		builder.append( "/" );

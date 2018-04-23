@@ -38,6 +38,11 @@ public abstract class StringParser<T> {
 		return position;
 	}
 
+	protected void setPosition( int position )
+	{
+		this.position = position;
+	}
+	
 	protected char getChar()
 	{
 		return chars[position];
@@ -53,14 +58,19 @@ public abstract class StringParser<T> {
 		return position < chars.length;
 	}
 
-	protected boolean hasNext( char cha )
+	protected boolean is( char cha )
 	{
 		return hasNext() && getChar() == cha;
 	}
 
-	protected boolean eatNext( char cha )
+	protected boolean isNot( char cha )
 	{
-		if ( hasNext( cha ) )
+		return hasNext() && getChar() != cha;
+	}
+	
+	protected boolean eat( char cha )
+	{
+		if ( is( cha ) )
 		{
 			next();
 			return true;
@@ -71,11 +81,11 @@ public abstract class StringParser<T> {
 
 	protected boolean eatAll( char cha )
 	{
-		if ( hasNext( cha ) )
+		if ( is( cha ) )
 		{
 			do{
 				position++;
-			}while ( hasNext( cha ) );
+			}while ( is( cha ) );
 			
 			return true;
 		}

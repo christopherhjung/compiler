@@ -8,15 +8,15 @@ import therms.Therm;
 import therms.VarSet;
 import therms.Variable;
 
-public class SinPlugin extends EnginePlugin {
+public class CosPlugin extends EnginePlugin {
 
-	private final Sin instance = new Sin();
+	private final Cos instance = new Cos();
 	private Therm derivate = null;
 
 	@Override
 	public void enable( MathParser engine )
 	{
-		derivate = engine.eval( "cos" );
+		derivate = engine.eval( "-sin" );
 	}
 
 	public boolean handle( String message )
@@ -40,9 +40,9 @@ public class SinPlugin extends EnginePlugin {
 		return new Chain( instance, therm );
 	}
 
-	public class Sin extends Therm {
+	public class Cos extends Therm {
 
-		private Sin()
+		private Cos()
 		{}
 
 		@Override
@@ -59,7 +59,7 @@ public class SinPlugin extends EnginePlugin {
 				if ( therms[0] instanceof Const )
 				{
 					Const value = (Const) therms[0];
-					return new Const( Math.sin( value.getValue() ) );
+					return new Const( Math.cos( value.getValue() ) );
 				}
 
 				return new Chain( this, therms[0] );
@@ -71,7 +71,7 @@ public class SinPlugin extends EnginePlugin {
 		@Override
 		public void toString( ThermStringifier builder )
 		{
-			builder.append( "sin" );
+			builder.append( "cos" );
 		}
 	}
 }

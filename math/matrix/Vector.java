@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
 import therms.Additional;
 import therms.Const;
 import therms.Multiply;
@@ -235,7 +235,7 @@ public class Vector extends Therm implements RowHandler {
 	}
 
 	@Override
-	public double valueAt( VarSet varSet )
+	public double reduce( VarSet varSet )
 	{
 		return 0;
 	}
@@ -260,7 +260,7 @@ public class Vector extends Therm implements RowHandler {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
 		builder.append( Arrays.toString( this.values ).replaceAll( "\\[", "{" ).replaceAll( "\\]", "}" ));
 	}

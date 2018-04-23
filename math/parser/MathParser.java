@@ -21,6 +21,7 @@ import therms.Equation;
 import therms.Therm;
 import therms.Variable;
 import tools.ReflectionUtils;
+import tools.Run;
 
 public class MathParser extends StringParser<Therm> {
 
@@ -59,7 +60,7 @@ public class MathParser extends StringParser<Therm> {
 	{
 		Therm result = parseAdditional();
 
-		if ( eatNext( EQUALS ) ) result = new Equation( result, parseAdditional() );
+		if ( eat( EQUALS ) ) result = new Equation( result, parseAdditional() );
 
 		return result;
 	}
@@ -137,13 +138,13 @@ public class MathParser extends StringParser<Therm> {
 		boolean invert = parseSign();
 
 		Therm therm;
-		if ( hasNext( PARENTHESIS_LEFT ) )
+		if ( is( PARENTHESIS_LEFT ) )
 		{
 			next();
 			therm = parseAdditional();
 			next();
 		}
-		else if ( hasNext( BRACE_LEFT ) )
+		else if ( is( BRACE_LEFT ) )
 		{
 			therm = parseVectorOrMatrix();
 		}
@@ -163,29 +164,13 @@ public class MathParser extends StringParser<Therm> {
 					therm = new Const( Double.POSITIVE_INFINITY );
 				}
 			}
-			/*else if ( str.equals( "e" ) )
-			{
-				therm = Functions.EXP.getTherm();
-
-				if ( eatNext( POW ) )
-				{
-					therm = new Chain( therm, parseTherm() );
-				}
-				else
-				{
-					therm = new Chain( therm, Const.ONE );
-				}
-			}*/
-			else if ( hasNext( PARENTHESIS_LEFT ) )
-			{
-				therm = parseMethod( str );
-			}
 			else
 			{
-				therm = new Variable( str );
+				therm = parseMethod( str );
+				// therm = new Variable( str );
 			}
 		}
-		else if ( isDigit() || hasNext( DOT ) )
+		else if ( isDigit() || is( DOT ) )
 		{
 			// Attach minus to number
 			therm = parseDouble( invert );
@@ -195,7 +180,7 @@ public class MathParser extends StringParser<Therm> {
 
 		eatAll( SPACE );
 
-		if ( eatNext( '^' ) ) therm = therm.pow( parseTherm() );
+		if ( eat( '^' ) ) therm = therm.pow( parseTherm() );
 
 		if ( invert ) return Const.MINUS_ONE.mul( therm );
 
@@ -204,74 +189,67 @@ public class MathParser extends StringParser<Therm> {
 
 	private Therm parseMethod( String methodName )
 	{
+		List<Therm> therms = new ArrayList<>();
+
+		if ( eat( PARENTHESIS_LEFT ) )
+		{
+			for ( ; isNot( PARENTHESIS_RIGHT ) ; )
+			{
+				Therm param = parseEquation();
+				therms.add( param );
+				eat( COMMA );
+			}
+
+			eat( PARENTHESIS_RIGHT );
+		}
+
+		Class<?>[] classes = new Class<?>[therms.size()];
+		Object[] thermsArr = new Therm[therms.size()];
+
+		for ( int i = 0 ; i < therms.size() ; i++ )
+		{
+			thermsArr[i] = therms.get( i );
+			classes[i] = thermsArr[i].getClass();
+		}
+
+		for ( EnginePlugin plugin : plugins.values() )
+		{
+			int save = getPosition();
+			boolean success = plugin.handle( this );
+			if ( success )
+			{
+				setPosition( save );
+				break;
+			}
+			else
+			{
+				setPosition( save );
+			}
+		}
+
 		Therm therm = null;
 
-		try
+		EnginePlugin function = plugins.get( methodName.toLowerCase() );
+
+		if ( function != null )
 		{
-			List<Therm> therms = new ArrayList<>();
-
-			for ( ; hasNext() && nextChar() != PARENTHESIS_RIGHT ; )
-			{
-				therms.add( parseEquation() );
-			}
-
-			Class<?>[] classes = new Class<?>[therms.size()];
-			Object[] thermsArr = new Therm[therms.size()];
-
-			for ( int i = 0 ; i < therms.size() ; i++ )
-			{
-				thermsArr[i] = therms.get( i );
-				classes[i] = thermsArr[i].getClass();
-			}
-
-			try
-			{
-				Therm function = plugins.get( methodName.toLowerCase() );
-
-				int[] test = new int[]{2};
-				
-				Arrays.stream( test ).asLongStream();
-				
-				try
-				{
-					List<Method> methods = ReflectionUtils.getMethodsAnnotatedWith( function.getClass(), EngineExecute.class );
-					Method method = ReflectionUtils.findBestMethod( methods, classes );
-
-					try
-					{
-						Object result = method.invoke( function, thermsArr );
-
-						if ( result instanceof Therm )
-						{
-							return (Therm) result;
-						}
-					}
-					catch ( Throwable excp )
-					{
-						throw new ParseException( "Failure while running method " + methodName );
-					}
-				}
-				catch ( Throwable excp )
-				{
-					throw new ParseException(
-							"No Matching Method found for " + methodName + " with " + Arrays.toString( classes ) );
-				}
-			}
-			catch ( Throwable excp )
-			{
-				if ( thermsArr.length != 1 )
-				{
-					throw new ParseException(
-							"No Matching Method found for " + methodName + " with " + Arrays.toString( classes ) );
-				}
-
-				therm = new Variable( methodName ).mul( (Therm) thermsArr[0] );
-			}
-
+			List<Method> methods = ReflectionUtils.getMethodsAnnotatedWith( function.getClass(), EngineExecute.class );
+			Method method = ReflectionUtils.findBestMethod( methods, classes );
+			therm = ReflectionUtils.safeInvoke( Therm.class, null, method, function, thermsArr );
 		}
-		catch ( IllegalArgumentException e2 )
+
+		if ( therm == null )
 		{
 			therm = new Variable( methodName );
+
+			if ( thermsArr.length == 1 )
+			{
+				therm = therm.mul( (Therm) thermsArr[0] );
+			}
+			else if ( thermsArr.length > 1 )
+			{
+				throw new ParseException( this );
+			}
 		}
 
 		return therm;
@@ -294,7 +272,7 @@ public class MathParser extends StringParser<Therm> {
 	protected List<Therm> parseElements()
 	{
 		List<Therm> therms = new ArrayList<>();
-		while ( hasNext() && nextChar() != BRACE_RIGHT )
+		while ( isNot( BRACE_RIGHT ) )
 			therms.add( parseAdditional() );
 
 		if ( therms.isEmpty() ) throw new ParseException( "Empty Vector" );
@@ -358,9 +336,9 @@ public class MathParser extends StringParser<Therm> {
 	protected boolean parseSign()
 	{
 		boolean sign = false;
-		while ( hasNext( MINUS ) || hasNext( PLUS ) || hasNext( SPACE ) )
+		while ( is( MINUS ) || is( PLUS ) || is( SPACE ) )
 		{
-			sign ^= hasNext( MINUS );
+			sign ^= is( MINUS );
 			next();
 		}
 
@@ -390,7 +368,7 @@ public class MathParser extends StringParser<Therm> {
 			builder.append( nextChar() );
 		}
 
-		if ( hasNext( DOT ) )
+		if ( is( DOT ) )
 		{
 			builder.append( nextChar() );
 

@@ -1,6 +1,6 @@
 package therms;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
 
 public abstract class Polynom extends Therm {
 
@@ -21,7 +21,7 @@ public abstract class Polynom extends Therm {
 	protected abstract double get( int element );
 	
 	@Override
-	public double valueAt( VarSet varSet )
+	public double reduce( VarSet varSet )
 	{
 		double pos = varSet.getValue( Variable.X );
 		double result = 0;
@@ -100,7 +100,7 @@ public abstract class Polynom extends Therm {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
 		for ( int i = size() - 1 ; i >= 0 ; i-- )
 		{

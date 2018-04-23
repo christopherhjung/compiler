@@ -1,6 +1,6 @@
 package therms;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
 
 public class Variable extends Therm {
 
@@ -19,9 +19,10 @@ public class Variable extends Therm {
 	}
 	
 	@Override
-	public double valueAt( VarSet varSet )
+	public Therm reduce( VarSet varSet, Therm... therms )
 	{
-		return varSet.getValue( this );
+		Therm value = varSet.getValue( this );
+		return value != null ? value : this;
 	}
 
 	@Override
@@ -30,13 +31,7 @@ public class Variable extends Therm {
 		if ( equals( name ) ) return Const.ONE;
 		return Const.ZERO;
 	}
-
-	@Override
-	public boolean contains( Therm var )
-	{
-		return var.equals( name );
-	}
-
+	
 	@Override
 	public boolean equals( Object obj )
 	{
@@ -48,7 +43,7 @@ public class Variable extends Therm {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
 		builder.append( name );
 	}

@@ -11,12 +11,12 @@ import java.util.stream.IntStream;
 import therms.Therm;
 
 public class ReflectionUtils {
-	
+
 	public static Method findBestMethod( List<Method> methods, Class<?>[] types )
 	{
 		int bestMatches = -1;
 		Method bestMatch = null;
-		
+
 		loop: for ( Method method : methods )
 		{
 			Class<?>[] methodTypes = method.getParameterTypes();
@@ -30,7 +30,7 @@ public class ReflectionUtils {
 					{
 						continue loop;
 					}
-					
+
 					if ( methodTypes[i].equals( types[i] ) ) currentMatching++;
 				}
 
@@ -42,31 +42,48 @@ public class ReflectionUtils {
 			}
 		}
 
-		if ( bestMatch == null ) throw new NoClassDefFoundError();
-
 		return bestMatch;
 	}
-	
-	public static List<Method> getMethodsAnnotatedWith(final Class<?> type, final Class<? extends Annotation> annotation) {
-	    //ReflectionStream.of(type).methodsUntil(Object.class).hasAnnotation(annotation).collect(Collectors.toList())
-		
-		final List<Method> methods = new ArrayList<Method>();
-	    Class<?> klass = type;
-	    while (klass != Object.class) { // need to iterated thought hierarchy in order to retrieve methods from above the current instance
-	        
-	        for (final Method method : klass.getDeclaredMethods()) {
-	            if (method.isAnnotationPresent(annotation)) {
 
-	                Annotation annotInstance = method.getAnnotation(annotation);
-	                
-	                
-	                // TODO process annotInstance
-	                methods.add(method);
-	            }
-	        }
-	        // move to the upper class in the hierarchy in search for more methods
-	        klass = klass.getSuperclass();
-	    }
-	    return methods;
+	public static List<Method> getMethodsAnnotatedWith( final Class<?> type,
+			final Class<? extends Annotation> annotation )
+	{
+		// ReflectionStream.of(type).methodsUntil(Object.class).hasAnnotation(annotation).collect(Collectors.toList())
+
+		final List<Method> methods = new ArrayList<Method>();
+		Class<?> clazz = type;
+		while ( clazz != Object.class )
+		{
+			for ( final Method method : clazz.getDeclaredMethods() )
+			{
+				if ( method.isAnnotationPresent( annotation ) )
+				{
+
+					Annotation annotInstance = method.getAnnotation( annotation );
+
+					// TODO process annotInstance
+					methods.add( method );
+				}
+			}
+			// move to the upper class in the hierarchy in search for more
+			// methods
+			clazz = clazz.getSuperclass();
+		}
+		return methods;
+	}
+
+	public static <T> T as( Object obj, Class<T> clazz )
+	{
+		if ( clazz.isInstance( obj ) )
+		{
+			return clazz.cast( obj );
+		}
+
+		return null;
+	}
+
+	public static <T> T safeInvoke( Class<T> clazz, T defaultValue, Method method, Object obj, Object... args )
+	{
+		return Run.safe( () -> method == null ? null : as( method.invoke( obj, args ), clazz ), defaultValue );
 	}
 }

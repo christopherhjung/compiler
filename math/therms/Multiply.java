@@ -9,7 +9,7 @@ import java.util.List;
 import builder.AdditionalBuilder;
 import builder.MultiplyBuilder;
 import builder.ThermBuilder;
-import parser.ThermStringify;
+import parser.ThermStringifier;
 import tools.ListComparer;
 
 public class Multiply extends Therm implements Iterable<Therm> {
@@ -37,45 +37,23 @@ public class Multiply extends Therm implements Iterable<Therm> {
 	}
 
 	@Override
-	public boolean contains( Therm var )
+	public Therm reduce( VarSet varSet, Therm... params )
 	{
+		Therm result = null;
 		for ( Therm therm : this )
 		{
-			if ( therm.contains( var ) )
+			Therm next = therm.reduce( varSet );
+
+			if ( result == null )
 			{
-				return true;
+				result = next;
+			}
+			else
+			{
+				result = result.mul( next );
 			}
 		}
-		return false;
-	}
-	
-	@Override
-	public double valueAt( VarSet varSet )
-	{
-		double result = 1;
-		for ( Therm therm : therms )
-		{
-			result *= therm.valueAt( varSet );
-		}
 		return result;
-	}
-
-	@Override
-	public Therm replace( Therm replacer, Therm replacement )
-	{
-		if ( equals( replacer ) )
-		{
-			return replacement;
-		}
-
-		List<Therm> newTherms = new ArrayList<>( therms );
-
-		for ( int i = 0 ; i < therms.size() ; i++ )
-		{
-			newTherms.set( i, newTherms.get( i ).replace( replacer, replacement ) );
-		}
-
-		return new Multiply( newTherms );
 	}
 
 	@Override
@@ -102,27 +80,6 @@ public class Multiply extends Therm implements Iterable<Therm> {
 		}
 
 		return additionalBuilder.build();
-	}
-
-	@Override
-	public Therm simplify()
-	{
-		List<Therm> newTherms = new ArrayList<>();
-
-		if ( !compute( therms, newTherms ) )
-		{
-			return Const.ZERO;
-		}
-		else if ( newTherms.size() == 0 )
-		{
-			return Const.ONE;
-		}
-		else if ( newTherms.size() == 1 )
-		{
-			return newTherms.get( 0 );
-		}
-
-		return new Multiply( newTherms );
 	}
 
 	private static boolean compute( List<Therm> oldTherms, List<Therm> newTherms )
@@ -180,13 +137,9 @@ public class Multiply extends Therm implements Iterable<Therm> {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
-		for ( int i = 0 ; i < therms.size() ; i++ )
-		{
-			if ( i != 0 ) builder.append( " * " );
-			builder.append( therms.get( i ) );
-		}
+		builder.append( therms, " * " );
 	}
 
 	@Override

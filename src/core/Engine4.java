@@ -4,16 +4,17 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Scanner;
 
-import functions.Cos;
+import functions.CosPlugin;
 import functions.EngineExecute;
 import functions.EnginePlugin;
 import functions.Functions;
+import functions.ReducePlugin;
 import functions.SinPlugin;
 import functions.Tan;
-import modifier.Derivate;
+import modifier.DerivatePlugin;
 import parser.MathParser;
 import parser.MathProgram;
-import parser.ThermStringify;
+import parser.ThermStringifier;
 import therms.Therm;
 import therms.VarSet;
 import therms.Variable;
@@ -26,9 +27,10 @@ public class Engine4 {
 		MathProgram program = new MathProgram();
 		
 		program.installPlugin( "sin", SinPlugin.class);
-		program.installPlugin( "cos", Cos.class);
-		program.installPlugin( "tan", Tan.class);
-		program.installPlugin( "derivate" , Derivate.class );
+		program.installPlugin( "cos", CosPlugin.class);
+		program.installPlugin( "reduce", ReducePlugin.class);
+		//program.installPlugin( "tan", Tan.class);
+		program.installPlugin( "derivate" , DerivatePlugin.class );
 		
 		MathParser engine = program.start();
 		
@@ -46,7 +48,7 @@ public class Engine4 {
 
 			try
 			{
-				System.out.println( engine.eval( therm ).simplify() );
+				System.out.println( engine.eval( therm ) );
 			}
 			catch ( Throwable t )
 			{

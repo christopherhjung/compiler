@@ -23,6 +23,8 @@ taylor(a,d,f) := sum(n=0,d,derivate(f,n)(a)/n!*(x-a)^n)
 //integrate( c * f(x), x ) = c * integrate(f(x),x)
 //integrate(f(x) + g(x), x ) = integrate(f(x),x) + integrate(g(x),x)
 
+derivate(sin) := cos;
+
 //Fourier
 fourier(function f){
 	a[k] := 1/pi * integrate(-pi,pi,f(t)*cos(k*t),t) for k >= 0
@@ -38,8 +40,8 @@ fourier(function f){
 
 {
 	integrate(derivate(f) * g) = f*g - integrate(f * derivate(g))
-	f: x -> ?
-	g: x -> ?
+	f: R -> R
+	g: R -> R
 	x elementof R
 }
 sin(0) = 0
@@ -76,7 +78,7 @@ e^log(x) = x
 log(e^x) = x
 log(x^n) = n*log(x)
 //log(a,x^n) = n*log(a,x)
--log(x) = log(1/x)
+//-log(x) = log(1/x)
 
 log(x) - log(y) = log(x/y)
 log(x) + log(y) = log(x*y)

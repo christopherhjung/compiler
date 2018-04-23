@@ -3,7 +3,7 @@ package therms;
 import java.util.ArrayList;
 import java.util.List;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
 
 public abstract class Therm {
 	public final static int ZERO_LEVEL = 0;
@@ -15,65 +15,14 @@ public abstract class Therm {
 
 	public abstract Therm derivate( Variable name );
 
-	public abstract void toString( ThermStringify builder );
+	public abstract void toString( ThermStringifier builder );
 
 	public Therm integrate( Variable name, Const constant )
 	{
 		return null;
 	}
-
-	public Therm replace( Therm replacer, Therm replacement )
-	{
-		if ( equals( replacer ) ) return replacement;
-		return this;
-	}
-
-	public abstract double valueAt( VarSet varSet );
-
-	public boolean contains( Therm var )
-	{
-		return false;
-	}
-
-	public Therm simplify()
-	{
-		return this;
-	}
-
-	public Therm contractMultiply( Therm therm )
-	{
-		if ( this.equals( therm ) ) return pow( Const.TWO );
-
-		if ( false && therm instanceof Additional )
-		{
-			Additional other = (Additional) therm;
-			List<Therm> newTherms = new ArrayList<>();
-			for ( Therm element : other.getTherms() )
-			{
-				newTherms.add( mul( element ) );
-			}
-
-			return new Additional( newTherms );
-		}
-
-		if ( therm instanceof Exponenional )
-		{
-			Exponenional other = (Exponenional) therm;
-			if ( other.getBasis().equals( this ) )
-			{
-				return pow( Const.ONE.add( other.getExponent() ) );
-			}
-		}
-
-		return null;
-	}
-
-	public Therm contractAdditional( Therm therm )
-	{
-		if ( this.equals( therm ) ) return Const.TWO.mul( this );
-
-		return null;
-	}
+	
+	public abstract Therm reduce( VarSet varSet, Therm... therms  );
 
 	public Therm add( Therm therm )
 	{
@@ -142,6 +91,6 @@ public abstract class Therm {
 
 	public String toString()
 	{
-		return new ThermStringify().append( this ).toString();
+		return new ThermStringifier().append( this ).toString();
 	}
 }

@@ -1,6 +1,6 @@
 package therms;
 
-import parser.ThermStringify;
+import parser.ThermStringifier;
 
 public class Equation extends Therm {
 
@@ -30,7 +30,7 @@ public class Equation extends Therm {
 	}
 	
 	@Override
-	public double valueAt( VarSet varSet )
+	public double reduce( VarSet varSet )
 	{
 		return Double.NaN;
 	}
@@ -42,7 +42,7 @@ public class Equation extends Therm {
 	}
 
 	@Override
-	public void toString( ThermStringify builder )
+	public void toString( ThermStringifier builder )
 	{
 		builder.append( left );
 		builder.append( " = " );

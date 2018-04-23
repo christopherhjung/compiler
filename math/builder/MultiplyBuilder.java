@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import therms.Const;
 import therms.Multiply;
+import therms.Neutral;
 import therms.Therm;
 
 public class MultiplyBuilder implements ThermBuilder{
@@ -15,7 +16,7 @@ public class MultiplyBuilder implements ThermBuilder{
 	public Therm build()
 	{
 		if ( isZero ) return Const.ZERO;
-		if ( list.size() == 0 ) return Const.MINUS_ONE;
+		if ( list.size() == 0 ) return new Neutral();
 		if ( list.size() == 1 ) return list.get( 0 );
 
 		return new Multiply( list );

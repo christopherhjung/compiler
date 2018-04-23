@@ -1,7 +1,7 @@
-package functions;
+package crap;
 
 import parser.MathParser;
-import parser.ThermStringify;
+import parser.ThermStringifier;
 import therms.Const;
 import therms.Exponenional;
 import therms.Therm;
@@ -32,7 +32,7 @@ public enum Functions {
 		}
 
 		@Override
-		public void toString( ThermStringify builder )
+		public void toString( ThermStringifier builder )
 		{
 			builder.append( "exp( x )" );
 		}
@@ -57,7 +57,7 @@ public enum Functions {
 		}
 
 		@Override
-		public void toString( ThermStringify builder )
+		public void toString( ThermStringifier builder )
 		{
 			builder.append( "log( x )" );
 		}
