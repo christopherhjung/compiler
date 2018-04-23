@@ -9,31 +9,40 @@ public abstract class StringParser<T> {
 	private char[] chars;
 
 	protected abstract T parse();
+	protected abstract T parseTest();
 
 	public T eval( char[] chars )
 	{
 		reset( chars );
-		return parse();
+		return parseImpl();
 	}
 
 	public T eval( String str )
 	{
 		reset( str.toCharArray() );
-		return parse();
+		return parseImpl();
+	}
+	
+	private T parseImpl(){
+		T result = parseTest();
+		
+		if(hasNext()) throw new ParseException( this );
+		
+		return result;
 	}
 
-	private final void reset( char[] chars )
+	protected void reset( char[] chars )
 	{
 		position = 0;
 		this.chars = chars;
 	}
 
-	protected void next()
+	public void next()
 	{
 		position++;
 	}
 
-	protected int getPosition()
+	public int getPosition()
 	{
 		return position;
 	}
@@ -43,32 +52,32 @@ public abstract class StringParser<T> {
 		this.position = position;
 	}
 	
-	protected char getChar()
+	public char getChar()
 	{
 		return chars[position];
 	}
 
-	protected char nextChar()
+	public char nextChar()
 	{
 		return chars[position++];
 	}
 
-	protected boolean hasNext()
+	public boolean hasNext()
 	{
 		return position < chars.length;
 	}
 
-	protected boolean is( char cha )
+	public boolean is( char cha )
 	{
 		return hasNext() && getChar() == cha;
 	}
 
-	protected boolean isNot( char cha )
+	public boolean isNot( char cha )
 	{
 		return hasNext() && getChar() != cha;
 	}
 	
-	protected boolean eat( char cha )
+	public boolean eat( char cha )
 	{
 		if ( is( cha ) )
 		{
@@ -79,7 +88,7 @@ public abstract class StringParser<T> {
 		return false;
 	}
 
-	protected boolean eatAll( char cha )
+	public boolean eatAll( char cha )
 	{
 		if ( is( cha ) )
 		{
@@ -93,12 +102,12 @@ public abstract class StringParser<T> {
 		return false;
 	}
 
-	protected boolean isAlpha()
+	public boolean isAlpha()
 	{
 		return hasNext() && Character.isAlphabetic( getChar() );
 	}
 
-	protected boolean isDigit()
+	public boolean isDigit()
 	{
 		return hasNext() && Character.isDigit( getChar() );
 	}

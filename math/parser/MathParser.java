@@ -7,12 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Stack;
 
 import builder.AdditionalBuilder;
 import builder.MultiplyBuilder;
 import functions.EngineExecute;
 import functions.EnginePlugin;
-import functions.Functions;
+
 import matrix.Matrix;
 import matrix.Vector;
 import therms.Chain;
@@ -46,6 +47,60 @@ public class MathParser extends StringParser<Therm> {
 		this.plugins = plugins;
 	}
 
+	@Override
+	protected void reset( char[] chars )
+	{
+		super.reset( chars );
+		level = 1;
+	}
+
+	private int level = 1;
+
+	public int getLevel()
+	{
+		return level;
+	}
+
+	public void setLevel( int level )
+	{
+		this.level = level;
+	}
+
+	@Override
+	public Therm parseTest()
+	{
+		for ( EnginePlugin plugin : plugins.values() )
+		{
+			int savePosition = getPosition();
+			int saveLevel = getLevel();
+			
+			Therm result = plugin.handle( this );
+			
+			setLevel( saveLevel );
+			
+			if ( result != null )
+			{
+				return result;
+			}
+			else
+			{
+				setPosition( savePosition );
+			}
+		}
+
+		throw new ParseException( this );
+	}
+
+	public Therm parseTest(int level)
+	{
+		int saveLevel = getLevel();
+		setLevel( level );
+		Therm result = parseTest();	
+		setLevel( saveLevel );
+		
+		return result;
+	}
+	
 	@Override
 	protected Therm parse()
 	{
@@ -212,21 +267,6 @@ public class MathParser extends StringParser<Therm> {
 			classes[i] = thermsArr[i].getClass();
 		}
 
-		for ( EnginePlugin plugin : plugins.values() )
-		{
-			int save = getPosition();
-			boolean success = plugin.handle( this );
-			if ( success )
-			{
-				setPosition( save );
-				break;
-			}
-			else
-			{
-				setPosition( save );
-			}
-		}
-
 		Therm therm = null;
 
 		EnginePlugin function = plugins.get( methodName.toLowerCase() );
@@ -333,7 +373,7 @@ public class MathParser extends StringParser<Therm> {
 	 * return null; }
 	 */
 
-	protected boolean parseSign()
+	public boolean parseSign()
 	{
 		boolean sign = false;
 		while ( is( MINUS ) || is( PLUS ) || is( SPACE ) )

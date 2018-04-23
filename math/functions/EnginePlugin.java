@@ -13,7 +13,7 @@ public abstract class EnginePlugin{
 
 	}	
 	
-	public boolean handle( MathParser engine ){
-		return false;
+	public Therm handle( MathParser engine ){
+		return null;
 	}
 }

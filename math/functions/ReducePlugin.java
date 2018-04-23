@@ -9,17 +9,6 @@ import therms.VarSet;
 import therms.Variable;
 
 public class ReducePlugin extends EnginePlugin {
-
-
-	public boolean handle( String message )
-	{
-		if ( message.equals( "derivate" ) )
-		{
-
-		}
-		return false;
-	}
-
 	@EngineExecute
 	public Therm execute( Therm therm )
 	{

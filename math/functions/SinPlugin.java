@@ -19,13 +19,10 @@ public class SinPlugin extends EnginePlugin {
 		derivate = engine.eval( "cos" );
 	}
 
-	public boolean handle( String message )
+	@Override
+	public Therm handle( MathParser engine )
 	{
-		if ( message.equals( "derivate" ) )
-		{
-
-		}
-		return false;
+		
 	}
 
 	@EngineExecute

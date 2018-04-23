@@ -29,10 +29,10 @@ public class Function extends Therm {
 	}
 
 	@Override
-	public double reduce( VarSet varSet )
+	public Therm reduce( VarSet varSet, Therm... therms )
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 }

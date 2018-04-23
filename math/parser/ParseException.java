@@ -1,9 +1,12 @@
 package parser;
 
 public class ParseException extends RuntimeException {
-	protected ParseException( MathParser engine )
+	public <T> ParseException( StringParser<T> engine )
 	{
-		this("Parse Error at :" + engine.getChar() );
+		this("Parse Error at position " + engine.getPosition() + " \" " + engine.getChar() + " \"" );
+		setStackTrace( Thread.currentThread().getStackTrace() );
+		
+		Thread.dumpStack();
 	}
 
 	protected ParseException( String comment )
