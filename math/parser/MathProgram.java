@@ -28,7 +28,7 @@ public class MathProgram {
 
 		for ( EnginePlugin plugin : plugins.values() )
 		{
-			plugin.enable( engine );
+			plugin.onAttach( engine );
 		}
 		
 		

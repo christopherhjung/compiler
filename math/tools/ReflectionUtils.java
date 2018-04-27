@@ -82,7 +82,7 @@ public class ReflectionUtils {
 		return null;
 	}
 
-	public static <T> T safeInvoke( Class<T> clazz, T defaultValue, Method method, Object obj, Object... args )
+	public static <T> T safeInvoke( T defaultValue,  Class<T> clazz, Object obj, Method method, Object... args )
 	{
 		return Run.safe( () -> method == null ? null : as( method.invoke( obj, args ), clazz ), defaultValue );
 	}

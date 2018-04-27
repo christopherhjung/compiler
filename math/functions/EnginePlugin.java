@@ -6,14 +6,20 @@ import therms.Therm;
 import therms.VarSet;
 import therms.Variable;
 
-public abstract class EnginePlugin{
+public abstract class EnginePlugin {
 
-	public void enable( MathParser engine )
+	public void onEnable()
 	{
 
-	}	
-	
-	public Therm handle( MathParser engine ){
+	}
+
+	public void onAttach( MathParser parser )
+	{
+
+	}
+
+	public Therm handle( MathParser parser )
+	{
 		return null;
 	}
 }

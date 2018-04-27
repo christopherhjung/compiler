@@ -1,5 +1,8 @@
 package parser;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,27 +11,24 @@ public abstract class StringParser<T> {
 	private int position;
 	private char[] chars;
 
-	protected abstract T parse();
-	protected abstract T parseTest();
+	public abstract T parse();
 
-	public T eval( char[] chars )
+	public abstract T parseTest();
+
+	public final T eval( char[] chars )
 	{
 		reset( chars );
-		return parseImpl();
+
+		T result = parse();
+
+		if ( hasNext() ) throw new ParseException( this );
+
+		return result;
 	}
 
-	public T eval( String str )
+	public final T eval( String str )
 	{
-		reset( str.toCharArray() );
-		return parseImpl();
-	}
-	
-	private T parseImpl(){
-		T result = parseTest();
-		
-		if(hasNext()) throw new ParseException( this );
-		
-		return result;
+		return eval( str.toCharArray() );
 	}
 
 	protected void reset( char[] chars )
@@ -51,7 +51,7 @@ public abstract class StringParser<T> {
 	{
 		this.position = position;
 	}
-	
+
 	public char getChar()
 	{
 		return chars[position];
@@ -76,7 +76,7 @@ public abstract class StringParser<T> {
 	{
 		return hasNext() && getChar() != cha;
 	}
-	
+
 	public boolean eat( char cha )
 	{
 		if ( is( cha ) )
@@ -92,30 +92,37 @@ public abstract class StringParser<T> {
 	{
 		if ( is( cha ) )
 		{
-			do{
+			do
+			{
 				position++;
-			}while ( is( cha ) );
-			
+			}
+			while ( is( cha ) );
+
 			return true;
 		}
-		
+
 		return false;
+	}
+
+	public boolean is( Predicate<Character> predicate )
+	{
+		return hasNext() && predicate.test( getChar() );
 	}
 
 	public boolean isAlpha()
 	{
-		return hasNext() && Character.isAlphabetic( getChar() );
+		return is( Character::isAlphabetic );
 	}
 
 	public boolean isDigit()
 	{
-		return hasNext() && Character.isDigit( getChar() );
+		return is( Character::isDigit );
 	}
 
 	protected String readFor( Pattern pattern )
 	{
-		Matcher matcher = pattern.matcher( new String(chars) );
-		matcher.region( getPosition(), chars.length - 1 );	
+		Matcher matcher = pattern.matcher( new String( chars ) );
+		matcher.region( getPosition(), chars.length - 1 );
 		matcher.find( position );
 		if ( matcher.find() )
 		{
@@ -128,5 +135,12 @@ public abstract class StringParser<T> {
 	protected boolean matches( String regex )
 	{
 		return Character.toString( getChar() ).matches( regex );
+	}
+
+	@Override
+	public String toString()
+	{
+		if ( position >= chars.length ) return "Parse finished";
+		return new String( chars, position, chars.length - position );
 	}
 }

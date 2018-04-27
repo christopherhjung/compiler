@@ -12,7 +12,7 @@ public class Tan extends EnginePlugin {
 	private Therm derivate = null;
 	
 	@Override
-	public void enable( MathParser engine )
+	public void onAttach( MathParser engine )
 	{
 		derivate = engine.eval( "cos(x) ^ -2" );
 	}

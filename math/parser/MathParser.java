@@ -11,6 +11,7 @@ import java.util.Stack;
 
 import builder.AdditionalBuilder;
 import builder.MultiplyBuilder;
+import functions.BasicPlugin;
 import functions.EngineExecute;
 import functions.EnginePlugin;
 
@@ -102,8 +103,12 @@ public class MathParser extends StringParser<Therm> {
 	}
 	
 	@Override
-	protected Therm parse()
+	public Therm parse()
 	{
+		if(true){
+			return new BasicPlugin().handle( this );
+		}
+		
 		Therm result = parseEquation();
 
 		if ( hasNext() ) throw new ParseException( "Unknow Signs left :" + getChar() );
@@ -132,19 +137,13 @@ public class MathParser extends StringParser<Therm> {
 					next();
 					break;
 
-				case BRACE_RIGHT:
-				case PARENTHESIS_RIGHT:
-				case COMMA:
-				case EQUALS:
-					break loop;
-
 				case PLUS:
 				case MINUS:
 					builder.add( parseMultiply() );
 					break;
 
 				default:
-					throw new ParseException( getChar() + " Wrong position" );
+					break loop;
 			}
 		}
 
@@ -163,14 +162,6 @@ public class MathParser extends StringParser<Therm> {
 					next();
 					break;
 
-				case BRACE_RIGHT:
-				case PARENTHESIS_RIGHT:
-				case COMMA:
-				case PLUS:
-				case MINUS:
-				case EQUALS:
-					break loop;
-
 				case DIV:
 					next();
 					builder.add( Const.ONE.div( parseTherm() ) );
@@ -179,9 +170,11 @@ public class MathParser extends StringParser<Therm> {
 				case MUL:
 					next();
 				case PARENTHESIS_LEFT:
-				default:
 					builder.add( parseTherm() );
 					break;
+					
+				default:
+					break loop;
 			}
 		}
 
@@ -275,7 +268,7 @@ public class MathParser extends StringParser<Therm> {
 		{
 			List<Method> methods = ReflectionUtils.getMethodsAnnotatedWith( function.getClass(), EngineExecute.class );
 			Method method = ReflectionUtils.findBestMethod( methods, classes );
-			therm = ReflectionUtils.safeInvoke( Therm.class, null, method, function, thermsArr );
+			therm = ReflectionUtils.safeInvoke( null, Therm.class, function, method, thermsArr );
 		}
 
 		if ( therm == null )

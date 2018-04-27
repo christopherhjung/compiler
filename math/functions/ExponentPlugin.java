@@ -11,10 +11,10 @@ import therms.Variable;
 public class ExponentPlugin extends EnginePlugin{
 
 	@Override
-	public void enable( MathParser engine )
+	public void onAttach( MathParser engine )
 	{
 		// TODO Auto-generated method stub
-		super.enable( engine );
+		super.onAttach( engine );
 	}
 	
 	@Override

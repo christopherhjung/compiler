@@ -1,10 +1,12 @@
 package parser;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import therms.Therm;
 
-public class ThermStringifier{
+public class ThermStringifier {
 	private StringBuilder builder = new StringBuilder();
 	private int last;
 
@@ -17,7 +19,7 @@ public class ThermStringifier{
 	{
 		return last;
 	}
-	
+
 	public StringBuilder getBuilder()
 	{
 		return builder;
@@ -34,26 +36,16 @@ public class ThermStringifier{
 		builder.append( number );
 		return this;
 	}
-	
-	public <T extends Therm> ThermStringifier append( T[] elements, String limiter  )
+
+	public <T extends Therm> ThermStringifier append( T[] elements, String limiter )
 	{
-		for ( int i = 0 ; i < elements.length ; i++ )
-		{
-			if ( i > 0 )
-			{
-				append( limiter );
-			}
-
-			append( elements[i] );
-		}
-
-		return this;
+		return append( Arrays.asList( elements ), limiter );
 	}
-	
-	public <T extends Therm> ThermStringifier append( List<T> elements, String limiter  )
+
+	public <T extends Therm> ThermStringifier append( List<T> elements, String limiter )
 	{
 		boolean first = true;
-		
+
 		for ( T therm : elements )
 		{
 			if ( !first )
@@ -62,7 +54,7 @@ public class ThermStringifier{
 			}
 
 			append( therm );
-			
+
 			first = false;
 		}
 
@@ -72,7 +64,7 @@ public class ThermStringifier{
 	public ThermStringifier append( Therm therm )
 	{
 		int level = therm.getLevel();
-		boolean inner = level <= last;
+		boolean inner = level < last;
 
 		int previous = last;
 		last = level;

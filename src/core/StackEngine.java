@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import functions.AddPlugin;
+import functions.BasicPlugin;
 import functions.ConstPlugin;
 import functions.CosPlugin;
 import functions.EngineExecute;
@@ -32,10 +33,14 @@ public class StackEngine {
 	{
 		MathProgram program = new MathProgram();
 
-		program.installPlugin( "n",	ConstPlugin.class);
-		program.installPlugin( "+", AddPlugin.class );
-		program.installPlugin( "*", MulPlugin.class );
-		program.installPlugin( "sss", ThermPlugin.class );
+		program.installPlugin( "s", BasicPlugin.class );
+		
+		//program.installPlugin( "reduce", ReducePlugin.class );
+		
+		//program.installPlugin( "n",	ConstPlugin.class);
+		//program.installPlugin( "+", AddPlugin.class );
+		//program.installPlugin( "*", MulPlugin.class );
+		//program.installPlugin( "sss", ThermPlugin.class );
 		//program.installPlugin( "ss", FunctionPlugin.class );
 		//program.installPlugin( "exp", ExponentPlugin.class );
 		
