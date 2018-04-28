@@ -1,7 +1,5 @@
 package parser;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,8 +10,6 @@ public abstract class StringParser<T> {
 	private char[] chars;
 
 	public abstract T parse();
-
-	public abstract T parseTest();
 
 	public final T eval( char[] chars )
 	{

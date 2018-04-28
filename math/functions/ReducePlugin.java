@@ -9,6 +9,8 @@ import therms.VarSet;
 import therms.Variable;
 
 public class ReducePlugin extends EnginePlugin {
+	
+	
 	@EngineExecute
 	public Therm execute( Therm therm )
 	{

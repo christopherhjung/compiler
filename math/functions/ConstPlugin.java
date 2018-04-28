@@ -11,14 +11,9 @@ public class ConstPlugin extends EnginePlugin {
 	@Override
 	public Therm handle( MathParser engine )
 	{
-		boolean invert = engine.parseSign();
-
-		if ( engine.getLevel() == 3 && engine.isDigit() )
+		if ( engine.is( Character::isDigit ) )
 		{
 			StringBuilder builder = new StringBuilder();
-			
-			if(invert) builder.append( '-' );
-
 			while ( engine.isDigit() )
 			{
 				builder.append( engine.nextChar() );

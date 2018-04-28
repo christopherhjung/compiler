@@ -134,12 +134,11 @@ public class BasicPlugin extends EnginePlugin {
 	}
 
 	/*
-	protected Therm parseVar( MathParser parser )
-	{
-		Therm therm = parseParenthesis( parser );
-
-		return therm;
-	}*/
+	 * protected Therm parseVar( MathParser parser ) { Therm therm =
+	 * parseParenthesis( parser );
+	 * 
+	 * return therm; }
+	 */
 
 	protected Therm parseParenthesis( MathParser parser )
 	{
@@ -150,22 +149,9 @@ public class BasicPlugin extends EnginePlugin {
 			therm = parseEquation( parser );
 			parser.next();
 		}
-		else if ( parser.is( Character::isAlphabetic ) )
+		else
 		{
-			therm = parseVariable( parser );
-			// String str = parseString();
-
-			/*
-			 * if ( str.equalsIgnoreCase( "infinity" ) ) { if ( invert ) {
-			 * invert = false; therm = new Const( Double.NEGATIVE_INFINITY ); }
-			 * else { therm = new Const( Double.POSITIVE_INFINITY ); } } else {
-			 * therm = parseMethod( str ); // therm = new Variable( str ); }
-			 */
-		}
-		else if ( parser.is( Character::isDigit ) || parser.is( DOT ) )
-		{
-			// Attach minus to number
-			therm = parseDouble( parser );
+			therm = parser.parseWithIgnore();
 		}
 
 		return therm;

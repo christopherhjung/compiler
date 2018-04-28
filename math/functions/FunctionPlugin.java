@@ -17,6 +17,7 @@ public class FunctionPlugin extends EnginePlugin {
 
 	{
 		plugins.put( "sin", new SinPlugin() );
+		plugins.put( "reduce", new ReducePlugin() );
 	}
 
 	@Override
@@ -26,7 +27,7 @@ public class FunctionPlugin extends EnginePlugin {
 		Therm therm = null;
 
 		engine.eat( ' ' );
-		if ( engine.getLevel() == 3 && engine.isAlpha() )
+		if ( engine.isAlpha() )
 		{
 			StringBuilder builder = new StringBuilder();
 
@@ -41,19 +42,15 @@ public class FunctionPlugin extends EnginePlugin {
 
 			if ( engine.eat( '(' ) )
 			{
-				int saveLevel = engine.getLevel();
-				engine.setLevel( 1 );
 				
 				for ( ; engine.isNot( ')' ) ; )
 				{
-					Therm param = engine.parseTest();
+					Therm param = engine.parse();
 					therms.add( param );
 					engine.eat( ',' ); 
 				}
-				
-				engine.setLevel( saveLevel );
 
-				engine.eat( '(' );
+				engine.eat( ')' );
 			}
 
 			Class<?>[] classes = new Class<?>[therms.size()];
@@ -72,7 +69,7 @@ public class FunctionPlugin extends EnginePlugin {
 				List<Method> methods = ReflectionUtils.getMethodsAnnotatedWith( function.getClass(),
 						EngineExecute.class );
 				Method method = ReflectionUtils.findBestMethod( methods, classes );
-				therm = ReflectionUtils.safeInvoke( Therm.class, null, method, function, thermsArr );
+				therm = ReflectionUtils.safeInvoke( null, Therm.class, function, method, thermsArr );
 			}
 
 			if ( therm == null )

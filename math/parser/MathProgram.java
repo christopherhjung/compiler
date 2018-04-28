@@ -1,36 +1,37 @@
 package parser;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import functions.EnginePlugin;
 
 public class MathProgram {
 
-	private Map<String, Class<? extends EnginePlugin>> plugins = new HashMap<>();
+	private Set<Class<? extends EnginePlugin>> plugins = new HashSet<>();
 
-	public void installPlugin( String str, Class<? extends EnginePlugin> plugin )
+	public void installPlugin( Class<? extends EnginePlugin> plugin )
 	{
-		plugins.put( str.toLowerCase(), plugin );
+		plugins.add( plugin );
 	}
 
 	public MathParser start() throws Exception
 	{
-		Map<String, EnginePlugin> plugins = new HashMap<String, EnginePlugin>();
+		Set<EnginePlugin> plugins = new HashSet<EnginePlugin>();
 
-		for ( Entry<String, Class<? extends EnginePlugin>> plugin : this.plugins.entrySet() )
+		for ( Class<? extends EnginePlugin> plugin : this.plugins )
 		{
-			plugins.put( plugin.getKey(), plugin.getValue().newInstance() );
+			plugins.add( plugin.newInstance());
 		}
 
 		MathParser engine = new MathParser( plugins );
 
-		for ( EnginePlugin plugin : plugins.values() )
+		for ( EnginePlugin plugin : plugins )
 		{
 			plugin.onAttach( engine );
 		}
-		
 		
 		return engine;
 	}
