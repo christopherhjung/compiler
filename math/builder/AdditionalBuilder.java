@@ -20,6 +20,11 @@ public class AdditionalBuilder implements ThermBuilder {
 	{
 		list = new ArrayList<>( therms );
 	}
+	
+	public int size()
+	{
+		return list.size();
+	}
 
 	@Override
 	public Therm build()

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import parser.MathParser;
+import parser.MathProgram;
 import parser.ParseException;
 import therms.Therm;
 import therms.Variable;
@@ -18,41 +19,48 @@ public class FunctionPlugin extends EnginePlugin {
 	{
 		plugins.put( "sin", new SinPlugin() );
 		plugins.put( "reduce", new ReducePlugin() );
+		plugins.put( "derivate", new DerivatePlugin() );
+	}
+	
+	@Override
+	public void onStart( MathProgram program )
+	{
+		plugins.values().forEach( plugin -> plugin.onStart( program ) );
 	}
 
 	@Override
-	public Therm handle( MathParser engine )
+	public Therm handle( MathParser parser )
 	{
-
 		Therm therm = null;
 
-		engine.eat( ' ' );
-		if ( engine.isAlpha() )
+		parser.eat( ' ' );
+		if ( parser.is( Character::isAlphabetic ))
 		{
 			StringBuilder builder = new StringBuilder();
 
-			while ( engine.isAlpha() )
+			while ( parser.isAlpha() )
 			{
-				builder.append( engine.nextChar() );
+				builder.append( parser.nextChar() );
 			}
 
 			String methodName = builder.toString();
 
 			List<Therm> therms = new ArrayList<>();
 
-			if ( engine.eat( '(' ) )
+			if ( parser.eat( '(' ) )
 			{
 				
-				for ( ; engine.isNot( ')' ) ; )
+				for ( ; parser.isNot( ')' ) ; )
 				{
-					Therm param = engine.parse();
+					Therm param = parser.parseWithLevelReset();
 					therms.add( param );
-					engine.eat( ',' ); 
+					parser.eat( ',' ); 
 				}
 
-				engine.eat( ')' );
+				parser.eat( ')' );
 			}
-
+			
+			
 			Class<?>[] classes = new Class<?>[therms.size()];
 			Object[] thermsArr = new Therm[therms.size()];
 
@@ -61,7 +69,6 @@ public class FunctionPlugin extends EnginePlugin {
 				thermsArr[i] = therms.get( i );
 				classes[i] = thermsArr[i].getClass();
 			}
-
 			EnginePlugin function = plugins.get( methodName.toLowerCase() );
 
 			if ( function != null )
@@ -82,7 +89,7 @@ public class FunctionPlugin extends EnginePlugin {
 				}
 				else if ( thermsArr.length > 1 )
 				{
-					throw new ParseException( engine );
+					throw new ParseException( parser );
 				}
 			}
 		}

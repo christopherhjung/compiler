@@ -7,8 +7,9 @@ import therms.Exponenional;
 import therms.Therm;
 import therms.VarSet;
 import therms.Variable;
+import tools.Utils;
 
-public class ExponentPlugin extends EnginePlugin{
+public class ExponentPlugin extends EnginePlugin {
 
 	@Override
 	public void onAttach( MathParser engine )
@@ -16,21 +17,29 @@ public class ExponentPlugin extends EnginePlugin{
 		// TODO Auto-generated method stub
 		super.onAttach( engine );
 	}
-	
+
 	@Override
-	public Therm handle( MathParser engine )
+	public Therm handle( MathParser parser, Therm left )
 	{
-		Therm basis = engine.parseTest(1);
-		engine.eatAll( ' ' );
-		if(!engine.eat( '^' )) return null;
-		engine.eatAll( ' ' );
-		Therm exponent = engine.parseTest(1);
-		
-		if(basis == null || exponent == null) return null;
-		
-		return new Exponenional( basis, exponent );
+		Therm therm;
+		if ( left != null )
+		{
+			therm = left;
+		}
+		else
+		{
+			therm = parser.parse();
+		}
+
+		if ( parser.eat( '^' ) )
+		{
+			therm = new Exponenional( therm, parser.parse() );
+			return therm;
+		}
+
+		return null;
 	}
-	
+
 	public static class Exponenional extends Therm {
 
 		private final Therm basis;
@@ -53,13 +62,35 @@ public class ExponentPlugin extends EnginePlugin{
 		}
 
 		@Override
+		public Object execute( String key, Object... params )
+		{
+			System.out.println( key );
+			if( key.equals( "derivate" ) ){
+				StringBuilder sb = new StringBuilder();
+				sb.append( "derivate(" );
+				sb.append( exponent );
+				sb.append( '*' );
+				sb.append( "log(" );
+				sb.append( basis );
+				sb.append( ')' );
+				sb.append( ',' );
+				Utils.concat( sb, params , ",");
+				sb.append( ')' );	
+				return sb.toString();
+			}
+			
+			return super.execute( key, params );
+		}
+		
+		@Override
 		public Therm derivate( Variable name )
 		{
-			/*
-			 * if ( false && exponent.contains( name ) ) { //return mul(
-			 * exponent.mul( new Chain( Functions.LOG.getTherm(), basis )
-			 * ).derivate( name ) ); } else { }
-			 */
+			
+			
+			
+			
+
+			
 
 			return exponent.mul( basis.derivate( name ) ).mul( basis.pow( exponent.add( Const.MINUS_ONE ) ) );
 		}
@@ -110,5 +141,4 @@ public class ExponentPlugin extends EnginePlugin{
 		}
 	}
 
-	
 }

@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.xml.stream.events.EndDocument;
 
 import java.util.Stack;
+import java.util.TreeMap;
 
 import builder.AdditionalBuilder;
 import builder.MultiplyBuilder;
@@ -26,59 +27,119 @@ import therms.Chain;
 import therms.Const;
 import therms.Equation;
 import therms.Therm;
+import therms.VarSet;
 import therms.Variable;
 import tools.ReflectionUtils;
 import tools.Run;
 
 public class MathParser extends StringParser<Therm> {
-	private Set<EnginePlugin> plugins = new HashSet<>();
+	private TreeMap<Integer, Set<EnginePlugin>> plugins;
+	private Integer level;
+	private HashMap<CacheKey, Therm> cache = new HashMap<>();	
+	
+	private class CacheKey {
+		private int position;
+		private int level;
 
-	public MathParser( Set<EnginePlugin> plugins )
+		public CacheKey( int position, int level )
+		{
+			this.position = position;
+			this.level = level;
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return position | (level << 16);
+		}
+
+		@Override
+		public boolean equals( Object obj )
+		{
+			if ( super.equals( obj ) ) return true;
+			if ( !(obj instanceof CacheKey) ) return false;
+			CacheKey key = (CacheKey) obj;
+
+			return position == key.position && level == key.level;
+		}
+
+		@Override
+		public String toString()
+		{
+			return String.format( "(%d , %d)", position, level );
+		}
+	}
+
+	public MathParser( Map<Integer, Set<EnginePlugin>> plugins )
 	{
-		this.plugins = plugins;
+		this.plugins = new TreeMap<>( plugins );
 	}
 
 	@Override
 	protected void reset( char[] chars )
 	{
 		super.reset( chars );
-		map.clear();
-		callStack.clear();
+		cache.clear();
+		resetLevel();
 	}
 
-	class StackElement {
-		int position;
-		EnginePlugin plugin;
-
-		public StackElement( int position, EnginePlugin plugin )
-		{
-			this.position = position;
-			this.plugin = plugin;
-		}
+	private void resetLevel()
+	{
+		level = plugins.firstKey();
 	}
 
-	HashMap<Integer, Stack<EnginePlugin>> map = new HashMap<>();
-	Stack<EnginePlugin> callStack = new Stack<>();
+	public Therm parseWithLevelReset()
+	{
+		Integer currentLevel = level;
+		resetLevel();
+		Therm result = parse();
+		level = currentLevel;
+		return result;
+	}
 
 	@Override
 	public Therm parse()
 	{
+		if ( level == null )
+		{
+			return null;
+		}
+
+		Set<EnginePlugin> plugins = this.plugins.get( level );
+		Integer currentLevel = level;
+		Integer nextLevel = this.plugins.higherKey( level );
+
+		level = nextLevel;
+
+		Therm result = parse();
+
+		while ( hasNext() )
+		{
+			Therm parsed = parseLevel( plugins, result );
+
+			if ( parsed != null )
+			{
+				result = parsed;
+			}
+			else
+			{
+				break;
+			}
+		}
+		
+		level = currentLevel;
+
+		return result;
+	}
+
+	private Therm parseLevel( Set<EnginePlugin> plugins, Therm left )
+	{
 		for ( EnginePlugin plugin : plugins )
 		{
 			int savePosition = getPosition();
-
-			if ( map.containsKey( savePosition ) && map.get( savePosition ).contains( plugin ) )
-			{
-				continue;
-			}
-
-			System.out.println( this + " ----> " + plugin );
-
-			map.computeIfAbsent( savePosition, i -> new Stack<>() ).push( plugin );
-			Therm result = plugin.handle( this );
-			map.get( savePosition ).remove( callStack.pop() );
-
-			System.out.println( result + " <---- " + plugin );
+			//System.out.println( this + " ----> " + plugin );
+			Therm result = plugin.handle( this, left );
+			//System.out.println( result + " <---- " + plugin );
 
 			if ( result != null )
 			{
@@ -90,20 +151,6 @@ public class MathParser extends StringParser<Therm> {
 			}
 		}
 
-		throw new ParseException( this );
+		return null;
 	}
-
-	public Therm parseWithIgnore()
-	{
-		EnginePlugin plugin = callStack.peek();
-		
-		int savePosition = getPosition();
-		map.computeIfAbsent( savePosition, i -> new HashSet<>() ).add( plugin );
-
-		Therm therm = parse();
-
-		map.get( savePosition ).remove( plugin );
-		
-		return therm;
-	}	
 }

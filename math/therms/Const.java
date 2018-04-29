@@ -1,5 +1,7 @@
 package therms;
 
+import java.util.Arrays;
+
 import parser.ThermStringifier;
 
 public class Const extends Therm {
@@ -17,6 +19,29 @@ public class Const extends Therm {
 		this.value = value;
 	}
 
+	@Override
+	public Object execute( String key, Object... params )
+	{
+		if ( key.equals( "value" ) )
+		{
+			return value;
+		}
+		else if ( key.equals( "type" ) )
+		{
+			return "const";
+		}
+		else if ( key.equals( "derivate" ) )
+		{
+			return "0";
+		}
+		else if ( key.equals( "add" ) )
+		{
+			return "0";
+		}
+
+		return super.execute( key );
+	}
+
 	public double getValue()
 	{
 		return value;
@@ -28,22 +53,22 @@ public class Const extends Therm {
 	{
 		return Const.ZERO;
 	}
-	
+
 	@Override
 	public Therm reduce( VarSet varSet, Therm... therms )
 	{
 		return this;
 	}
-	
+
 	@Override
 	public Therm add( Therm therm )
 	{
-		if ( therm instanceof Const )
+		if ( therm.execute( "type" ).equals( "const" ) )
 		{
-			Const other = (Const) therm;
-			return new Const( value + other.value );
+			double otherValue = therm.get( "value", Double.class );
+			return new Const( value + otherValue );
 		}
-		
+
 		return super.add( therm );
 	}
 
@@ -55,23 +80,22 @@ public class Const extends Therm {
 			Const other = (Const) therm;
 			return new Const( value * other.value );
 		}
-		
+
 		return super.mul( therm );
 	}
-
 
 	@Override
 	public boolean equals( Object obj )
 	{
 		return super.equals( obj ) || obj instanceof Const && value == ((Const) obj).value;
 	}
-	
+
 	@Override
 	public void toString( ThermStringifier builder )
 	{
 		builder.append( value );
 	}
-	
+
 	@Override
 	public int getLevel()
 	{

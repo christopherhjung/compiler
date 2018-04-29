@@ -1,38 +1,56 @@
 package parser;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import functions.EnginePlugin;
+import tools.Utils;
 
 public class MathProgram {
 
-	private Set<Class<? extends EnginePlugin>> plugins = new HashSet<>();
+	private Map<Integer, Set<Class<? extends EnginePlugin>>> plugins = new HashMap<>();
 
 	public void installPlugin( Class<? extends EnginePlugin> plugin )
 	{
-		plugins.add( plugin );
+		installPlugin( Integer.MAX_VALUE, plugin );
+	}
+
+	public void installPlugin( int level, Class<? extends EnginePlugin> plugin )
+	{
+		Set<Class<? extends EnginePlugin>> set = plugins.computeIfAbsent( level, i -> new HashSet<>() );
+		set.add( plugin );
 	}
 
 	public MathParser start() throws Exception
 	{
-		Set<EnginePlugin> plugins = new HashSet<EnginePlugin>();
-
-		for ( Class<? extends EnginePlugin> plugin : this.plugins )
-		{
-			plugins.add( plugin.newInstance());
-		}
-
-		MathParser engine = new MathParser( plugins );
-
-		for ( EnginePlugin plugin : plugins )
-		{
-			plugin.onAttach( engine );
-		}
+		Map<Integer, Set<EnginePlugin>> plugins = new HashMap<>();
 		
-		return engine;
+		for ( int level : this.plugins.keySet() )
+		{
+			Set<Class<? extends EnginePlugin>> set = this.plugins.get( level );
+			Set<EnginePlugin> target = new HashSet<>();
+			plugins.put( level, target );
+
+			for ( Class<? extends EnginePlugin> pluginClass : set )
+			{
+				target.add( pluginClass.newInstance() );
+			}
+		}
+
+		MathParser parser = new MathParser( plugins );
+
+		for ( int level : plugins.keySet() )
+		{
+			plugins.get( level ).forEach( plugin -> plugin.onAttach( parser ) );
+			plugins.get( level ).forEach( plugin -> plugin.onStart( this ) );
+		}
+
+		return parser;
 	}
 }

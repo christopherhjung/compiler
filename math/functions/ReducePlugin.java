@@ -11,9 +11,11 @@ import therms.Variable;
 public class ReducePlugin extends EnginePlugin {
 	
 	
+	
 	@EngineExecute
 	public Therm execute( Therm therm )
 	{
-		return therm.reduce( new VarSet() );
+		return (Therm)therm.execute( "reduce" );
+		//return therm.reduce( new VarSet() );
 	}
 }

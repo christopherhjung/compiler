@@ -13,6 +13,23 @@ public abstract class Therm {
 	public final static int EXPONENT_LEVEL = 4;
 	public final static int FUNCTION_LEVEL = 5;
 
+	public <T> T get( String key, Class<T> type )
+	{
+		Object result = execute( key );
+
+		if ( type.isAssignableFrom( result.getClass() ) )
+		{
+			return type.cast( result );
+		}
+
+		return null;
+	}
+
+	public Object execute( String key, Object... params )
+	{
+		return null;
+	}
+
 	public abstract Therm derivate( Variable name );
 
 	public abstract void toString( ThermStringifier builder );
@@ -21,8 +38,11 @@ public abstract class Therm {
 	{
 		return null;
 	}
-	
-	public abstract Therm reduce( VarSet varSet, Therm... therms  );
+
+	public Therm reduce( VarSet varSet, Therm... therms )
+	{
+		return this;
+	}
 
 	public Therm add( Therm therm )
 	{
@@ -68,8 +88,8 @@ public abstract class Therm {
 
 	public Therm pow( Therm therm )
 	{
-		if ( therm.equals( Const.ZERO ) ) return Const.ONE;
-		if ( therm.equals( Const.ONE ) ) return this;
+		// if ( therm.equals( Const.ZERO ) ) return Const.ONE;
+		// if ( therm.equals( Const.ONE ) ) return this;
 
 		return new Exponenional( this, therm );
 	}

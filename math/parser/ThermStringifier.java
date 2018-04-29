@@ -64,7 +64,7 @@ public class ThermStringifier {
 	public ThermStringifier append( Therm therm )
 	{
 		int level = therm.getLevel();
-		boolean inner = level < last;
+		boolean inner = level <= last;
 
 		int previous = last;
 		last = level;

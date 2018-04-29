@@ -1,5 +1,7 @@
 package parser;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,14 +10,27 @@ public abstract class StringParser<T> {
 
 	private int position;
 	private char[] chars;
+	private AtomicBoolean idle = new AtomicBoolean( true );
 
 	public abstract T parse();
 
 	public final T eval( char[] chars )
 	{
-		reset( chars );
+		if ( !idle.compareAndSet( true, false ) )
+		{
+			throw new ParseException( "Parser is already started" );
+		}
 
-		T result = parse();
+		reset( chars );
+		T result;
+		try
+		{
+			result = parse();
+		}
+		finally
+		{
+			idle.set( true );
+		}
 
 		if ( hasNext() ) throw new ParseException( this );
 
@@ -24,7 +39,7 @@ public abstract class StringParser<T> {
 
 	public final T eval( String str )
 	{
-		return eval( str.toCharArray() );
+		return eval( str.replace( " ", "" ).toCharArray() );
 	}
 
 	protected void reset( char[] chars )

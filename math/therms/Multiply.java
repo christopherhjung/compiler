@@ -57,6 +57,44 @@ public class Multiply extends Therm implements Iterable<Therm> {
 	}
 
 	@Override
+	public Object execute( String key, Object... params )
+	{
+		if ( key.equals( "derivate" ) )
+		{
+			System.out.println( "pimmmel" );
+			StringBuilder sb = new StringBuilder();
+			for ( int i = 0 ; i < therms.size() ; i++ )
+			{
+				if ( i > 0 )
+				{
+					sb.append( '+' );
+				}
+
+				for ( int j = 0 ; j < therms.size() ; j++ )
+				{
+					if ( j > 0 )
+					{
+						sb.append( '*' );
+					}
+
+					if ( i == j )
+					{
+						sb.append( therms.get( j ).execute( key, params ) );
+					}
+					else
+					{
+						sb.append( therms.get( j ) );
+					}
+				}
+			}
+
+			return sb.toString();
+		}
+
+		return super.execute( key, params );
+	}
+
+	@Override
 	public Therm derivate( Variable name )
 	{
 		ThermBuilder additionalBuilder = new AdditionalBuilder();

@@ -7,7 +7,7 @@ import therms.Multiply;
 import therms.Neutral;
 import therms.Therm;
 
-public class MultiplyBuilder implements ThermBuilder{
+public class MultiplyBuilder implements ThermBuilder {
 
 	private ArrayList<Therm> list = new ArrayList<>();
 	private boolean isZero = false;
@@ -22,10 +22,15 @@ public class MultiplyBuilder implements ThermBuilder{
 		return new Multiply( list );
 	}
 
+	public int size()
+	{
+		return list.size();
+	}
+
 	@Override
 	public void add( Therm e )
 	{
 		list.add( e );
 	}
-	
+
 }

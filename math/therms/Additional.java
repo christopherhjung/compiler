@@ -34,6 +34,28 @@ public class Additional extends Therm implements Iterable<Therm> {
 	}
 
 	@Override
+	public Object execute( String key, Object... params )
+	{
+		if ( key.equals( "derivate" ) )
+		{
+			StringBuilder builder = new StringBuilder();
+			for ( Therm therm : this )
+			{
+				if ( builder.length() > 0 )
+				{
+					builder.append( '+' );
+				}
+				
+				builder.append( therm.execute( key, params ).toString() );
+			}
+
+			return builder.toString();
+		}
+
+		return super.execute( key, params );
+	}
+
+	@Override
 	public Therm derivate( Variable name )
 	{
 		AdditionalBuilder builder = new AdditionalBuilder();
@@ -67,9 +89,9 @@ public class Additional extends Therm implements Iterable<Therm> {
 				result = result.add( next );
 			}
 		}
-		
-		if(result == null) return new Neutral();
-		
+
+		if ( result == null ) return new Neutral();
+
 		return result;
 	}
 

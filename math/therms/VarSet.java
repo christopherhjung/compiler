@@ -27,11 +27,4 @@ public class VarSet {
 		Therm value = valueSet.get( var );
 		return value;
 	}
-
-	public VarSet extend( Variable key, double value )
-	{
-		Map<Variable, Double> newValueSet = new HashMap<>();
-		newValueSet.put( key, value );
-		return new VarSet( newValueSet );
-	}
 }
