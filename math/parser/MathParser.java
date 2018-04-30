@@ -35,40 +35,6 @@ import tools.Run;
 public class MathParser extends StringParser<Therm> {
 	private TreeMap<Integer, Set<EnginePlugin>> plugins;
 	private Integer level;
-	private HashMap<CacheKey, Therm> cache = new HashMap<>();	
-	
-	private class CacheKey {
-		private int position;
-		private int level;
-
-		public CacheKey( int position, int level )
-		{
-			this.position = position;
-			this.level = level;
-		}
-
-		@Override
-		public int hashCode()
-		{
-			return position | (level << 16);
-		}
-
-		@Override
-		public boolean equals( Object obj )
-		{
-			if ( super.equals( obj ) ) return true;
-			if ( !(obj instanceof CacheKey) ) return false;
-			CacheKey key = (CacheKey) obj;
-
-			return position == key.position && level == key.level;
-		}
-
-		@Override
-		public String toString()
-		{
-			return String.format( "(%d , %d)", position, level );
-		}
-	}
 
 	public MathParser( Map<Integer, Set<EnginePlugin>> plugins )
 	{
@@ -79,11 +45,10 @@ public class MathParser extends StringParser<Therm> {
 	protected void reset( char[] chars )
 	{
 		super.reset( chars );
-		cache.clear();
 		resetLevel();
 	}
 
-	private void resetLevel()
+	protected void resetLevel()
 	{
 		level = plugins.firstKey();
 	}
@@ -97,6 +62,12 @@ public class MathParser extends StringParser<Therm> {
 		return result;
 	}
 
+	@Override
+	public char getChar()
+	{
+		return super.getChar();
+	}
+	
 	@Override
 	public Therm parse()
 	{
@@ -126,13 +97,13 @@ public class MathParser extends StringParser<Therm> {
 				break;
 			}
 		}
-		
+
 		level = currentLevel;
 
 		return result;
 	}
 
-	private Therm parseLevel( Set<EnginePlugin> plugins, Therm left )
+	protected Therm parseLevel( Set<EnginePlugin> plugins, Therm left )
 	{
 		for ( EnginePlugin plugin : plugins )
 		{

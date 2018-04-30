@@ -1,6 +1,7 @@
 package functions;
 
 import parser.MathParser;
+import parser.MathProgram;
 import parser.ThermStringifier;
 import therms.Const;
 import therms.Exponenional;
@@ -10,13 +11,6 @@ import therms.Variable;
 import tools.Utils;
 
 public class ExponentPlugin extends EnginePlugin {
-
-	@Override
-	public void onAttach( MathParser engine )
-	{
-		// TODO Auto-generated method stub
-		super.onAttach( engine );
-	}
 
 	@Override
 	public Therm handle( MathParser parser, Therm left )
@@ -40,7 +34,7 @@ public class ExponentPlugin extends EnginePlugin {
 		return null;
 	}
 
-	public static class Exponenional extends Therm {
+	public class Exponenional extends Therm {
 
 		private final Therm basis;
 		private final Therm exponent;
@@ -65,32 +59,18 @@ public class ExponentPlugin extends EnginePlugin {
 		public Object execute( String key, Object... params )
 		{
 			System.out.println( key );
-			if( key.equals( "derivate" ) ){
-				StringBuilder sb = new StringBuilder();
-				sb.append( "derivate(" );
-				sb.append( exponent );
-				sb.append( '*' );
-				sb.append( "log(" );
-				sb.append( basis );
-				sb.append( ')' );
-				sb.append( ',' );
-				Utils.concat( sb, params , ",");
-				sb.append( ')' );	
-				return sb.toString();
+			if ( key.equals( "derivate" ) )
+			{
+				return eval( this, "*", "derivate(", exponent, "*", "log(", basis, "),", Utils.concat( params, "," ),
+						")" );
 			}
-			
+
 			return super.execute( key, params );
 		}
-		
+
 		@Override
 		public Therm derivate( Variable name )
 		{
-			
-			
-			
-			
-
-			
 
 			return exponent.mul( basis.derivate( name ) ).mul( basis.pow( exponent.add( Const.MINUS_ONE ) ) );
 		}

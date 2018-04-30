@@ -27,7 +27,7 @@ public class MathProgram {
 		set.add( plugin );
 	}
 
-	public MathParser start() throws Exception
+	public MathEngine start() throws Exception
 	{
 		Map<Integer, Set<EnginePlugin>> plugins = new HashMap<>();
 		
@@ -43,14 +43,13 @@ public class MathProgram {
 			}
 		}
 
-		MathParser parser = new MathParser( plugins );
-
+		MathEngine engine = new MathEngine( plugins );
+		
 		for ( int level : plugins.keySet() )
 		{
-			plugins.get( level ).forEach( plugin -> plugin.onAttach( parser ) );
-			plugins.get( level ).forEach( plugin -> plugin.onStart( this ) );
+			plugins.get( level ).forEach( plugin -> plugin.onStart( engine ) );
 		}
-
-		return parser;
+		
+		return engine;
 	}
 }

@@ -3,6 +3,7 @@ package therms;
 import java.util.Arrays;
 
 import parser.ThermStringifier;
+import tools.ReflectionUtils;
 
 public class Const extends Therm {
 
@@ -32,11 +33,20 @@ public class Const extends Therm {
 		}
 		else if ( key.equals( "derivate" ) )
 		{
-			return "0";
+			return new Const( 0 );
 		}
-		else if ( key.equals( "add" ) )
+		else if ( key.equals( "add" ) && params.length == 1 )
 		{
-			return "0";
+			Therm therm = ReflectionUtils.as( params[0], Therm.class );
+			if ( therm != null && therm.execute( "type" ).equals( "const" ) )
+			{
+				double otherValue = therm.get( "value", Double.class );
+				return new Const( value + otherValue );
+			}
+		}
+		else if ( key.equals( "reduce" ) )
+		{
+			return this;
 		}
 
 		return super.execute( key );
@@ -45,13 +55,6 @@ public class Const extends Therm {
 	public double getValue()
 	{
 		return value;
-	}
-
-	@Override
-
-	public Therm derivate( Variable name )
-	{
-		return Const.ZERO;
 	}
 
 	@Override

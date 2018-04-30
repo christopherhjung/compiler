@@ -70,7 +70,9 @@ public abstract class StringParser<T> {
 
 	public char nextChar()
 	{
-		return chars[position++];
+		char temp = getChar();
+		next();
+		return temp;
 	}
 
 	public boolean hasNext()
@@ -151,7 +153,7 @@ public abstract class StringParser<T> {
 	@Override
 	public String toString()
 	{
-		if ( position >= chars.length ) return "Parse finished";
+		if ( !hasNext() ) return "Parse finished";
 		return new String( chars, position, chars.length - position );
 	}
 }

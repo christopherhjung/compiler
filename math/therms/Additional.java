@@ -45,54 +45,31 @@ public class Additional extends Therm implements Iterable<Therm> {
 				{
 					builder.append( '+' );
 				}
-				
-				builder.append( therm.execute( key, params ).toString() );
+
+				builder.append( therm.execute( key, params ) );
 			}
+			
 
 			return builder.toString();
+		}
+		else if ( key.equals( "reduce" ) )
+		{
+			Therm therm = therms.get( 0 );
+
+			for ( int i = 1 ; i < therms.size() ; i++ )
+			{
+				therm = (Therm) therm.execute( key, therms.get( i ) );
+			}
+
+			return therm;
 		}
 
 		return super.execute( key, params );
 	}
 
-	@Override
-	public Therm derivate( Variable name )
-	{
-		AdditionalBuilder builder = new AdditionalBuilder();
-		for ( Therm therm : this )
-		{
-			builder.add( therm.derivate( name ) );
-		}
-
-		return builder.build();
-	}
-
 	private int size()
 	{
 		return therms.size();
-	}
-
-	@Override
-	public Therm reduce( VarSet varSet, Therm... therms )
-	{
-		Therm result = null;
-		for ( Therm therm : this )
-		{
-			Therm next = therm.reduce( varSet );
-
-			if ( result == null )
-			{
-				result = next;
-			}
-			else
-			{
-				result = result.add( next );
-			}
-		}
-
-		if ( result == null ) return new Neutral();
-
-		return result;
 	}
 
 	@Override

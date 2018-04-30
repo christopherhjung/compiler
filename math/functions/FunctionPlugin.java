@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import parser.MathEngine;
 import parser.MathParser;
 import parser.MathProgram;
 import parser.ParseException;
@@ -20,12 +21,13 @@ public class FunctionPlugin extends EnginePlugin {
 		plugins.put( "sin", new SinPlugin() );
 		plugins.put( "reduce", new ReducePlugin() );
 		plugins.put( "derivate", new DerivatePlugin() );
+		plugins.put( "log", new LogPlugin() );
 	}
 	
 	@Override
-	public void onStart( MathProgram program )
+	public void onStart( MathEngine engine )
 	{
-		plugins.values().forEach( plugin -> plugin.onStart( program ) );
+		plugins.values().forEach( plugin -> plugin.onStart( engine ) );
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class FunctionPlugin extends EnginePlugin {
 		Therm therm = null;
 
 		parser.eat( ' ' );
-		if ( parser.is( Character::isAlphabetic ))
+		if ( parser.is( Character::isAlphabetic ) )
 		{
 			StringBuilder builder = new StringBuilder();
 
@@ -49,18 +51,17 @@ public class FunctionPlugin extends EnginePlugin {
 
 			if ( parser.eat( '(' ) )
 			{
-				
+
 				for ( ; parser.isNot( ')' ) ; )
 				{
 					Therm param = parser.parseWithLevelReset();
 					therms.add( param );
-					parser.eat( ',' ); 
+					parser.eat( ',' );
 				}
 
 				parser.eat( ')' );
 			}
-			
-			
+
 			Class<?>[] classes = new Class<?>[therms.size()];
 			Object[] thermsArr = new Therm[therms.size()];
 

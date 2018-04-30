@@ -30,8 +30,6 @@ public abstract class Therm {
 		return null;
 	}
 
-	public abstract Therm derivate( Variable name );
-
 	public abstract void toString( ThermStringifier builder );
 
 	public Therm integrate( Variable name, Const constant )

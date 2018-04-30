@@ -21,6 +21,23 @@ public class Chain extends Therm {
 	}
 
 	@Override
+	public Object execute( String key, Object... params )
+	{
+		if ( key.equals( "derivate" ) )
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.append( inner[0].execute( "derivate", params ) );
+			sb.append( "*" );
+			sb.append( outer.execute( "derivate" ) );
+			sb.append( '(' );
+			sb.append( inner[0] );
+			sb.append( ')' );
+		}
+
+		return super.execute( key, params );
+	}
+
+	@Override
 	public Therm derivate( Variable name )
 	{
 		return inner[0].derivate( name ).mul( new Chain( outer.derivate( null ), inner[0] ) );
@@ -35,7 +52,7 @@ public class Chain extends Therm {
 		{
 			newInner[i] = inner[i].reduce( varSet );
 		}
-		
+
 		return outer.reduce( varSet, newInner );
 	}
 

@@ -1,29 +1,38 @@
 package functions;
 
+import parser.MathEngine;
 import parser.MathParser;
 import parser.MathProgram;
 import therms.Chain;
 import therms.Therm;
 import therms.VarSet;
 import therms.Variable;
+import tools.Run;
 
 public abstract class EnginePlugin {
 
-	public void onEnable()
-	{
+	private MathEngine engine;
 
+	public MathEngine getEngine()
+	{
+		return engine;
 	}
 
-	public void onAttach( MathParser parser )
+	public Therm eval( String str )
 	{
+		return getEngine().eval( str );
+	}
 
+	public Therm eval( Object... objs )
+	{
+		return getEngine().eval( objs );
 	}
 	
-	public void onStart( MathProgram program )
+	public void onStart( MathEngine engine )
 	{
-		
+		this.engine = engine;
 	}
-	
+
 	public Therm handle( MathParser parser )
 	{
 		return null;
@@ -35,6 +44,7 @@ public abstract class EnginePlugin {
 		{
 			return null;
 		}
+		
 		return handle( parser );
 	}
 }

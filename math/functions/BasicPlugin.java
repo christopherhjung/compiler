@@ -176,7 +176,6 @@ public class BasicPlugin extends EnginePlugin {
 	protected Const parseDouble( MathParser parser )
 	{
 		StringBuilder builder = new StringBuilder();
-		int startPos = parser.getPosition();
 		
 		while ( parser.is( Character::isDigit ) )
 		{

@@ -1,9 +1,4 @@
-/tools/
-/functions/
 /parser/
-/core/
+/functions/
 /therms/
-/builder/
-/crap/
-/matrix/
-/modifier/
+/core/
