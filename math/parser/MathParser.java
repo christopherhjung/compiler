@@ -1,36 +1,11 @@
 package parser;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.xml.stream.events.EndDocument;
-
-import java.util.Stack;
 import java.util.TreeMap;
 
-import builder.AdditionalBuilder;
-import builder.MultiplyBuilder;
-import functions.BasicPlugin;
-import functions.EngineExecute;
 import functions.EnginePlugin;
-
-import matrix.Matrix;
-import matrix.Vector;
-import therms.Chain;
-import therms.Const;
-import therms.Equation;
 import therms.Therm;
-import therms.VarSet;
-import therms.Variable;
-import tools.ReflectionUtils;
-import tools.Run;
 
 public class MathParser extends StringParser<Therm> {
 	private TreeMap<Integer, Set<EnginePlugin>> plugins;

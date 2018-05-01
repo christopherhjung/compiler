@@ -4,10 +4,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import parser.MathEngine;
 import parser.MathParser;
-import parser.MathProgram;
 import parser.ParseException;
 import therms.Therm;
 import therms.Variable;
@@ -23,7 +23,7 @@ public class FunctionPlugin extends EnginePlugin {
 		plugins.put( "derivate", new DerivatePlugin() );
 		plugins.put( "log", new LogPlugin() );
 	}
-	
+
 	@Override
 	public void onStart( MathEngine engine )
 	{
@@ -31,22 +31,17 @@ public class FunctionPlugin extends EnginePlugin {
 	}
 
 	@Override
-	public Therm handle( MathParser parser )
+	public Therm handle( MathParser parser, Therm left )
 	{
 		Therm therm = null;
 
-		parser.eat( ' ' );
-		if ( parser.is( Character::isAlphabetic ) )
+		if ( left == null )
 		{
-			StringBuilder builder = new StringBuilder();
+			return null;
+		}
 
-			while ( parser.isAlpha() )
-			{
-				builder.append( parser.nextChar() );
-			}
-
-			String methodName = builder.toString();
-
+		if ( left.is( "variable" ) )
+		{
 			List<Therm> therms = new ArrayList<>();
 
 			if ( parser.eat( '(' ) )
@@ -70,7 +65,10 @@ public class FunctionPlugin extends EnginePlugin {
 				thermsArr[i] = therms.get( i );
 				classes[i] = thermsArr[i].getClass();
 			}
-			EnginePlugin function = plugins.get( methodName.toLowerCase() );
+
+			String methodName = left.get( "value", String.class ).toLowerCase();
+
+			EnginePlugin function = plugins.get( methodName );
 
 			if ( function != null )
 			{
@@ -78,20 +76,6 @@ public class FunctionPlugin extends EnginePlugin {
 						EngineExecute.class );
 				Method method = ReflectionUtils.findBestMethod( methods, classes );
 				therm = ReflectionUtils.safeInvoke( null, Therm.class, function, method, thermsArr );
-			}
-
-			if ( therm == null )
-			{
-				therm = new Variable( methodName );
-
-				if ( thermsArr.length == 1 )
-				{
-					therm = therm.mul( (Therm) thermsArr[0] );
-				}
-				else if ( thermsArr.length > 1 )
-				{
-					throw new ParseException( parser );
-				}
 			}
 		}
 

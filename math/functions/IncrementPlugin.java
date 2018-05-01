@@ -13,9 +13,9 @@ public class IncrementPlugin extends EnginePlugin {
 		if ( parser.eat( '+' ) && parser.eat( '+' ) )
 		{
 			Therm therm = parser.parse();
-			if ( therm instanceof Variable )
+			if ( therm.is( "variable" ) )
 			{
-				return new Increment( (Variable) therm );
+				return new Increment( therm );
 			}
 		}
 
@@ -24,17 +24,11 @@ public class IncrementPlugin extends EnginePlugin {
 
 	public static class Increment extends Therm {
 
-		Variable inside;
+		Therm inside;
 
-		public Increment( Variable var )
+		public Increment( Therm var )
 		{
 			inside = var;
-		}
-
-		@Override
-		public Therm derivate( Variable name )
-		{
-			return null;
 		}
 
 		@Override

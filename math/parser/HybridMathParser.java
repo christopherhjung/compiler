@@ -1,12 +1,10 @@
 package parser;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
 import functions.EnginePlugin;
 import therms.Therm;
-import tools.Utils;
 
 public class HybridMathParser extends MathParser {
 
@@ -86,7 +84,6 @@ public class HybridMathParser extends MathParser {
 	public Therm eval( Object... objs )
 	{
 		input = objs;
-		System.out.println( Utils.concat( input, "" ) );
 
 		calc();
 

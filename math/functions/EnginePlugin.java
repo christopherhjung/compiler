@@ -2,12 +2,7 @@ package functions;
 
 import parser.MathEngine;
 import parser.MathParser;
-import parser.MathProgram;
-import therms.Chain;
 import therms.Therm;
-import therms.VarSet;
-import therms.Variable;
-import tools.Run;
 
 public abstract class EnginePlugin {
 

@@ -1,24 +1,13 @@
 package core;
 
-import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Scanner;
 
 import functions.CosPlugin;
-import functions.EngineExecute;
-import functions.EnginePlugin;
-import functions.Functions;
 import functions.ReducePlugin;
 import functions.SinPlugin;
-import functions.Tan;
 import modifier.DerivatePlugin;
 import parser.MathParser;
 import parser.MathProgram;
-import parser.ThermStringifier;
-import therms.Therm;
-import therms.VarSet;
-import therms.Variable;
-import tools.ReflectionUtils;
 
 public class Engine4 {
 

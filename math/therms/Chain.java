@@ -1,13 +1,6 @@
 package therms;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import parser.ThermStringifier;
-import tools.Utils;
 
 public class Chain extends Therm {
 
@@ -33,27 +26,17 @@ public class Chain extends Therm {
 			sb.append( inner[0] );
 			sb.append( ')' );
 		}
-
-		return super.execute( key, params );
-	}
-
-	@Override
-	public Therm derivate( Variable name )
-	{
-		return inner[0].derivate( name ).mul( new Chain( outer.derivate( null ), inner[0] ) );
-	}
-
-	@Override
-	public Therm reduce( VarSet varSet, Therm... therms )
-	{
-		Therm[] newInner = new Therm[inner.length];
-
-		for ( int i = 0 ; i < inner.length ; i++ )
+		else if ( key.equals( "reduce" ) )
 		{
-			newInner[i] = inner[i].reduce( varSet );
+			Object[] reducedParams = new Object[inner.length];
+			for ( int i = 0 ; i < inner.length ; i++ )
+			{
+				reducedParams[i] = inner[i].execute( "reduce" );
+			}
+			return outer.execute( key, reducedParams );
 		}
 
-		return outer.reduce( varSet, newInner );
+		return super.execute( key, params );
 	}
 
 	@Override

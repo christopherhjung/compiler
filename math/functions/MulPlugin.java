@@ -1,10 +1,7 @@
 package functions;
 
 import builder.MultiplyBuilder;
-import functions.DividePlugin.Divide;
 import parser.MathParser;
-import therms.Const;
-import therms.Multiply;
 import therms.Therm;
 
 public class MulPlugin extends EnginePlugin{

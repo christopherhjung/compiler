@@ -5,7 +5,6 @@ import parser.ThermStringifier;
 import therms.Const;
 import therms.Therm;
 import therms.VarSet;
-import therms.Variable;
 
 public class DividePlugin extends EnginePlugin {
 
@@ -58,13 +57,6 @@ public class DividePlugin extends EnginePlugin {
 			}
 			
 			return new Divide(reducedZaehler,reducedNenner);
-		}
-
-		@Override
-		public Therm derivate( Variable name )
-		{
-			// TODO Auto-generated method stub
-			return null;
 		}
 
 		@Override

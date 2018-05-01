@@ -6,9 +6,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import builder.AdditionalBuilder;
-import builder.MultiplyBuilder;
-import builder.ThermBuilder;
 import parser.ThermStringifier;
 import tools.ListComparer;
 
@@ -61,102 +58,52 @@ public class Multiply extends Therm implements Iterable<Therm> {
 	{
 		if ( key.equals( "derivate" ) )
 		{
-			System.out.println( "pimmmel" );
-			StringBuilder sb = new StringBuilder();
+			ArrayList<Object> list = new ArrayList<>();
 			for ( int i = 0 ; i < therms.size() ; i++ )
 			{
 				if ( i > 0 )
 				{
-					sb.append( '+' );
+					list.add( '+' );
 				}
 
 				for ( int j = 0 ; j < therms.size() ; j++ )
 				{
 					if ( j > 0 )
 					{
-						sb.append( '*' );
+						list.add( '*' );
 					}
 
 					if ( i == j )
 					{
-						sb.append( therms.get( j ).execute( key, params ) );
+						list.add( therms.get( j ).execute( key, params ) );
 					}
 					else
 					{
-						sb.append( therms.get( j ) );
+						list.add( therms.get( j ) );
 					}
 				}
 			}
 
-			return sb.toString();
+			return list.toString();
+		}
+		else if ( key.equals( "reduce" ) )
+		{
+			Therm therm = (Therm)therms.get( 0 ).execute( "reduce" );
+
+			for ( int i = 1 ; i < therms.size() ; i++ )
+			{
+				therm = (Therm) therm.execute( "mulreduce", therms.get( i ).execute( "reduce" ) );
+			}
+
+			return therm;
 		}
 
 		return super.execute( key, params );
 	}
 
-	@Override
-	public Therm derivate( Variable name )
-	{
-		ThermBuilder additionalBuilder = new AdditionalBuilder();
-		for ( int i = 0 ; i < therms.size() ; i++ )
-		{
-			ThermBuilder multiplyBuilder = new MultiplyBuilder();
-			int j = 0;
-			for ( Therm therm : therms )
-			{
-				if ( i == j )
-				{
-					multiplyBuilder.add( therm.derivate( name ) );
-				}
-				else
-				{
-					multiplyBuilder.add( therm );
-				}
-				j++;
-			}
-			additionalBuilder.add( multiplyBuilder.build() );
-		}
+	
 
-		return additionalBuilder.build();
-	}
-
-	private static boolean compute( List<Therm> oldTherms, List<Therm> newTherms )
-	{
-		loop: for ( Therm therm : oldTherms )
-		{
-			therm = therm.simplify();
-			if ( therm.equals( Const.ZERO ) )
-			{
-				return false;
-			}
-			else if ( therm.equals( Const.ONE ) )
-			{
-				continue;
-			}
-			else if ( therm instanceof Multiply )
-			{
-				if ( !compute( ((Multiply) therm).therms, newTherms ) )
-				{
-					return false;
-				}
-				continue loop;
-			}
-
-			for ( int i = 0 ; i < newTherms.size() ; i++ )
-			{
-				Therm smaller = newTherms.get( i ).contractMultiply( therm );
-				if ( smaller != null )
-				{
-					newTherms.set( i, smaller.simplify() );
-					continue loop;
-				}
-			}
-
-			newTherms.add( therm );
-		}
-
-		return true;
-	}
+	
 
 	@Override
 	public Iterator<Therm> iterator()

@@ -1,11 +1,7 @@
 package functions;
 
-import parser.MathParser;
-import parser.MathProgram;
 import therms.Therm;
-import therms.VarSet;
 import therms.Variable;
-import tools.Run;
 
 public class DerivatePlugin extends EnginePlugin {
 

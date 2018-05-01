@@ -1,18 +1,12 @@
 package functions;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
 import builder.AdditionalBuilder;
 import builder.MultiplyBuilder;
 import parser.MathParser;
-import parser.ParseException;
 import therms.Const;
 import therms.Equation;
 import therms.Therm;
 import therms.Variable;
-import tools.ReflectionUtils;
 
 public class BasicPlugin extends EnginePlugin {
 

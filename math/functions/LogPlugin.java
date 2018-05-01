@@ -2,9 +2,7 @@ package functions;
 
 import parser.ThermStringifier;
 import therms.Chain;
-import therms.Const;
 import therms.Therm;
-import therms.Variable;
 import tools.ReflectionUtils;
 
 public class LogPlugin extends EnginePlugin {

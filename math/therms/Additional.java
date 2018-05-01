@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import builder.AdditionalBuilder;
 import parser.ThermStringifier;
 import tools.ListComparer;
 
@@ -54,11 +53,11 @@ public class Additional extends Therm implements Iterable<Therm> {
 		}
 		else if ( key.equals( "reduce" ) )
 		{
-			Therm therm = therms.get( 0 );
+			Therm therm = (Therm)therms.get( 0 ).execute( "reduce" );
 
 			for ( int i = 1 ; i < therms.size() ; i++ )
 			{
-				therm = (Therm) therm.execute( key, therms.get( i ) );
+				therm = (Therm) therm.execute( "addreduce", therms.get( i ).execute( "reduce" ) );
 			}
 
 			return therm;

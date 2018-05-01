@@ -2,9 +2,7 @@ package functions;
 
 import parser.MathParser;
 import parser.ThermStringifier;
-import therms.Equation;
 import therms.Therm;
-import therms.Variable;
 
 public class AssignmentPlugin extends EnginePlugin {
 
@@ -22,15 +20,13 @@ public class AssignmentPlugin extends EnginePlugin {
 			therm = left;
 		}
 		
-		if ( therm instanceof Variable )
+		if ( therm.is( "variable" ) )
 		{
-			Variable var = (Variable) therm;
-
 			if ( parser.eat( '=' ) )
 			{
 				Therm right = parser.parse();
 
-				return new Assignment( var, right );
+				return new Assignment( therm, right );
 			}
 		}
 
@@ -39,20 +35,13 @@ public class AssignmentPlugin extends EnginePlugin {
 
 	public static class Assignment extends Therm {
 
-		Variable left;
+		Therm left;
 		Therm right;
 
-		public Assignment( Variable left, Therm right )
+		public Assignment( Therm left, Therm right )
 		{
 			this.left = left;
 			this.right = right;
-		}
-
-		@Override
-		public Therm derivate( Variable name )
-		{
-			// TODO Auto-generated method stub
-			return null;
 		}
 
 		@Override

@@ -29,7 +29,7 @@ public class AdditionalBuilder implements ThermBuilder {
 	@Override
 	public Therm build()
 	{
-		if ( list.size() == 0 ) return Const.ZERO;
+		if ( list.size() == 0 ) return null;
 		if ( list.size() == 1 ) return list.get( 0 );
 
 		return new Additional( list );

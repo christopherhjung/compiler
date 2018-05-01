@@ -1,5 +1,6 @@
 package crap;
 
+import functions.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Const;

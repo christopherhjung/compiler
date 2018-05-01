@@ -1,40 +1,21 @@
 package core;
 
-import java.lang.reflect.Method;
-import java.security.Signature;
-import java.util.List;
 import java.util.Scanner;
 
 import functions.AddPlugin;
 import functions.AssignmentPlugin;
-import functions.BasicPlugin;
 import functions.ConstPlugin;
-import functions.CosPlugin;
 import functions.DividePlugin;
-import functions.DividePlugin.Divide;
-import functions.EngineExecute;
-import functions.EnginePlugin;
 import functions.ExponentPlugin;
 import functions.FunctionPlugin;
 import functions.IncrementPlugin;
 import functions.MulPlugin;
 import functions.ParenthesisPlugin;
-import functions.ReducePlugin;
 import functions.SignPlugin;
-import functions.SinPlugin;
-import functions.Tan;
-import functions.ThermPlugin;
 import functions.VariablePlugin;
-import modifier.DerivatePlugin;
 import parser.MathEngine;
-import parser.MathParser;
 import parser.MathProgram;
-import parser.ThermStringifier;
-import therms.Const;
 import therms.Therm;
-import therms.VarSet;
-import therms.Variable;
-import tools.ReflectionUtils;
 
 public class StackEngine {
 
@@ -49,10 +30,10 @@ public class StackEngine {
 		program.installPlugin( 14, SignPlugin.class );
 		program.installPlugin( 14, IncrementPlugin.class );
 		program.installPlugin( 15, ExponentPlugin.class );
-		program.installPlugin( 16, ParenthesisPlugin.class );
-		program.installPlugin( FunctionPlugin.class );
+		program.installPlugin( 16, VariablePlugin.class );
+		program.installPlugin( 16, FunctionPlugin.class );
+		program.installPlugin( 17, ParenthesisPlugin.class );
 		program.installPlugin( ConstPlugin.class );
-		// program.installPlugin( VariablePlugin.class );
 
 		// program.installPlugin( BasicPlugin.class );
 		// program.installPlugin( ConstPlugin.class );
@@ -87,7 +68,8 @@ public class StackEngine {
 			try
 			{
 				long begin = System.currentTimeMillis();
-				System.out.println( engine.eval( therm ) );
+				Therm result = engine.eval( therm );
+				System.out.println( result );
 				long end = System.currentTimeMillis();
 
 				System.out.println( "Time need:" + (end - begin) );

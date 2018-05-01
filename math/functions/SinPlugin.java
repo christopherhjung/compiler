@@ -1,12 +1,10 @@
 package functions;
 
-import parser.MathParser;
+import parser.MathEngine;
 import parser.ThermStringifier;
 import therms.Chain;
 import therms.Const;
 import therms.Therm;
-import therms.VarSet;
-import therms.Variable;
 
 public class SinPlugin extends EnginePlugin {
 
@@ -14,15 +12,9 @@ public class SinPlugin extends EnginePlugin {
 	private Therm derivate = null;
 
 	@Override
-	public void onAttach( MathParser engine )
+	public void onStart( MathEngine engine )
 	{
 		derivate = engine.eval( "cos" );
-	}
-
-	@Override
-	public Therm handle( MathParser engine )
-	{
-		
 	}
 
 	@EngineExecute
@@ -43,26 +35,25 @@ public class SinPlugin extends EnginePlugin {
 		{}
 
 		@Override
-		public Therm derivate( Variable name )
+		public Object execute( String key, Object... params )
 		{
-			return derivate;
-		}
-
-		@Override
-		public Therm reduce( VarSet varSet, Therm... therms )
-		{
-			if ( therms.length == 1 )
+			if ( key.equals( "reduce" ) && params.length == 1 )
 			{
-				if ( therms[0] instanceof Const )
+
+				if ( params[0] instanceof Const )
 				{
-					Const value = (Const) therms[0];
+					Const value = (Const) params[0];
 					return new Const( Math.sin( value.getValue() ) );
 				}
 
-				return new Chain( this, therms[0] );
+				return new Chain( this, (Therm) params[0] );
+			}
+			else if ( key.equals( "derivate" ) )
+			{
+				return derivate;
 			}
 
-			throw new IllegalArgumentException( "Wrong Arguments" );
+			return super.execute( key, params );
 		}
 
 		@Override
