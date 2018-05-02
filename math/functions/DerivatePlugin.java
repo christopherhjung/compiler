@@ -1,7 +1,7 @@
 package functions;
 
+import functions.VariablePlugin.Variable;
 import therms.Therm;
-import therms.Variable;
 
 public class DerivatePlugin extends EnginePlugin {
 
@@ -9,12 +9,13 @@ public class DerivatePlugin extends EnginePlugin {
 	public Therm execute( Therm therm, Variable var )
 	{
 
-		String str = (String) therm.execute( "derivate", var );
-		if ( str == null )
+		Therm result = (Therm) therm.execute( "derivate", var );
+
+		if ( result == null )
 		{
 			return null;
 		}
 
-		return eval( str );
+		return result;
 	}
 }

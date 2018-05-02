@@ -633,19 +633,6 @@ public class Matrix extends Therm implements RowHandler {
 	}
 
 	@Override
-	public Therm derivate( Variable name )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public double reduce( VarSet varSet )
-	{
-		return 0;
-	}
-
-	@Override
 	public Matrix simplify()
 	{
 		Therm[][] newMatrix = new Therm[rowSize()][columnSize()];
@@ -659,30 +646,6 @@ public class Matrix extends Therm implements RowHandler {
 		}
 
 		return new Matrix( newMatrix );
-	}
-
-	@Override
-	public Therm replace( Therm replacer, Therm replacement )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Therm contractMultiply( Therm therm )
-	{
-		if ( therm instanceof Vector )
-		{
-			Vector other = (Vector) therm;
-			return this.multiply( other, null );
-		}
-		else if ( therm instanceof Matrix )
-		{
-			Matrix other = (Matrix) therm;
-			return this.multiply( other, null );
-		}
-
-		return super.contractMultiply( therm );
 	}
 
 	@Override

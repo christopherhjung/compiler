@@ -1,5 +1,7 @@
 package therms;
 
+import java.util.Objects;
+
 import parser.ThermStringifier;
 
 public abstract class Therm {
@@ -24,7 +26,7 @@ public abstract class Therm {
 
 	public boolean is( String type )
 	{
-		return type.equals( execute( "type" ) );
+		return Objects.equals( type, execute( "type" ) );
 	}
 
 	public Object execute( String key, Object... params )

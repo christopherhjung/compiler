@@ -2,20 +2,11 @@ package functions;
 
 import parser.MathEngine;
 import parser.ThermStringifier;
-import therms.Chain;
-import therms.Const;
 import therms.Therm;
 
 public class SinPlugin extends EnginePlugin {
 
 	private final Sin instance = new Sin();
-	private Therm derivate = null;
-
-	@Override
-	public void onStart( MathEngine engine )
-	{
-		derivate = engine.eval( "cos" );
-	}
 
 	@EngineExecute
 	public Therm execute()
@@ -39,18 +30,18 @@ public class SinPlugin extends EnginePlugin {
 		{
 			if ( key.equals( "reduce" ) && params.length == 1 )
 			{
-
-				if ( params[0] instanceof Const )
+				Therm therm = (Therm) params[0];
+				if ( therm.is( "const" ) )
 				{
-					Const value = (Const) params[0];
-					return new Const( Math.sin( value.getValue() ) );
+					Double value = therm.get( "value", Double.class );
+					return eval( Math.sin( value ) );
 				}
 
 				return new Chain( this, (Therm) params[0] );
 			}
 			else if ( key.equals( "derivate" ) )
 			{
-				return derivate;
+				return eval("cos");
 			}
 
 			return super.execute( key, params );

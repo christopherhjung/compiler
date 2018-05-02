@@ -11,19 +11,9 @@ public class ConstPlugin extends EnginePlugin {
 	public Therm handle( MathParser engine )
 	{
 		StringBuilder builder = new StringBuilder();
-		
-		if ( engine.eat( '-' ) )
-		{
-			builder.append( '-' );
-		}
 
 		if ( engine.is( Character::isDigit ) )
 		{
-			if ( engine.eat( '-' ) )
-			{
-				builder.append( '-' );
-			}
-
 			while ( engine.isDigit() )
 			{
 				builder.append( engine.nextChar() );
@@ -67,25 +57,29 @@ public class ConstPlugin extends EnginePlugin {
 			}
 			else if ( key.equals( "derivate" ) )
 			{
-				return new Const( 0 );
+				return eval( 0 );
 			}
 			else if ( key.equals( "addreduce" ) && params.length == 1 )
 			{
 				Therm therm = ReflectionUtils.as( params[0], Therm.class );
-				if ( therm != null && therm.execute( "type" ).equals( "const" ) )
+				if ( therm != null && therm.is( "const" ) )
 				{
 					double otherValue = therm.get( "value", Double.class );
 					return new Const( value + otherValue );
 				}
+
+				return eval( this, "+", params[0] );
 			}
 			else if ( key.equals( "mulreduce" ) && params.length == 1 )
 			{
 				Therm therm = ReflectionUtils.as( params[0], Therm.class );
-				if ( therm != null && therm.execute( "type" ).equals( "const" ) )
+				if ( therm != null && therm.is( "const" ) )
 				{
 					double otherValue = therm.get( "value", Double.class );
-					return new Const( value * otherValue );
+					return eval( value * otherValue );
 				}
+
+				return eval( this, "*", params[0] );
 			}
 			else if ( key.equals( "reduce" ) && params.length == 0 )
 			{

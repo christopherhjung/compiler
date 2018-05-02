@@ -46,17 +46,17 @@ public class VariablePlugin extends EnginePlugin {
 				{
 					Therm derivateFor = (Therm) params[0];
 
-					if ( derivateFor.execute( "type" ).equals( "variable" ) )
+					if ( derivateFor.is( "variable" ) )
 					{
 						String name = derivateFor.get( "value", String.class );
 
 						if ( this.name.equals( name ) )
 						{
-							return "1";
+							return eval(1);
 						}
 						else
 						{
-							return "0";
+							return eval(0);
 						}
 					}
 				}

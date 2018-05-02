@@ -1,27 +1,30 @@
 package functions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import builder.AdditionalBuilder;
 import parser.MathParser;
+import parser.ThermStringifier;
+import therms.Additional;
 import therms.Therm;
+import tools.ListComparer;
 
 public class AddPlugin extends EnginePlugin {
 
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
-		AdditionalBuilder builder = new AdditionalBuilder();
-		Therm therm;
-
 		if ( left == null )
 		{
-			therm = parser.parse();
-		}
-		else
-		{
-			therm = left;
+			return null;
 		}
 
-		builder.add( therm );
+		List<Therm> builder = new ArrayList<Therm>();
+
+		builder.add( left );
 
 		loop: while ( parser.hasNext() )
 		{
@@ -40,7 +43,98 @@ public class AddPlugin extends EnginePlugin {
 			}
 		}
 
-		return builder.size() > 1 ? builder.build() : null;
+		return builder.size() > 1 ? new Additional( builder ) : null;
+	}
+
+	public class Additional extends Therm implements Iterable<Therm> {
+
+		private final List<Therm> therms;
+
+		public Additional()
+		{
+			therms = new ArrayList<>();
+		}
+
+		public <T extends Therm> Additional( T... therms )
+		{
+			this.therms = Arrays.asList( therms );
+		}
+
+		public Additional( List<? extends Therm> therms )
+		{
+			this.therms = new ArrayList<>( therms );
+		}
+
+		public List<Therm> getTherms()
+		{
+			return therms;
+		}
+
+		@Override
+		public Object execute( String key, Object... params )
+		{
+			if ( key.equals( "derivate" ) )
+			{
+				List<Object> builder = new ArrayList<>();
+				for ( Therm therm : this )
+				{
+					if ( builder.size() > 0 )
+					{
+						builder.add( '+' );
+					}
+
+					builder.add( therm.execute( key, params ) );
+				}
+
+				return eval( builder.toArray( new Object[builder.size()] ) );
+			}
+			else if ( key.equals( "reduce" ) )
+			{
+				Therm therm = (Therm) therms.get( 0 ).execute( "reduce" );
+
+				for ( int i = 1 ; i < therms.size() ; i++ )
+				{
+					therm = (Therm) therm.execute( "addreduce", therms.get( i ).execute( "reduce" ) );
+				}
+
+				return therm;
+			}
+
+			return super.execute( key, params );
+		}
+
+		private int size()
+		{
+			return therms.size();
+		}
+
+		@Override
+		public Iterator<Therm> iterator()
+		{
+			return therms.iterator();
+		}
+
+		@Override
+		public boolean equals( Object obj )
+		{
+			if ( super.equals( obj ) ) return true;
+			if ( !(obj instanceof Additional) ) return false;
+
+			Additional other = (Additional) obj;
+			return ListComparer.containsSame( therms, other.therms );
+		}
+
+		@Override
+		public void toString( ThermStringifier builder )
+		{
+			builder.append( therms, " + " );
+		}
+
+		@Override
+		public int getLevel()
+		{
+			return ADDITION_LEVEL;
+		}
 	}
 
 }

@@ -30,11 +30,11 @@ public class SignPlugin extends EnginePlugin {
 		return therm;
 	}
 
-	public static class Invert extends Therm {
+	public class Invert extends Therm {
 
 		private Therm therm;
 
-		public Invert(  Therm therm )
+		public Invert( Therm therm )
 		{
 			this.therm = therm;
 		}
@@ -48,10 +48,31 @@ public class SignPlugin extends EnginePlugin {
 			}
 			else if ( key.equals( "value" ) )
 			{
-				if( therm.is( "const" )){
-					Double value = therm.get( "value", Double.class);
+				if ( therm.is( "const" ) )
+				{
+					Double value = therm.get( "value", Double.class );
 					return -value;
 				}
+			}
+			else if ( key.equals( "reduce" ) )
+			{
+				Therm inner = (Therm) therm.execute( "reduce" );
+
+				if ( inner.is( "const" ) )
+				{
+					Double value = inner.get( "value", Double.class );
+
+					if ( value < 0 )
+					{
+						return eval( -value );
+					}
+					else
+					{
+						return new Invert( inner );
+					}
+				}
+
+				return new Invert( (Therm) therm.execute( "reduce" ) );
 			}
 
 			return super.execute( key, params );

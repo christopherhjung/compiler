@@ -77,7 +77,6 @@ public class StackEngine {
 			catch ( Throwable t )
 			{
 				System.out.println( t.getMessage() );
-				t.printStackTrace();
 			}
 		}
 

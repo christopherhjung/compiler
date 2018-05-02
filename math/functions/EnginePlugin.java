@@ -1,5 +1,7 @@
 package functions;
 
+import java.util.Arrays;
+
 import parser.MathEngine;
 import parser.MathParser;
 import therms.Therm;
@@ -17,7 +19,7 @@ public abstract class EnginePlugin {
 	{
 		return getEngine().eval( str );
 	}
-
+	
 	public Therm eval( Object... objs )
 	{
 		return getEngine().eval( objs );

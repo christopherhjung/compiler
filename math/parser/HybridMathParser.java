@@ -52,6 +52,7 @@ public class HybridMathParser extends MathParser {
 
 	private void calc()
 	{
+		isTherm = false;
 		if ( hasNext() )
 		{
 			if ( input[objPosition] instanceof Therm )
@@ -62,7 +63,6 @@ public class HybridMathParser extends MathParser {
 			}
 			else
 			{
-				isTherm = false;
 				str = input[objPosition].toString();
 				nextTherm = null;
 			}
@@ -72,7 +72,7 @@ public class HybridMathParser extends MathParser {
 	@Override
 	public char getChar()
 	{
-		return str.charAt( stringPos );
+		return str == null ? 0 : str.charAt( stringPos );
 	}
 
 	@Override

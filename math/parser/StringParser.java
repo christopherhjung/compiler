@@ -64,7 +64,7 @@ public abstract class StringParser<T> {
 
 	public char getChar()
 	{
-		return chars[position];
+		return chars[getPosition()];
 	}
 
 	public char nextChar()
@@ -106,7 +106,7 @@ public abstract class StringParser<T> {
 		{
 			do
 			{
-				position++;
+				next();
 			}
 			while ( is( cha ) );
 
@@ -129,24 +129,6 @@ public abstract class StringParser<T> {
 	public boolean isDigit()
 	{
 		return is( Character::isDigit );
-	}
-
-	protected String readFor( Pattern pattern )
-	{
-		Matcher matcher = pattern.matcher( new String( chars ) );
-		matcher.region( getPosition(), chars.length - 1 );
-		matcher.find( position );
-		if ( matcher.find() )
-		{
-			position = matcher.end();
-			return matcher.group();
-		}
-		return null;
-	}
-
-	protected boolean matches( String regex )
-	{
-		return Character.toString( getChar() ).matches( regex );
 	}
 
 	@Override

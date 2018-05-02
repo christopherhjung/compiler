@@ -11,21 +11,14 @@ public class DividePlugin extends EnginePlugin {
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
-		Therm therm;
-
-		if ( left != null )
+		if ( left == null )
 		{
-			therm = left;
-		}
-		else
-		{
-			therm = parser.parse();
+			return null;
 		}
 
 		if ( parser.eat( '/' ) )
 		{
-			therm = new Divide( therm, parser.parse() );
-			return therm;
+			return new Divide( left, parser.parse() );
 		}
 
 		return null;
@@ -47,16 +40,17 @@ public class DividePlugin extends EnginePlugin {
 		{
 			Therm reducedZaehler = zaehler.reduce( varSet, therms );
 			Therm reducedNenner = nenner.reduce( varSet, therms );
-			
-			if( reducedZaehler instanceof Const && reducedNenner instanceof Const ){
+
+			if ( reducedZaehler instanceof Const && reducedNenner instanceof Const )
+			{
 				Const a = (Const) reducedZaehler;
 				Const b = (Const) reducedNenner;
-				
-				Const r = new Const(a.getValue()/b.getValue());
+
+				Const r = new Const( a.getValue() / b.getValue() );
 				return r;
 			}
-			
-			return new Divide(reducedZaehler,reducedNenner);
+
+			return new Divide( reducedZaehler, reducedNenner );
 		}
 
 		@Override

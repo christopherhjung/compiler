@@ -58,8 +58,9 @@ public class ExponentPlugin extends EnginePlugin {
 		{
 			if ( key.equals( "derivate" ) )
 			{
-				return eval( this, "*", "derivate(", exponent, "*", "log(", basis, "),", Utils.concat( params, "," ),
-						")" );
+				//return eval( this, "*", "derivate(", exponent, "*", "log(", basis, "),",	Utils.concat( params, "," ), ")" );
+
+				return eval( exponent, "*", basis, "^(", exponent, "-1)" );
 			}
 			else if ( key.equals( "reduce" ) )
 			{
@@ -68,11 +69,22 @@ public class ExponentPlugin extends EnginePlugin {
 
 				if ( params.length == 0 )
 				{
-					if ( reducedBasis.is( "const" ) && reducedExponent.is( "const" ) )
+					if ( reducedExponent.is( "const" ) )
 					{
-						Double basisValue = reducedBasis.get( "value", Double.class );
-						Double exponentValue =  reducedExponent.get( "value", Double.class );
-						return eval(Math.pow( basisValue, exponentValue ));
+						Double exponentValue = reducedExponent.get( "value", Double.class );
+						if ( reducedBasis.is( "const" ) )
+						{
+							Double basisValue = reducedBasis.get( "value", Double.class );
+							return eval( Math.pow( basisValue, exponentValue ) );
+						}
+						else if ( exponentValue == 1 )
+						{
+							return reducedBasis;
+						}
+						else if ( exponentValue == 0 )
+						{
+							return eval( 0 );
+						}
 					}
 
 					return new Exponenional( reducedBasis, reducedExponent );
