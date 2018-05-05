@@ -1,5 +1,6 @@
 package parser;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,11 +9,11 @@ import therms.Therm;
 
 public class HybridMathParser extends MathParser {
 
-	private Object[] input;
-	private Therm nextTherm;
-	private String str;
-	private int objPosition = 0;
-	private int stringPos = 0;
+	private Object[] objs;
+	private Therm thermElement;
+	private String stringElement;
+	private int objPosition = -1;
+	private int stringPosition = 0;
 	private boolean isTherm = false;
 
 	public HybridMathParser( Map<Integer, Set<EnginePlugin>> plugins )
@@ -27,44 +28,50 @@ public class HybridMathParser extends MathParser {
 		
 		if ( isTherm && superTherm == null )
 		{
-			Therm temp = nextTherm;
+			Therm temp = thermElement;
 			next();
 			return temp;
 		}
 
 		return superTherm;
 	}
+	
+	@Override
+	protected void reset()
+	{
+		super.reset();
+		thermElement = null;
+		stringElement = null;
+		objPosition = -1;
+		stringPosition = 0;
+		isTherm = false;
+		next();
+	}
 
 	@Override
 	public void next()
 	{
-		if ( isTherm || str.length() <= stringPos + 1 )
+		stringPosition++;
+		
+		if ( stringElement == null && thermElement == null && hasNext() 
+				|| isTherm || stringElement.length() <= stringPosition )
 		{
 			objPosition++;
-			stringPos = 0;
-			calc();
-		}
-		else
-		{
-			stringPos++;
-		}
-	}
-
-	private void calc()
-	{
-		isTherm = false;
-		if ( hasNext() )
-		{
-			if ( input[objPosition] instanceof Therm )
+			stringPosition = 0;
+			isTherm = false;
+			if ( hasNext() )
 			{
-				isTherm = true;
-				nextTherm = (Therm) input[objPosition];
-				str = null;
-			}
-			else
-			{
-				str = input[objPosition].toString();
-				nextTherm = null;
+				if ( objs[objPosition] instanceof Therm )
+				{
+					isTherm = true;
+					thermElement = (Therm) objs[objPosition];
+					stringElement = null;
+				}
+				else
+				{
+					stringElement = objs[objPosition].toString();
+					thermElement = null;
+				}
 			}
 		}
 	}
@@ -72,28 +79,48 @@ public class HybridMathParser extends MathParser {
 	@Override
 	public char getChar()
 	{
-		return str == null ? 0 : str.charAt( stringPos );
+		return stringElement == null ? 0 : stringElement.charAt( stringPosition );
 	}
 
 	@Override
 	public boolean hasNext()
 	{
-		return input.length > objPosition;
+		return objs.length > objPosition;
 	}
 
 	public Therm eval( Object... objs )
 	{
-		input = objs;
-
-		calc();
-
-		resetLevel();
+		this.objs = objs;
+		reset();
 		return parse();
 	}
 	
 	@Override
 	public String toString()
 	{
-		return input[objPosition].toString();
+		return objs[objPosition].toString();
+	}
+	
+	@Override
+	protected ParserState getRestorePoint()
+	{
+		Therm thermElement = this.thermElement;
+		String stringElement = this.stringElement;
+		int objPosition = this.objPosition;
+		int stringPosition = this.stringPosition;
+		boolean isTherm = this.isTherm;	
+		
+		return new ParserState() {
+			
+			@Override
+			public void restore()
+			{
+				HybridMathParser.this.thermElement = thermElement;
+				HybridMathParser.this.stringElement = stringElement;
+				HybridMathParser.this.objPosition = objPosition;
+				HybridMathParser.this.stringPosition = stringPosition;
+				HybridMathParser.this.isTherm = isTherm;	
+			}
+		};
 	}
 }

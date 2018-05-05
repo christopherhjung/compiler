@@ -86,7 +86,7 @@ public class AddPlugin extends EnginePlugin {
 					builder.add( therm.execute( key, params ) );
 				}
 
-				return eval( builder.toArray( new Object[builder.size()] ) );
+				return eval( builder );
 			}
 			else if ( key.equals( "reduce" ) )
 			{

@@ -9,7 +9,7 @@ public class SignPlugin extends EnginePlugin {
 	@Override
 	public Therm handle( MathParser parser )
 	{
-		parser.eat( ' ' );
+		parser.eatAll( ' ' );
 		boolean invert = false;
 		if ( parser.eat( '-' ) )
 		{
@@ -24,17 +24,17 @@ public class SignPlugin extends EnginePlugin {
 
 		if ( invert )
 		{
-			therm = new Invert( therm );
+			therm = new Negate( therm );
 		}
 
 		return therm;
 	}
 
-	public class Invert extends Therm {
+	public class Negate extends Therm {
 
 		private Therm therm;
 
-		public Invert( Therm therm )
+		public Negate( Therm therm )
 		{
 			this.therm = therm;
 		}
@@ -50,8 +50,7 @@ public class SignPlugin extends EnginePlugin {
 			{
 				if ( therm.is( "const" ) )
 				{
-					Double value = therm.get( "value", Double.class );
-					return -value;
+					return -therm.get( "value", Double.class );
 				}
 			}
 			else if ( key.equals( "reduce" ) )
@@ -68,11 +67,11 @@ public class SignPlugin extends EnginePlugin {
 					}
 					else
 					{
-						return new Invert( inner );
+						return new Negate( inner );
 					}
 				}
 
-				return new Invert( (Therm) therm.execute( "reduce" ) );
+				return new Negate( (Therm) therm.execute( "reduce" ) );
 			}
 
 			return super.execute( key, params );

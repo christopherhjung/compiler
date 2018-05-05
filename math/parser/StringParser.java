@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public abstract class StringParser<T> {
 
 	private int position;
@@ -20,7 +21,8 @@ public abstract class StringParser<T> {
 			throw new ParseException( "Parser is already started" );
 		}
 
-		reset( chars );
+		this.chars = chars;
+		reset();
 		T result;
 		try
 		{
@@ -41,10 +43,9 @@ public abstract class StringParser<T> {
 		return eval( str.replace( " ", "" ).toCharArray() );
 	}
 
-	protected void reset( char[] chars )
+	protected void reset()
 	{
 		position = 0;
-		this.chars = chars;
 	}
 
 	public void next()
@@ -100,6 +101,23 @@ public abstract class StringParser<T> {
 		return false;
 	}
 
+	public boolean eat( String str )
+	{
+		ParserState state = getRestorePoint();
+		for ( char cha : str.toCharArray() )
+		{
+			if ( !is(cha) )
+			{
+				state.restore();
+				return false;
+			}
+
+			next();
+		}
+
+		return true;
+	}
+
 	public boolean eatAll( char cha )
 	{
 		if ( is( cha ) )
@@ -129,6 +147,22 @@ public abstract class StringParser<T> {
 	public boolean isDigit()
 	{
 		return is( Character::isDigit );
+	}
+
+	protected static abstract class ParserState {
+		public abstract void restore();
+	}
+
+	protected ParserState getRestorePoint()
+	{
+		int position = getPosition();
+		return new ParserState() {
+			@Override
+			public void restore()
+			{
+				setPosition( position );
+			}
+		};
 	}
 
 	@Override

@@ -9,11 +9,13 @@ public class ParenthesisPlugin extends EnginePlugin {
 	public Therm handle( MathParser parser )
 	{
 		Therm therm = null;
-		if ( parser.is( '(' ) )
+		if ( parser.eat( '(' ) )
 		{
-			parser.next();
 			therm = parser.parseWithLevelReset();
-			parser.next();
+			if ( !parser.eat( ')' ) )
+			{
+				return null;
+			}
 		}
 
 		return therm;

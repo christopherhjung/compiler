@@ -9,24 +9,18 @@ public class AssignmentPlugin extends EnginePlugin {
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
-		Therm therm;
-
 		if ( left == null )
 		{
-			therm = parser.parse();
+			return null;
 		}
-		else
-		{
-			therm = left;
-		}
-		
-		if ( therm.is( "variable" ) )
+
+		if ( left.is( "variable" ) )
 		{
 			if ( parser.eat( '=' ) )
 			{
 				Therm right = parser.parse();
 
-				return new Assignment( therm, right );
+				return new Assignment( left, right );
 			}
 		}
 
@@ -51,7 +45,7 @@ public class AssignmentPlugin extends EnginePlugin {
 			builder.append( "=" );
 			builder.append( right );
 		}
-		
+
 		@Override
 		public int getLevel()
 		{

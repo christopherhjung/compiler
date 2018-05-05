@@ -1,6 +1,8 @@
 package functions;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import parser.MathEngine;
 import parser.MathParser;
@@ -23,6 +25,11 @@ public abstract class EnginePlugin {
 	public Therm eval( Object... objs )
 	{
 		return getEngine().eval( objs );
+	}
+	
+	public Therm eval( List<Object> list )
+	{
+		return getEngine().eval( list );
 	}
 	
 	public void onStart( MathEngine engine )

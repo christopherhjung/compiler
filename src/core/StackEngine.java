@@ -1,5 +1,6 @@
 package core;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import functions.AddPlugin;
@@ -9,6 +10,7 @@ import functions.DividePlugin;
 import functions.ExponentPlugin;
 import functions.FunctionPlugin;
 import functions.IncrementPlugin;
+import functions.MethodPlugin;
 import functions.MulPlugin;
 import functions.ParenthesisPlugin;
 import functions.SignPlugin;
@@ -30,9 +32,10 @@ public class StackEngine {
 		program.installPlugin( 14, SignPlugin.class );
 		program.installPlugin( 14, IncrementPlugin.class );
 		program.installPlugin( 15, ExponentPlugin.class );
-		program.installPlugin( 16, VariablePlugin.class );
-		program.installPlugin( 16, FunctionPlugin.class );
-		program.installPlugin( 17, ParenthesisPlugin.class );
+		program.installPlugin( 16, MethodPlugin.class );
+		program.installPlugin( 17, VariablePlugin.class );
+		program.installPlugin( 17, FunctionPlugin.class );
+		program.installPlugin( 18, ParenthesisPlugin.class );
 		program.installPlugin( ConstPlugin.class );
 
 		// program.installPlugin( BasicPlugin.class );

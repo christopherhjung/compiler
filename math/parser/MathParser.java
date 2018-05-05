@@ -17,9 +17,8 @@ public class MathParser extends StringParser<Therm> {
 	}
 
 	@Override
-	protected void reset( char[] chars )
+	protected void reset()
 	{
-		super.reset( chars );
 		resetLevel();
 	}
 
@@ -37,11 +36,7 @@ public class MathParser extends StringParser<Therm> {
 		return result;
 	}
 
-	@Override
-	public char getChar()
-	{
-		return super.getChar();
-	}
+	private int c = 0;
 	
 	@Override
 	public Therm parse()
@@ -56,13 +51,13 @@ public class MathParser extends StringParser<Therm> {
 		Integer nextLevel = this.plugins.higherKey( level );
 
 		level = nextLevel;
-
+	
 		Therm result = parse();
 
 		while ( hasNext() )
 		{
 			Therm parsed = parseLevel( plugins, result );
-
+			
 			if ( parsed != null )
 			{
 				result = parsed;
@@ -82,21 +77,20 @@ public class MathParser extends StringParser<Therm> {
 	{
 		for ( EnginePlugin plugin : plugins )
 		{
-			int savePosition = getPosition();
-			//System.out.println( this + " ----> " + plugin );
-			Therm result = plugin.handle( this, left );
-			//System.out.println( result + " <---- " + plugin );
+			ParserState savedState = getRestorePoint();
 
+			Therm result = plugin.handle( this, left );
+			
 			if ( result != null )
 			{
 				return result;
 			}
 			else
 			{
-				setPosition( savePosition );
+				savedState.restore();
 			}
 		}
-
+		
 		return null;
 	}
 }

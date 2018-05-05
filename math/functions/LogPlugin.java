@@ -15,7 +15,7 @@ public class LogPlugin extends EnginePlugin {
 		return new Chain( log, therm );
 	}
 
-	public static class Log extends Therm {
+	public class Log extends Therm {
 
 		@Override
 		public Object execute( String key, Object... params )
@@ -32,7 +32,7 @@ public class LogPlugin extends EnginePlugin {
 					if ( therm != null )
 					{
 						double value = therm.get( "value", Double.class );
-						return String.valueOf( Math.log( value ) );
+						return eval( Math.log( value ) );
 					}
 
 					// return new Chain( this, therms[0] );

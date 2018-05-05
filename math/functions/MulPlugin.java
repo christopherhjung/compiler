@@ -99,7 +99,7 @@ public class MulPlugin extends EnginePlugin {
 					}
 				}
 
-				return eval( list.toArray( new Object[list.size()] ) );
+				return eval( list );
 			}
 			else if ( key.equals( "reduce" ) )
 			{

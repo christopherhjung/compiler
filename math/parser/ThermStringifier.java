@@ -7,7 +7,7 @@ import therms.Therm;
 
 public class ThermStringifier {
 	private StringBuilder builder = new StringBuilder();
-	private int last;
+	private int last = Integer.MIN_VALUE;
 
 	public int length()
 	{
