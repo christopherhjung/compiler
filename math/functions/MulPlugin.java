@@ -23,21 +23,16 @@ public class MulPlugin extends EnginePlugin {
 		{
 			return null;
 		}
-		
+
 		ArrayList<Therm> builder = new ArrayList<Therm>();
-		
+
 		builder.add( left );
 
 		loop: while ( parser.hasNext() )
 		{
 			switch ( parser.getChar() ) {
-				case ' ':
-					parser.next();
-					break;
-
 				case '*':
 					parser.next();
-				case '(':
 					builder.add( parser.parse() );
 					break;
 
@@ -71,46 +66,29 @@ public class MulPlugin extends EnginePlugin {
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "derivate" ) )
+			if ( key.equals( "type" ) )
 			{
-				ArrayList<Object> list = new ArrayList<>();
+				return "mul";
+			}
+			else if ( key.equals( "value" ) )
+			{
+				return therms;
+			}
+			else if ( key.equals( "do" ) )
+			{
+				List<Object> list = new ArrayList<>();
+
 				for ( int i = 0 ; i < therms.size() ; i++ )
 				{
 					if ( i > 0 )
 					{
-						list.add( '+' );
+						list.add( "*" );
 					}
 
-					for ( int j = 0 ; j < therms.size() ; j++ )
-					{
-						if ( j > 0 )
-						{
-							list.add( '*' );
-						}
-
-						if ( i == j )
-						{
-							list.add( therms.get( j ).execute( key, params ) );
-						}
-						else
-						{
-							list.add( therms.get( j ) );
-						}
-					}
+					list.add( therms.get( i ).execute( "do" ) );
 				}
 
-				return eval( list );
-			}
-			else if ( key.equals( "reduce" ) )
-			{
-				Therm therm = (Therm) therms.get( 0 ).execute( "reduce" );
-
-				for ( int i = 1 ; i < therms.size() ; i++ )
-				{
-					therm = (Therm) therm.execute( "mulreduce", therms.get( i ).execute( "reduce" ) );
-				}
-
-				return therm;
+				return eval(list);
 			}
 
 			return super.execute( key, params );

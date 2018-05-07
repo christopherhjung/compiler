@@ -12,6 +12,7 @@ import parser.ParseException;
 import parser.ThermStringifier;
 import therms.Therm;
 import tools.ReflectionUtils;
+import tools.Run;
 
 public class FunctionPlugin extends EnginePlugin {
 
@@ -28,6 +29,7 @@ public class FunctionPlugin extends EnginePlugin {
 	public void onStart( MathEngine engine )
 	{
 		plugins.values().forEach( plugin -> plugin.onStart( engine ) );
+		super.onStart( engine );
 	}
 
 	@Override
@@ -56,6 +58,10 @@ public class FunctionPlugin extends EnginePlugin {
 
 				parser.eat( ')' );
 			}
+			else
+			{
+				return null;
+			}
 
 			Class<?>[] classes = new Class<?>[therms.size()];
 			Object[] thermsArr = new Therm[therms.size()];
@@ -72,9 +78,15 @@ public class FunctionPlugin extends EnginePlugin {
 
 			if ( function != null )
 			{
-				List<Method> methods = ReflectionUtils.getMethodsAnnotatedWith( function.getClass(), EngineExecute.class );
+				List<Method> methods = ReflectionUtils.getMethodsAnnotatedWith( function.getClass(),
+						EngineExecute.class );
 				Method method = ReflectionUtils.findBestMethod( methods, classes );
 				therm = ReflectionUtils.safeInvoke( null, Therm.class, function, method, thermsArr );
+			}
+			else
+			{
+				therm = Run
+						.safe( () -> (Therm) getEngine().globalScope.get( methodName ).execute( "call", thermsArr ) );
 			}
 		}
 
@@ -143,5 +155,5 @@ public class FunctionPlugin extends EnginePlugin {
 			return FUNCTION_LEVEL;
 		}
 	}
-	
+
 }

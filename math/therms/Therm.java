@@ -2,6 +2,7 @@ package therms;
 
 import java.util.Objects;
 
+import parser.MathEngine;
 import parser.ThermStringifier;
 
 public abstract class Therm {
@@ -11,6 +12,11 @@ public abstract class Therm {
 	public final static int MULTIPLY_LEVEL = 3;
 	public final static int EXPONENT_LEVEL = 4;
 	public final static int FUNCTION_LEVEL = 5;
+
+	public MathEngine getEngine()
+	{
+		return null;
+	}
 
 	public <T> T get( String key, Class<T> type )
 	{
@@ -31,6 +37,11 @@ public abstract class Therm {
 
 	public Object execute( String key, Object... params )
 	{
+		if ( key.equals( "do" ) )
+		{
+			return this;
+		}
+		
 		return null;
 	}
 

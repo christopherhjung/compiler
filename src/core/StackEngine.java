@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import functions.AddPlugin;
+import functions.AskPlugin;
 import functions.AssignmentPlugin;
 import functions.ConstPlugin;
 import functions.DividePlugin;
@@ -30,7 +31,7 @@ public class StackEngine {
 		program.installPlugin( 12, MulPlugin.class );
 		program.installPlugin( 12, DividePlugin.class );
 		program.installPlugin( 14, SignPlugin.class );
-		program.installPlugin( 14, IncrementPlugin.class );
+		//program.installPlugin( 14, IncrementPlugin.class );
 		program.installPlugin( 15, ExponentPlugin.class );
 		program.installPlugin( 16, MethodPlugin.class );
 		program.installPlugin( 17, VariablePlugin.class );
@@ -72,7 +73,7 @@ public class StackEngine {
 			{
 				long begin = System.currentTimeMillis();
 				Therm result = engine.eval( therm );
-				System.out.println( result );
+				System.out.println( "Result:" + result.execute( "do" ) );
 				long end = System.currentTimeMillis();
 
 				System.out.println( "Time need:" + (end - begin) );
@@ -80,6 +81,7 @@ public class StackEngine {
 			catch ( Throwable t )
 			{
 				System.out.println( t.getMessage() );
+				t.printStackTrace();
 			}
 		}
 

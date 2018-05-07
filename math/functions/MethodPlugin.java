@@ -1,24 +1,43 @@
 package functions;
 
+import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction;
+
+import parser.MathEngine;
 import parser.MathParser;
+import parser.Space.Scope;
 import parser.ThermStringifier;
 import therms.Therm;
 
 public class MethodPlugin extends EnginePlugin {
 
+	private Scope currentScope = null;
+
+	@Override
+	public void reset()
+	{
+		currentScope = getEngine().globalScope;
+	}
+
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
+		Therm[] vars;
+
 		if ( left == null )
 		{
 			List<Therm> therms = new ArrayList<>();
 
 			if ( parser.eat( '(' ) )
 			{
-
 				while ( parser.isNot( ')' ) )
 				{
 					Therm param = parser.parse();
@@ -33,47 +52,147 @@ public class MethodPlugin extends EnginePlugin {
 				}
 
 				parser.eat( ')' );
+				vars = therms.toArray( new Therm[therms.size()] );
+			}
+			else
+			{
+				return null;
+			}
+		}
+		else
+		{
+			if ( !left.is( "variable" ) )
+			{
+				return null;
 			}
 
-			left = new VariablePlugin().new Variable( therms.toString() );
+			vars = new Therm[] {
+					left
+			};
 		}
 
 		if ( parser.eat( "->" ) )
 		{
 			Therm therm = parser.parseWithLevelReset();
 
-			return new Method( left, therm );
+			return new Method( vars, therm );
 		}
 
 		return super.handle( parser );
 	}
-	
-	public static class Reference extends Therm{
 
-		public String alias;
-		
-		@Override
-		public void toString( ThermStringifier builder )
-		{
-			
-		}
-	}
+	public class Method extends Therm {
 
-	public static class Method extends Therm {
-
-		private Therm var;
+		private Therm[] vars;
 		private Therm inner;
+		private HashMap<Therm, Integer> varSet;
 
-		public Method( Therm var, Therm inner )
+		public Method( Therm[] vars, Therm inner )
 		{
-			this.var = var;
+			this.vars = vars;
 			this.inner = inner;
+			this.varSet = new HashMap<>();
+
+			for ( int i = 0 ; i < vars.length ; i++ )
+			{
+				varSet.put( vars[i], i );
+			}
+		}
+
+		@Override
+		public MathEngine getEngine()
+		{
+			return MethodPlugin.this.getEngine();
+		}
+
+		@Override
+		public Object execute( String key, Object... params )
+		{
+			if ( key.equals( "call" ) )
+			{
+				if ( vars.length == params.length )
+				{
+					Scope old = getEngine().globalScope;
+					getEngine().globalScope = new Scope( old ) {
+						@Override
+						public Therm get( Object key )
+						{
+							if ( varSet.containsKey( key ) )
+							{
+								return (Therm) params[varSet.get( key )];
+							}
+
+							return super.get( key );
+						}
+					};
+
+					Therm result = (Therm) inner.execute( "do" );
+
+					getEngine().globalScope = old;
+
+					return result;
+				}
+			}
+			else if ( key.equals( "do" ) )
+			{
+				Scope old = getEngine().globalScope;
+				getEngine().globalScope = new Scope( old ) {
+					@Override
+					public Therm get( Object key )
+					{
+						if ( varSet.containsKey( key ) )
+						{
+							return (Therm) key;
+						}
+
+						return super.get( key );
+					}
+				};
+
+				Therm result = (Therm) inner.execute( "do" );
+
+				getEngine().globalScope = old;
+				return new Method( vars, result );
+			}
+			else if ( key.equals( "type" ) )
+			{
+				return "method";
+			}
+			else if ( key.equals( "value" ) )
+			{
+				return inner;
+			}
+			else if ( key.equals( "param" ) )
+			{
+				return vars[0];
+			}
+
+			return super.execute( key, params );
 		}
 
 		@Override
 		public void toString( ThermStringifier builder )
 		{
-			builder.append( var );
+			if ( vars.length != 1 )
+			{
+				builder.append( "(" );
+			}
+
+			for ( int i = 0 ; i < vars.length ; i++ )
+			{
+				if ( i > 0 )
+				{
+					builder.append( "," );
+				}
+
+				builder.append( vars[i] );
+			}
+
+			if ( vars.length != 1 )
+			{
+				builder.append( ")" );
+			}
+
 			builder.append( "->" );
 			builder.append( inner );
 		}

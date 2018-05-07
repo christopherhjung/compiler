@@ -56,39 +56,21 @@ public class ExponentPlugin extends EnginePlugin {
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "derivate" ) )
+			if ( key.equals( "type" ) )
 			{
-				//return eval( this, "*", "derivate(", exponent, "*", "log(", basis, "),",	Utils.concat( params, "," ), ")" );
-
-				return eval( exponent, "*", basis, "^(", exponent, "-1)" );
+				return "exponent";
 			}
-			else if ( key.equals( "reduce" ) )
+			else if ( key.equals( "basis" ) )
 			{
-				Therm reducedBasis = (Therm) basis.execute( "reduce" );
-				Therm reducedExponent = (Therm) exponent.execute( "reduce" );
-
-				if ( params.length == 0 )
-				{
-					if ( reducedExponent.is( "const" ) )
-					{
-						Double exponentValue = reducedExponent.get( "value", Double.class );
-						if ( reducedBasis.is( "const" ) )
-						{
-							Double basisValue = reducedBasis.get( "value", Double.class );
-							return eval( Math.pow( basisValue, exponentValue ) );
-						}
-						else if ( exponentValue == 1 )
-						{
-							return reducedBasis;
-						}
-						else if ( exponentValue == 0 )
-						{
-							return eval( 0 );
-						}
-					}
-
-					return new Exponenional( reducedBasis, reducedExponent );
-				}
+				return basis;
+			}
+			else if ( key.equals( "exponent" ) )
+			{
+				return exponent;
+			}
+			else if ( key.equals( "do" ) )
+			{
+				return eval( basis.execute( "do" ), "^", exponent.execute( "do" ) );
 			}
 
 			return super.execute( key, params );

@@ -1,5 +1,6 @@
 package functions;
 
+import parser.MathEngine;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;
@@ -43,6 +44,12 @@ public class ConstPlugin extends EnginePlugin {
 		{
 			this.value = value;
 		}
+		
+		@Override
+		public MathEngine getEngine()
+		{
+			return ConstPlugin.this.getEngine();
+		}
 
 		@Override
 		public Object execute( String key, Object... params )
@@ -54,36 +61,6 @@ public class ConstPlugin extends EnginePlugin {
 			else if ( key.equals( "type" ) )
 			{
 				return "const";
-			}
-			else if ( key.equals( "derivate" ) )
-			{
-				return eval( 0 );
-			}
-			else if ( key.equals( "addreduce" ) && params.length == 1 )
-			{
-				Therm therm = ReflectionUtils.as( params[0], Therm.class );
-				if ( therm != null && therm.is( "const" ) )
-				{
-					double otherValue = therm.get( "value", Double.class );
-					return new Const( value + otherValue );
-				}
-
-				return eval( this, "+", params[0] );
-			}
-			else if ( key.equals( "mulreduce" ) && params.length == 1 )
-			{
-				Therm therm = ReflectionUtils.as( params[0], Therm.class );
-				if ( therm != null && therm.is( "const" ) )
-				{
-					double otherValue = therm.get( "value", Double.class );
-					return eval( value * otherValue );
-				}
-
-				return eval( this, "*", params[0] );
-			}
-			else if ( key.equals( "reduce" ) && params.length == 0 )
-			{
-				return this;
 			}
 
 			return super.execute( key );

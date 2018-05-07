@@ -14,14 +14,11 @@ public class AssignmentPlugin extends EnginePlugin {
 			return null;
 		}
 
-		if ( left.is( "variable" ) )
+		if ( parser.eat( '=' ) )
 		{
-			if ( parser.eat( '=' ) )
-			{
-				Therm right = parser.parse();
+			Therm right = parser.parse();
 
-				return new Assignment( left, right );
-			}
+			return new Assignment( left, right );
 		}
 
 		return null;
@@ -36,6 +33,18 @@ public class AssignmentPlugin extends EnginePlugin {
 		{
 			this.left = left;
 			this.right = right;
+		}
+		
+		@Override
+		public Object execute( String key, Object... params )
+		{
+			if( key.equals( "do" ) ){
+				Therm newRight = (Therm)right.execute( "do" );
+				left.execute( "assign", newRight );
+				return newRight;
+			}
+			
+			return super.execute( key, params );
 		}
 
 		@Override

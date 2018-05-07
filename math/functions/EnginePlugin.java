@@ -37,6 +37,10 @@ public abstract class EnginePlugin {
 		this.engine = engine;
 	}
 
+	public void reset(){
+		
+	}
+	
 	public Therm handle( MathParser parser )
 	{
 		return null;

@@ -10,7 +10,7 @@ public class IncrementPlugin extends EnginePlugin {
 	@Override
 	public Therm handle( MathParser parser )
 	{
-		if ( parser.eat( '+' ) && parser.eat( '+' ) )
+		if ( parser.eat( "++" ) )
 		{
 			Therm therm = parser.parse();
 			if ( therm.is( "variable" ) )

@@ -9,7 +9,7 @@ public class ParseException extends RuntimeException {
 		//Thread.dumpStack();
 	}
 
-	protected ParseException( String comment )
+	public ParseException( String comment )
 	{
 		super( comment );
 	}

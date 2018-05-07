@@ -26,39 +26,40 @@ public class DividePlugin extends EnginePlugin {
 
 	public static class Divide extends Therm {
 
-		Therm zaehler;
-		Therm nenner;
+		Therm numerators;
+		Therm denominators;
 
-		public Divide( Therm zaehler, Therm nenner )
+		public Divide( Therm numerators, Therm denominators )
 		{
-			this.zaehler = zaehler;
-			this.nenner = nenner;
+			this.numerators = numerators;
+			this.denominators = denominators;
 		}
 
 		@Override
-		public Therm reduce( VarSet varSet, Therm... therms )
+		public Object execute( String key, Object... params )
 		{
-			Therm reducedZaehler = zaehler.reduce( varSet, therms );
-			Therm reducedNenner = nenner.reduce( varSet, therms );
-
-			if ( reducedZaehler instanceof Const && reducedNenner instanceof Const )
+			if ( key.equals( "numerators" ) )
 			{
-				Const a = (Const) reducedZaehler;
-				Const b = (Const) reducedNenner;
-
-				Const r = new Const( a.getValue() / b.getValue() );
-				return r;
+				return numerators;
+			}
+			else if ( key.equals( "denominators" ) )
+			{
+				return denominators;
+			}
+			else if ( key.equals( "type" ) )
+			{
+				return "divide";
 			}
 
-			return new Divide( reducedZaehler, reducedNenner );
+			return super.execute( key, params );
 		}
 
 		@Override
 		public void toString( ThermStringifier builder )
 		{
-			builder.append( zaehler );
+			builder.append( numerators );
 			builder.append( "/" );
-			builder.append( nenner );
+			builder.append( denominators );
 		}
 
 		@Override

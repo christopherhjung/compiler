@@ -1,5 +1,6 @@
 package functions;
 
+import parser.MathEngine;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;
@@ -11,13 +12,9 @@ public class VariablePlugin extends EnginePlugin {
 	{
 		if ( parser.is( Character::isAlphabetic ) )
 		{
-			StringBuilder builder = new StringBuilder();
-			while ( parser.is( Character::isAlphabetic ) )
-			{
-				builder.append( parser.nextChar() );
-			}
+			String name = parser.eatWhile( Character::isAlphabetic );
 
-			return new Variable( builder.toString() );
+			return new Variable( name );
 		}
 
 		return null;
@@ -32,6 +29,12 @@ public class VariablePlugin extends EnginePlugin {
 			this.name = name;
 		}
 
+		@Override
+		public MathEngine getEngine()
+		{
+			return VariablePlugin.this.getEngine();
+		}
+
 		public String getName()
 		{
 			return name;
@@ -40,28 +43,7 @@ public class VariablePlugin extends EnginePlugin {
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "derivate" ) )
-			{
-				if ( params.length == 1 && params[0] instanceof Therm )
-				{
-					Therm derivateFor = (Therm) params[0];
-
-					if ( derivateFor.is( "variable" ) )
-					{
-						String name = derivateFor.get( "value", String.class );
-
-						if ( this.name.equals( name ) )
-						{
-							return eval(1);
-						}
-						else
-						{
-							return eval(0);
-						}
-					}
-				}
-			}
-			else if ( key.equals( "value" ) )
+			if ( key.equals( "value" ) )
 			{
 				return name;
 			}
@@ -69,13 +51,21 @@ public class VariablePlugin extends EnginePlugin {
 			{
 				return "variable";
 			}
-			else if ( key.equals( "reduce" ) )
+			else if ( key.equals( "assign" ) && params.length == 1 )
 			{
-				return this;
+				Therm therm = (Therm) params[0];
+				getEngine().globalScope.set( this, therm );
 			}
-			else if ( key.equals( "addreduce" ) && params.length == 1 )
+			else if ( key.equals( "do" ) )
 			{
-				return eval( this, "+", params[0] );
+				Therm result = getEngine().globalScope.get( this );
+
+				if ( result == null )
+				{
+					throw new RuntimeException( "Variable " + name + " not found" );
+				}
+
+				return result;
 			}
 
 			return super.execute( key, params );

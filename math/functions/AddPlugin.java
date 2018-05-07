@@ -88,16 +88,29 @@ public class AddPlugin extends EnginePlugin {
 
 				return eval( builder );
 			}
-			else if ( key.equals( "reduce" ) )
+			else if ( key.equals( "type" ) )
 			{
-				Therm therm = (Therm) therms.get( 0 ).execute( "reduce" );
+				return "add";
+			}
+			else if ( key.equals( "value" ) )
+			{
+				return therms;
+			}
+			else if ( key.equals( "do" ) )
+			{
+				List<Object> list = new ArrayList<>();
 
-				for ( int i = 1 ; i < therms.size() ; i++ )
+				for ( int i = 0 ; i < therms.size() ; i++ )
 				{
-					therm = (Therm) therm.execute( "addreduce", therms.get( i ).execute( "reduce" ) );
+					if ( i > 0 )
+					{
+						list.add( "+" );
+					}
+
+					list.add( therms.get( i ).execute( "do" ) );
 				}
 
-				return therm;
+				return eval(list);
 			}
 
 			return super.execute( key, params );

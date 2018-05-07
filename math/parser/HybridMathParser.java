@@ -102,7 +102,7 @@ public class HybridMathParser extends MathParser {
 	}
 	
 	@Override
-	protected ParserState getRestorePoint()
+	protected RestoreAction getRestorePoint()
 	{
 		Therm thermElement = this.thermElement;
 		String stringElement = this.stringElement;
@@ -110,7 +110,7 @@ public class HybridMathParser extends MathParser {
 		int stringPosition = this.stringPosition;
 		boolean isTherm = this.isTherm;	
 		
-		return new ParserState() {
+		return new RestoreAction() {
 			
 			@Override
 			public void restore()

@@ -53,26 +53,6 @@ public class SignPlugin extends EnginePlugin {
 					return -therm.get( "value", Double.class );
 				}
 			}
-			else if ( key.equals( "reduce" ) )
-			{
-				Therm inner = (Therm) therm.execute( "reduce" );
-
-				if ( inner.is( "const" ) )
-				{
-					Double value = inner.get( "value", Double.class );
-
-					if ( value < 0 )
-					{
-						return eval( -value );
-					}
-					else
-					{
-						return new Negate( inner );
-					}
-				}
-
-				return new Negate( (Therm) therm.execute( "reduce" ) );
-			}
 
 			return super.execute( key, params );
 		}

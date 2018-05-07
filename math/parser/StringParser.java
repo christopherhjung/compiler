@@ -5,7 +5,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public abstract class StringParser<T> {
 
 	private int position;
@@ -101,12 +100,24 @@ public abstract class StringParser<T> {
 		return false;
 	}
 
+	public String eatWhile( Predicate<Character> predicate )
+	{
+		StringBuilder sb = new StringBuilder();
+
+		while ( hasNext() && predicate.test( getChar() ) )
+		{
+			sb.append( nextChar() );
+		}
+		
+		return sb.toString();
+	}
+
 	public boolean eat( String str )
 	{
-		ParserState state = getRestorePoint();
+		RestoreAction state = getRestorePoint();
 		for ( char cha : str.toCharArray() )
 		{
-			if ( !is(cha) )
+			if ( !is( cha ) )
 			{
 				state.restore();
 				return false;
@@ -149,14 +160,14 @@ public abstract class StringParser<T> {
 		return is( Character::isDigit );
 	}
 
-	protected static abstract class ParserState {
+	protected static abstract class RestoreAction {
 		public abstract void restore();
 	}
 
-	protected ParserState getRestorePoint()
+	protected RestoreAction getRestorePoint()
 	{
 		int position = getPosition();
-		return new ParserState() {
+		return new RestoreAction() {
 			@Override
 			public void restore()
 			{
