@@ -3,6 +3,8 @@ package therms;
 import java.util.HashMap;
 import java.util.Map;
 
+import functions.VariablePlugin.Variable;
+
 public class VarSet {
 	private final Map<Variable, Therm> valueSet;
 

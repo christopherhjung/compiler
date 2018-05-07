@@ -1,7 +1,7 @@
 package modifier;
 
+import functions.ConstPlugin.Const;
 import maths.TaylorSeries;
-import therms.Const;
 import therms.Therm;
 
 public class Series {

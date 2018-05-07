@@ -1,9 +1,9 @@
 package modifier;
 
-import therms.Const;
+import functions.ConstPlugin.Const;
+import functions.VariablePlugin.Variable;
 import therms.Equation;
 import therms.Therm;
-import therms.Variable;
 
 public class Sum {
 

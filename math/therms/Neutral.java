@@ -1,5 +1,6 @@
 package therms;
 
+import functions.VariablePlugin.Variable;
 import parser.ThermStringifier;
 
 public class Neutral extends Therm{

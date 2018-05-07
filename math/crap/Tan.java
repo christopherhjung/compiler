@@ -1,6 +1,6 @@
 package crap;
 
-import therms.Chain;
+import functions.FunctionPlugin.Chain;
 import therms.Therm;
 
 public class Tan extends Therm {

@@ -1,9 +1,9 @@
 package crap;
 
-import therms.Const;
-import therms.Exponenional;
+import functions.ConstPlugin.Const;
+import functions.ExponentPlugin.Exponenional;
+import functions.VariablePlugin.Variable;
 import therms.Therm;
-import therms.Variable;
 
 public class Log extends Therm{
 

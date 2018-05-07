@@ -3,7 +3,6 @@ package functions;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;
-import therms.Variable;
 
 public class IncrementPlugin extends EnginePlugin {
 

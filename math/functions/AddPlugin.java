@@ -5,10 +5,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import builder.AdditionalBuilder;
 import parser.MathParser;
 import parser.ThermStringifier;
-import therms.Additional;
 import therms.Therm;
 import tools.ListComparer;
 
@@ -26,7 +24,7 @@ public class AddPlugin extends EnginePlugin {
 
 		builder.add( left );
 
-		loop: while ( parser.hasNext() )
+		loop: while ( parser.hasCurrent() )
 		{
 			switch ( parser.getChar() ) {
 				case ' ':

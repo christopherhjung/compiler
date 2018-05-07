@@ -2,11 +2,7 @@ package functions;
 
 import java.util.List;
 
-import functions.ConstPlugin.Const;
-import functions.ExponentPlugin.Exponenional;
-import functions.SignPlugin.Negate;
 import therms.Therm;
-import tools.ReflectionUtils;
 
 public class ReducePlugin extends EnginePlugin {
 

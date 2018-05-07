@@ -1,17 +1,13 @@
 package functions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import builder.MultiplyBuilder;
 import parser.MathParser;
 import parser.ThermStringifier;
-import therms.Multiply;
 import therms.Therm;
-import therms.VarSet;
 import tools.ListComparer;
 
 public class MulPlugin extends EnginePlugin {
@@ -28,7 +24,7 @@ public class MulPlugin extends EnginePlugin {
 
 		builder.add( left );
 
-		loop: while ( parser.hasNext() )
+		loop: while ( parser.hasCurrent() )
 		{
 			switch ( parser.getChar() ) {
 				case '*':

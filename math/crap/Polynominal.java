@@ -1,8 +1,8 @@
 package crap;
 
-import therms.Additional;
-import therms.Const;
-import therms.Multiply;
+import functions.AddPlugin.Additional;
+import functions.ConstPlugin.Const;
+import functions.MulPlugin.Multiply;
 import therms.Therm;
 
 public class Polynominal extends Therm {

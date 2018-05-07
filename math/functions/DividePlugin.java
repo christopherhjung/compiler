@@ -2,9 +2,7 @@ package functions;
 
 import parser.MathParser;
 import parser.ThermStringifier;
-import therms.Const;
 import therms.Therm;
-import therms.VarSet;
 
 public class DividePlugin extends EnginePlugin {
 

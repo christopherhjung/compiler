@@ -2,11 +2,7 @@ package functions;
 
 import parser.MathParser;
 import parser.ThermStringifier;
-import therms.Const;
-import therms.Exponenional;
 import therms.Therm;
-import therms.VarSet;
-import tools.Utils;
 
 public class ExponentPlugin extends EnginePlugin {
 

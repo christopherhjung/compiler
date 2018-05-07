@@ -1,8 +1,8 @@
 package modifier;
 
-import therms.Const;
+import functions.ConstPlugin.Const;
+import functions.VariablePlugin.Variable;
 import therms.Therm;
-import therms.Variable;
 
 public class Integrate {
 

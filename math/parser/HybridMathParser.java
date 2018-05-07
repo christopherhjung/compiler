@@ -1,6 +1,5 @@
 package parser;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,9 +10,7 @@ public class HybridMathParser extends MathParser {
 
 	private Object[] objs;
 	private Therm thermElement;
-	private String stringElement;
 	private int objPosition = -1;
-	private int stringPosition = 0;
 	private boolean isTherm = false;
 
 	public HybridMathParser( Map<Integer, Set<EnginePlugin>> plugins )
@@ -25,7 +22,7 @@ public class HybridMathParser extends MathParser {
 	public Therm parse()
 	{
 		Therm superTherm = super.parse();
-		
+
 		if ( isTherm && superTherm == null )
 		{
 			Therm temp = thermElement;
@@ -35,55 +32,46 @@ public class HybridMathParser extends MathParser {
 
 		return superTherm;
 	}
-	
+
 	@Override
 	protected void reset()
 	{
 		super.reset();
 		thermElement = null;
-		stringElement = null;
 		objPosition = -1;
-		stringPosition = 0;
-		isTherm = false;
+		isTherm = true;
 		next();
 	}
 
 	@Override
 	public void next()
 	{
-		stringPosition++;
-		
-		if ( stringElement == null && thermElement == null && hasNext() 
-				|| isTherm || stringElement.length() <= stringPosition )
+		if ( isTherm || !super.hasNext() )
 		{
 			objPosition++;
-			stringPosition = 0;
 			isTherm = false;
-			if ( hasNext() )
+			if ( hasCurrent() )
 			{
 				if ( objs[objPosition] instanceof Therm )
 				{
 					isTherm = true;
 					thermElement = (Therm) objs[objPosition];
-					stringElement = null;
 				}
 				else
 				{
-					stringElement = objs[objPosition].toString();
-					thermElement = null;
+					setChars( objs[objPosition].toString().toCharArray() );
+					setPosition( 0 );
 				}
 			}
+		}
+		else
+		{
+			super.next();
 		}
 	}
 
 	@Override
-	public char getChar()
-	{
-		return stringElement == null ? 0 : stringElement.charAt( stringPosition );
-	}
-
-	@Override
-	public boolean hasNext()
+	public boolean hasCurrent()
 	{
 		return objs.length > objPosition;
 	}
@@ -100,27 +88,24 @@ public class HybridMathParser extends MathParser {
 	{
 		return objs[objPosition].toString();
 	}
-	
+
 	@Override
 	protected RestoreAction getRestorePoint()
 	{
 		Therm thermElement = this.thermElement;
-		String stringElement = this.stringElement;
 		int objPosition = this.objPosition;
-		int stringPosition = this.stringPosition;
-		boolean isTherm = this.isTherm;	
-		
+		boolean isTherm = this.isTherm;
+
 		return new RestoreAction() {
-			
+
 			@Override
 			public void restore()
 			{
 				HybridMathParser.this.thermElement = thermElement;
-				HybridMathParser.this.stringElement = stringElement;
 				HybridMathParser.this.objPosition = objPosition;
-				HybridMathParser.this.stringPosition = stringPosition;
-				HybridMathParser.this.isTherm = isTherm;	
+				HybridMathParser.this.isTherm = isTherm;
 			}
 		};
 	}
 }
+

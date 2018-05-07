@@ -1,7 +1,7 @@
 package crap;
 
-import therms.Chain;
-import therms.Exponenional;
+import functions.ExponentPlugin.Exponenional;
+import functions.FunctionPlugin.Chain;
 import therms.Therm;
 
 public class Root extends Exponenional {

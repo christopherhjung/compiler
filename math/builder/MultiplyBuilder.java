@@ -2,8 +2,7 @@ package builder;
 
 import java.util.ArrayList;
 
-import therms.Const;
-import therms.Multiply;
+import functions.MulPlugin.Multiply;
 import therms.Neutral;
 import therms.Therm;
 

@@ -4,7 +4,6 @@ import parser.MathEngine;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;
-import tools.ReflectionUtils;
 
 public class ConstPlugin extends EnginePlugin {
 
@@ -15,7 +14,7 @@ public class ConstPlugin extends EnginePlugin {
 
 		if ( engine.is( Character::isDigit ) )
 		{
-			while ( engine.isDigit() )
+			while ( engine.is( Character::isDigit ) )
 			{
 				builder.append( engine.nextChar() );
 			}
@@ -24,7 +23,7 @@ public class ConstPlugin extends EnginePlugin {
 			{
 				builder.append( engine.nextChar() );
 
-				while ( engine.isDigit() )
+				while ( engine.is( Character::isDigit ) )
 				{
 					builder.append( engine.nextChar() );
 				}

@@ -30,6 +30,11 @@ public abstract class Therm {
 		return null;
 	}
 
+	public String getType()
+	{
+		return null;
+	}
+
 	public boolean is( String type )
 	{
 		return Objects.equals( type, execute( "type" ) );
@@ -41,7 +46,11 @@ public abstract class Therm {
 		{
 			return this;
 		}
-		
+		else if ( key.equals( "type" ) )
+		{
+			return getType();
+		}
+
 		return null;
 	}
 

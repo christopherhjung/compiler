@@ -3,7 +3,6 @@ package functions;
 import java.util.ArrayList;
 import java.util.List;
 
-import functions.VariablePlugin.Variable;
 import parser.ParseException;
 import therms.Therm;
 

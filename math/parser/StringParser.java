@@ -2,8 +2,6 @@ package parser;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class StringParser<T> {
 
@@ -32,7 +30,7 @@ public abstract class StringParser<T> {
 			idle.set( true );
 		}
 
-		if ( hasNext() ) throw new ParseException( this );
+		if ( hasCurrent() ) throw new ParseException( this );
 
 		return result;
 	}
@@ -61,6 +59,11 @@ public abstract class StringParser<T> {
 	{
 		this.position = position;
 	}
+	
+	public void setChars( char[] chars )
+	{
+		this.chars = chars;
+	}
 
 	public char getChar()
 	{
@@ -74,19 +77,24 @@ public abstract class StringParser<T> {
 		return temp;
 	}
 
-	public boolean hasNext()
+	public boolean hasCurrent()
 	{
 		return position < chars.length;
+	}
+	
+	public boolean hasNext()
+	{
+		return position + 1 < chars.length;
 	}
 
 	public boolean is( char cha )
 	{
-		return hasNext() && getChar() == cha;
+		return hasCurrent() && getChar() == cha;
 	}
 
 	public boolean isNot( char cha )
 	{
-		return hasNext() && getChar() != cha;
+		return hasCurrent() && getChar() != cha;
 	}
 
 	public boolean eat( char cha )
@@ -104,7 +112,7 @@ public abstract class StringParser<T> {
 	{
 		StringBuilder sb = new StringBuilder();
 
-		while ( hasNext() && predicate.test( getChar() ) )
+		while ( hasCurrent() && predicate.test( getChar() ) )
 		{
 			sb.append( nextChar() );
 		}
@@ -147,7 +155,7 @@ public abstract class StringParser<T> {
 
 	public boolean is( Predicate<Character> predicate )
 	{
-		return hasNext() && predicate.test( getChar() );
+		return hasCurrent() && predicate.test( getChar() );
 	}
 
 	public boolean isAlpha()
@@ -179,7 +187,7 @@ public abstract class StringParser<T> {
 	@Override
 	public String toString()
 	{
-		if ( !hasNext() ) return "Parse finished";
+		if ( !hasCurrent() ) return "Parse finished";
 		return new String( chars, position, chars.length - position );
 	}
 }

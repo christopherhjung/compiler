@@ -1,6 +1,6 @@
 package crap;
 
-import therms.Const;
+import functions.ConstPlugin.Const;
 import therms.Therm;
 
 public class Cos extends Therm {

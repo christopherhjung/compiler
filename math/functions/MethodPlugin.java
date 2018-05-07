@@ -1,15 +1,8 @@
 package functions;
 
-import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.RestoreAction;
 
 import parser.MathEngine;
 import parser.MathParser;
@@ -81,7 +74,7 @@ public class MethodPlugin extends EnginePlugin {
 		return super.handle( parser );
 	}
 
-	public class Method extends Therm {
+	public class Method extends AbstractMethod {
 
 		private Therm[] vars;
 		private Therm inner;
@@ -106,34 +99,38 @@ public class MethodPlugin extends EnginePlugin {
 		}
 
 		@Override
+		public Therm call( Therm[] params )
+		{
+			if ( vars.length == params.length )
+			{
+				Scope old = getEngine().globalScope;
+				getEngine().globalScope = new Scope( old ) {
+					@Override
+					public Therm get( Object key )
+					{
+						if ( varSet.containsKey( key ) )
+						{
+							return (Therm) params[varSet.get( key )];
+						}
+
+						return super.get( key );
+					}
+				};
+
+				Therm result = (Therm) inner.execute( "do" );
+
+				getEngine().globalScope = old;
+
+				return result;
+			}
+			
+			return null;
+		}
+		
+		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "call" ) )
-			{
-				if ( vars.length == params.length )
-				{
-					Scope old = getEngine().globalScope;
-					getEngine().globalScope = new Scope( old ) {
-						@Override
-						public Therm get( Object key )
-						{
-							if ( varSet.containsKey( key ) )
-							{
-								return (Therm) params[varSet.get( key )];
-							}
-
-							return super.get( key );
-						}
-					};
-
-					Therm result = (Therm) inner.execute( "do" );
-
-					getEngine().globalScope = old;
-
-					return result;
-				}
-			}
-			else if ( key.equals( "do" ) )
+			if ( key.equals( "do" ) )
 			{
 				Scope old = getEngine().globalScope;
 				getEngine().globalScope = new Scope( old ) {

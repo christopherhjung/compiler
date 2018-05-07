@@ -6,11 +6,11 @@ import java.util.function.Predicate;
 
 import builder.AdditionalBuilder;
 import builder.ThermBuilder;
-import therms.Const;
+import functions.ConstPlugin.Const;
+import functions.VariablePlugin.Variable;
 import therms.ListPolynom;
 import therms.Polynom;
 import therms.Therm;
-import therms.Variable;
 
 public class TaylorSeries {
 

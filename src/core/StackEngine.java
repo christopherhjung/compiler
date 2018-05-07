@@ -1,16 +1,13 @@
 package core;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import functions.AddPlugin;
-import functions.AskPlugin;
 import functions.AssignmentPlugin;
 import functions.ConstPlugin;
 import functions.DividePlugin;
 import functions.ExponentPlugin;
 import functions.FunctionPlugin;
-import functions.IncrementPlugin;
 import functions.MethodPlugin;
 import functions.MulPlugin;
 import functions.ParenthesisPlugin;
@@ -81,7 +78,7 @@ public class StackEngine {
 			catch ( Throwable t )
 			{
 				System.out.println( t.getMessage() );
-				t.printStackTrace();
+				//t.printStackTrace();
 			}
 		}
 

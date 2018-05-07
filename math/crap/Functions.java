@@ -1,13 +1,13 @@
 package crap;
 
+import functions.ConstPlugin.Const;
 import functions.EnginePlugin;
+import functions.ExponentPlugin.Exponenional;
+import functions.VariablePlugin.Variable;
 import parser.MathParser;
 import parser.ThermStringifier;
-import therms.Const;
-import therms.Exponenional;
 import therms.Therm;
 import therms.VarSet;
-import therms.Variable;
 
 public enum Functions {
 	SQRT(new Exponenional( Variable.X, new Const( 0.5 ) )), 

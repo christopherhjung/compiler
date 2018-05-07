@@ -1,6 +1,6 @@
 package functions;
 
-import parser.MathEngine;
+import functions.FunctionPlugin.Chain;
 import parser.ThermStringifier;
 import therms.Therm;
 

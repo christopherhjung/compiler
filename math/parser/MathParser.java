@@ -61,7 +61,7 @@ public class MathParser extends StringParser<Therm> {
 
 		Therm result = parse();
 
-		while ( hasNext() )
+		while ( hasCurrent() )
 		{
 			Therm parsed = parseLevel( plugins, result );
 

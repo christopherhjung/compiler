@@ -3,8 +3,8 @@ package builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import therms.Additional;
-import therms.Const;
+import functions.AddPlugin.Additional;
+import functions.ConstPlugin.Const;
 import therms.Therm;
 
 public class AdditionalBuilder implements ThermBuilder {

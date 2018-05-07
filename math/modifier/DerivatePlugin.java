@@ -1,12 +1,12 @@
 package modifier;
 
+import functions.ConstPlugin.Const;
 import functions.EngineExecute;
 import functions.EnginePlugin;
+import functions.VariablePlugin.Variable;
 import parser.ThermStringifier;
-import therms.Const;
 import therms.Therm;
 import therms.VarSet;
-import therms.Variable;
 
 public class DerivatePlugin extends EnginePlugin {
 

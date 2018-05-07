@@ -1,5 +1,7 @@
 package therms;
 
+import functions.ConstPlugin.Const;
+import functions.VariablePlugin.Variable;
 import parser.ThermStringifier;
 
 public abstract class Polynom extends Therm {

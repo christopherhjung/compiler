@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import functions.AddPlugin.Additional;
+import functions.ConstPlugin.Const;
+import functions.MulPlugin.Multiply;
+import functions.VariablePlugin.Variable;
 import parser.ThermStringifier;
-import therms.Additional;
-import therms.Const;
-import therms.Multiply;
 import therms.Therm;
 import therms.VarSet;
-import therms.Variable;
 
 public class Vector extends Therm implements RowHandler {
 

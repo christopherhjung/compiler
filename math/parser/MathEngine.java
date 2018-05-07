@@ -1,13 +1,11 @@
 package parser;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import functions.EnginePlugin;
-import functions.VariablePlugin.Variable;
 import parser.Space.Scope;
 import therms.Therm;
 
