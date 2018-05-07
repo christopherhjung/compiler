@@ -43,8 +43,6 @@ public class MathParser extends StringParser<Therm> {
 		return result;
 	}
 
-	private int c = 0;
-
 	@Override
 	public Therm parse()
 	{

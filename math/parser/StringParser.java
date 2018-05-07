@@ -60,9 +60,10 @@ public abstract class StringParser<T> {
 		this.position = position;
 	}
 	
-	public void setChars( char[] chars )
+	public void reset( String str )
 	{
-		this.chars = chars;
+		this.chars = str.toCharArray();
+		this.position = 0;
 	}
 
 	public char getChar()

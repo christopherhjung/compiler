@@ -59,8 +59,7 @@ public class HybridMathParser extends MathParser {
 				}
 				else
 				{
-					setChars( objs[objPosition].toString().toCharArray() );
-					setPosition( 0 );
+					reset( objs[objPosition].toString() );
 				}
 			}
 		}
@@ -95,12 +94,15 @@ public class HybridMathParser extends MathParser {
 		Therm thermElement = this.thermElement;
 		int objPosition = this.objPosition;
 		boolean isTherm = this.isTherm;
+		
+		RestoreAction action = super.getRestorePoint();
 
 		return new RestoreAction() {
 
 			@Override
 			public void restore()
 			{
+				action.restore();
 				HybridMathParser.this.thermElement = thermElement;
 				HybridMathParser.this.objPosition = objPosition;
 				HybridMathParser.this.isTherm = isTherm;
