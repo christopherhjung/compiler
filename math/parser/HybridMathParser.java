@@ -3,7 +3,6 @@ package parser;
 import java.util.Map;
 import java.util.Set;
 
-import functions.EnginePlugin;
 import therms.Therm;
 
 public class HybridMathParser extends MathParser {
@@ -39,7 +38,7 @@ public class HybridMathParser extends MathParser {
 		super.reset();
 		thermElement = null;
 		objPosition = -1;
-		isTherm = true;
+		isTherm = objs != null;
 		next();
 	}
 
@@ -52,14 +51,19 @@ public class HybridMathParser extends MathParser {
 			isTherm = false;
 			if ( hasCurrent() )
 			{
-				if ( objs[objPosition] instanceof Therm )
+				Object current = objs[objPosition];
+				if ( current instanceof Therm )
 				{
 					isTherm = true;
-					thermElement = (Therm) objs[objPosition];
+					thermElement = (Therm) current;
+				}
+				else if ( current instanceof char[] )
+				{
+					resetBuffer( (char[]) current );
 				}
 				else
 				{
-					reset( objs[objPosition].toString() );
+					resetBuffer( current.toString() );
 				}
 			}
 		}
@@ -72,16 +76,24 @@ public class HybridMathParser extends MathParser {
 	@Override
 	public boolean hasCurrent()
 	{
-		return objs.length > objPosition;
+		return objPosition < objs.length;
 	}
 
-	public Therm eval( Object... objs )
+	public Therm eval( Object[] objs )
 	{
 		this.objs = objs;
 		reset();
 		return parse();
 	}
-	
+
+	@Override
+	public Therm eval( char[] chars )
+	{
+		return eval( new Object[] {
+				chars
+		} );
+	}
+
 	@Override
 	public String toString()
 	{
@@ -94,7 +106,7 @@ public class HybridMathParser extends MathParser {
 		Therm thermElement = this.thermElement;
 		int objPosition = this.objPosition;
 		boolean isTherm = this.isTherm;
-		
+
 		RestoreAction action = super.getRestorePoint();
 
 		return new RestoreAction() {
@@ -110,4 +122,3 @@ public class HybridMathParser extends MathParser {
 		};
 	}
 }
-

@@ -1,10 +1,13 @@
 package functions;
 
 import functions.FunctionPlugin.Chain;
+import parser.EngineExecute;
+import parser.EnginePlugin;
+import parser.PluginExtention;
 import parser.ThermStringifier;
 import therms.Therm;
 
-public class SinPlugin extends EnginePlugin {
+public class SinPlugin implements PluginExtention {
 
 	private final Sin instance = new Sin();
 

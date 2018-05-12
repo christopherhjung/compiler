@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import functions.EnginePlugin;
 import therms.Therm;
 
 public class MathParser extends StringParser<Therm> {

@@ -22,7 +22,7 @@ public abstract class Therm {
 	{
 		Object result = execute( key );
 
-		if ( type.isAssignableFrom( result.getClass() ) )
+		if ( result != null && type.isAssignableFrom( result.getClass() ) )
 		{
 			return type.cast( result );
 		}

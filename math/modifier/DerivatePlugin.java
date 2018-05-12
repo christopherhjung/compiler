@@ -1,9 +1,9 @@
 package modifier;
 
 import functions.ConstPlugin.Const;
-import functions.EngineExecute;
-import functions.EnginePlugin;
 import functions.VariablePlugin.Variable;
+import parser.EngineExecute;
+import parser.EnginePlugin;
 import parser.ThermStringifier;
 import therms.Therm;
 import therms.VarSet;

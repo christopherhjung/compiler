@@ -1,9 +1,7 @@
 /functions/
-/parser/
+/tools/
 /core/
-/therms/
-/builder/
 /crap/
-/maths/
-/matrix/
 /modifier/
+/parser/
+/pluginextentions/

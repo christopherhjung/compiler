@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;
@@ -12,6 +13,12 @@ import tools.ListComparer;
 
 public class AddPlugin extends EnginePlugin {
 
+	@Override
+	public String getName()
+	{
+		return "add";
+	}
+	
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
@@ -32,6 +39,7 @@ public class AddPlugin extends EnginePlugin {
 					break;
 
 				case '+':
+					parser.next();
 				case '-':
 					builder.add( parser.parse() );
 					break;

@@ -5,20 +5,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import functions.EnginePlugin;
 import parser.Space.Scope;
 import therms.Therm;
+import tools.Run;
 
-public class MathEngine { 
+public class MathEngine {
 	private Map<Integer, Set<EnginePlugin>> plugins;
-	
-	public Map<Therm, Therm> variables = new HashMap<>();
-	
+
 	public Scope globalScope = new Scope();
+	public Scope currentScope = globalScope;
+
+	public void enterScope( Scope scope )
+	{
+		scope.setParentScope( currentScope );
+		currentScope = scope;
+	}
+	
+	public void leaveScope()
+	{
+		currentScope = currentScope.getParentScope();
+	}
 
 	public MathEngine( Map<Integer, Set<EnginePlugin>> plugins )
 	{
 		this.plugins = plugins;
+	}
+
+	public <T extends MathParser> T getParser( Class<T> parserClass )
+	{
+		return Run.safe( () -> parserClass.getConstructor( Map.class ).newInstance( plugins ) );
 	}
 
 	public Therm eval( String str )
@@ -26,13 +41,13 @@ public class MathEngine {
 
 		return new MathParser( plugins ).eval( str );
 	}
-	
+
 	public Therm eval( Object... obj )
 	{
 
 		return new HybridMathParser( plugins ).eval( obj );
 	}
-	
+
 	public Therm eval( List<Object> list )
 	{
 

@@ -2,9 +2,12 @@ package functions;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import parser.EngineExecute;
+import parser.EnginePlugin;
 import parser.MathEngine;
 import parser.MathParser;
 import parser.ThermStringifier;
@@ -14,22 +17,12 @@ import tools.Run;
 
 public class FunctionPlugin extends EnginePlugin {
 
-	private HashMap<String, EnginePlugin> plugins = new HashMap<>();
-
-	{
-		plugins.put( "sin", new SinPlugin() );
-		plugins.put( "reduce", new ReducePlugin() );
-		plugins.put( "derivate", new DerivatePlugin() );
-		plugins.put( "log", new LogPlugin() );
-	}
-
 	@Override
-	public void onStart( MathEngine engine )
+	public String getName()
 	{
-		plugins.values().forEach( plugin -> plugin.onStart( engine ) );
-		super.onStart( engine );
+		return "function";
 	}
-
+	
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
@@ -60,32 +53,16 @@ public class FunctionPlugin extends EnginePlugin {
 			{
 				return null;
 			}
-
-			Class<?>[] classes = new Class<?>[therms.size()];
-			Object[] thermsArr = new Therm[therms.size()];
-
-			for ( int i = 0 ; i < therms.size() ; i++ )
-			{
-				thermsArr[i] = therms.get( i );
-				classes[i] = thermsArr[i].getClass();
-			}
-
+			
 			String methodName = left.get( "value", String.class ).toLowerCase();
 
-			EnginePlugin function = plugins.get( methodName );
+			Object[] params =  therms.toArray();
+			therm = (Therm) handle( methodName, params );
+			
 
-			if ( function != null )
+			/*if ( therm == null )
 			{
-				List<Method> methods = ReflectionUtils.getMethodsAnnotatedWith( function.getClass(),
-						EngineExecute.class );
-				Method method = ReflectionUtils.findBestMethod( methods, classes );
-				therm = ReflectionUtils.safeInvoke( null, Therm.class, function, method, thermsArr );
-			}
-			else
-			{
-				therm = Run
-						.safe( () -> (Therm) getEngine().globalScope.get( methodName ).execute( "call", thermsArr ) );
-			}
+				therm = 			}*/
 		}
 
 		return therm;

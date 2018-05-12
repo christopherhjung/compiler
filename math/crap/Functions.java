@@ -1,9 +1,9 @@
 package crap;
 
 import functions.ConstPlugin.Const;
-import functions.EnginePlugin;
 import functions.ExponentPlugin.Exponenional;
 import functions.VariablePlugin.Variable;
+import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;

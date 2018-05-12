@@ -7,19 +7,22 @@ public abstract class StringParser<T> {
 
 	private int position;
 	private char[] chars;
-	private AtomicBoolean idle = new AtomicBoolean( true );
+	private boolean idle = true;
 
-	public abstract T parse();
+	protected abstract T parse();
 
-	public final T eval( char[] chars )
+	public T eval( char[] chars )
 	{
-		if ( !idle.compareAndSet( true, false ) )
+		if ( !idle )
 		{
 			throw new ParseException( "Parser is already started" );
 		}
 
-		this.chars = chars;
+		idle = false;
+
+		resetBuffer( chars );
 		reset();
+		
 		T result;
 		try
 		{
@@ -27,7 +30,7 @@ public abstract class StringParser<T> {
 		}
 		finally
 		{
-			idle.set( true );
+			idle = true;
 		}
 
 		if ( hasCurrent() ) throw new ParseException( this );
@@ -35,7 +38,7 @@ public abstract class StringParser<T> {
 		return result;
 	}
 
-	public final T eval( String str )
+	public T eval( String str )
 	{
 		return eval( str.replace( " ", "" ).toCharArray() );
 	}
@@ -59,10 +62,15 @@ public abstract class StringParser<T> {
 	{
 		this.position = position;
 	}
-	
-	public void reset( String str )
+
+	public void resetBuffer( String str )
 	{
-		this.chars = str.toCharArray();
+		resetBuffer( str.toCharArray() );
+	}
+
+	public void resetBuffer( char[] str )
+	{
+		this.chars = str;
 		this.position = 0;
 	}
 
@@ -82,7 +90,7 @@ public abstract class StringParser<T> {
 	{
 		return position < chars.length;
 	}
-	
+
 	public boolean hasNext()
 	{
 		return position + 1 < chars.length;
@@ -117,7 +125,7 @@ public abstract class StringParser<T> {
 		{
 			sb.append( nextChar() );
 		}
-		
+
 		return sb.toString();
 	}
 

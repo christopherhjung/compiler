@@ -28,6 +28,16 @@ public class Space {
 		{
 			this( null );
 		}
+		
+		public void setParentScope( Scope parentScope )
+		{
+			this.parentScope = parentScope;
+		}
+		
+		public Scope getParentScope()
+		{
+			return parentScope;
+		}
 
 		public Scope( Scope parentScope )
 		{

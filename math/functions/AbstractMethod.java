@@ -1,5 +1,7 @@
 package functions;
 
+import java.util.Arrays;
+
 import parser.ThermStringifier;
 import therms.Therm;
 
@@ -10,7 +12,13 @@ public abstract class AbstractMethod extends Therm {
 	{
 		if ( key.equals( "call" ) )
 		{
-			return call( (Therm[]) params );
+			Therm[] therms = new Therm[params.length];
+			for ( int i = 0 ; i < params.length ; i++ )
+			{
+				therms[i] = (Therm) params[i];
+			}
+			
+			return call( therms );
 		}
 
 		return super.execute( key, params );

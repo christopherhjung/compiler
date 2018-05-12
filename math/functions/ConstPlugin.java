@@ -1,11 +1,48 @@
 package functions;
 
+import parser.EnginePlugin;
 import parser.MathEngine;
 import parser.MathParser;
+import parser.MathProgram;
 import parser.ThermStringifier;
 import therms.Therm;
 
 public class ConstPlugin extends EnginePlugin {
+
+	@Override
+	public String getName()
+	{
+		return "const";
+	}
+
+	@Override
+	protected void onCreate( MathProgram program )
+	{
+		super.onCreate( program );
+
+		program.installPlugin( () -> new EnginePlugin() {
+
+			@Override
+			public String getName()
+			{
+				return "sign." + ConstPlugin.this.getName();
+			}
+
+			@Override
+			public Object handle( String key, Object... params )
+			{
+				Therm therm = (Therm) params[0];
+				if ( key.equals( "negate" ) && therm.is( "const" ) )
+				{
+					Double value = therm.get( "value", Double.class );
+
+					return new Const( -value );
+				}
+
+				return super.handle( key, params );
+			}
+		} );
+	}
 
 	@Override
 	public Therm handle( MathParser engine )
@@ -43,7 +80,7 @@ public class ConstPlugin extends EnginePlugin {
 		{
 			this.value = value;
 		}
-		
+
 		@Override
 		public MathEngine getEngine()
 		{

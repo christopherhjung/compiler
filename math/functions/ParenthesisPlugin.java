@@ -1,9 +1,15 @@
 package functions;
 
+import parser.EnginePlugin;
 import parser.MathParser;
 import therms.Therm;
 
 public class ParenthesisPlugin extends EnginePlugin {
+	@Override
+	public String getName()
+	{
+		return "parenthesis";
+	}
 
 	@Override
 	public Therm handle( MathParser parser )

@@ -5,12 +5,19 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;
 import tools.ListComparer;
 
 public class MulPlugin extends EnginePlugin {
+	
+	@Override
+	public String getName()
+	{
+		return "mul";
+	}
 
 	@Override
 	public Therm handle( MathParser parser, Therm left )
@@ -84,7 +91,7 @@ public class MulPlugin extends EnginePlugin {
 					list.add( therms.get( i ).execute( "do" ) );
 				}
 
-				return eval(list);
+				return eval( list );
 			}
 
 			return super.execute( key, params );

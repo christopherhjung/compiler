@@ -4,20 +4,47 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import parser.EnginePlugin;
 import parser.MathEngine;
 import parser.MathParser;
+import parser.MathProgram;
+import parser.PluginExtention;
 import parser.Space.Scope;
 import parser.ThermStringifier;
 import therms.Therm;
+import tools.Run;
 
 public class MethodPlugin extends EnginePlugin {
 
-	private Scope currentScope = null;
-
 	@Override
-	public void reset()
+	public String getName()
 	{
-		currentScope = getEngine().globalScope;
+		return "method";
+	}
+
+	protected void onCreate( MathProgram program )
+	{
+		super.onCreate( program );
+
+		program.installPlugin( () -> new EnginePlugin() {
+
+			@Override
+			public String getName()
+			{
+				return "function.method";
+			}
+
+			@Override
+			public Object handle( String key, Object... params )
+			{
+				Therm therm = getEngine().currentScope.get( key );
+				if ( therm != null )
+				{
+					therm = (Therm) therm.execute( "call", params );
+				}
+				return therm;
+			}
+		} );
 	}
 
 	@Override
@@ -103,8 +130,7 @@ public class MethodPlugin extends EnginePlugin {
 		{
 			if ( vars.length == params.length )
 			{
-				Scope old = getEngine().globalScope;
-				getEngine().globalScope = new Scope( old ) {
+				getEngine().enterScope( new Scope() {
 					@Override
 					public Therm get( Object key )
 					{
@@ -115,25 +141,24 @@ public class MethodPlugin extends EnginePlugin {
 
 						return super.get( key );
 					}
-				};
+				} );
 
-				Therm result = (Therm) inner.execute( "do" );
+				Therm result = (Therm) inner.execute( "assign" );
 
-				getEngine().globalScope = old;
+				getEngine().leaveScope();
 
 				return result;
 			}
-			
+
 			return null;
 		}
-		
+
 		@Override
 		public Object execute( String key, Object... params )
 		{
 			if ( key.equals( "do" ) )
 			{
-				Scope old = getEngine().globalScope;
-				getEngine().globalScope = new Scope( old ) {
+				getEngine().enterScope( new Scope() {
 					@Override
 					public Therm get( Object key )
 					{
@@ -144,11 +169,11 @@ public class MethodPlugin extends EnginePlugin {
 
 						return super.get( key );
 					}
-				};
+				} );
 
 				Therm result = (Therm) inner.execute( "do" );
 
-				getEngine().globalScope = old;
+				getEngine().leaveScope();
 				return new Method( vars, result );
 			}
 			else if ( key.equals( "type" ) )

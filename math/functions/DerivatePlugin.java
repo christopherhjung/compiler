@@ -3,24 +3,49 @@ package functions;
 import java.util.ArrayList;
 import java.util.List;
 
+import parser.EngineExecute;
+import parser.EnginePlugin;
 import parser.ParseException;
 import therms.Therm;
 
 public class DerivatePlugin extends EnginePlugin {
 
-	@EngineExecute
-	public Therm execute( Therm therm ){
-		Therm method = getEngine().globalScope.get( therm );
-		
+	@Override
+	public String getName()
+	{
+		return "function.derivate";
+	}
+
+	@Override
+	public Object handle( String key, Object... params )
+	{
+		if ( key.equals( "derivate" ) )
+		{
+			if ( params.length == 1 )
+			{
+				return execute( (Therm) params[0] );
+			}
+			else if ( params.length == 2 )
+			{
+				return execute( (Therm) params[0], (Therm) params[1] );
+			}
+		}
+
+		return super.handle( key, params );
+	}
+
+	public Therm execute( Therm therm )
+	{
+		Therm method = getEngine().currentScope.get( therm );
+
 		if ( method != null && method.is( "method" ) )
 		{
 			return execute( method.get( "value", Therm.class ), method.get( "param", Therm.class ) );
 		}
-		
+
 		return null;
 	}
-	
-	@EngineExecute
+
 	public Therm execute( Therm therm, Therm var )
 	{
 		if ( !var.is( "variable" ) )
@@ -28,7 +53,7 @@ public class DerivatePlugin extends EnginePlugin {
 			return null;
 		}
 
-		return eval(var,"->",derivate( therm, var ));
+		return eval( var, "->", derivate( therm, var ) );
 	}
 
 	public Therm derivate( Therm therm, Therm var )
@@ -99,7 +124,7 @@ public class DerivatePlugin extends EnginePlugin {
 		else if ( therm.is( "variable" ) )
 		{
 			String name = therm.get( "value", String.class );
-						
+
 			String derivateVar = var.get( "value", String.class );
 			if ( derivateVar.equals( name ) )
 			{

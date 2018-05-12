@@ -1,5 +1,6 @@
 package functions;
 
+import parser.EnginePlugin;
 import parser.MathEngine;
 import parser.MathParser;
 import parser.ThermStringifier;
@@ -7,6 +8,12 @@ import therms.Therm;
 
 public class VariablePlugin extends EnginePlugin {
 
+	@Override
+	public String getName()
+	{
+		return "variable";
+	}
+	
 	@Override
 	public Therm handle( MathParser parser )
 	{
@@ -54,11 +61,11 @@ public class VariablePlugin extends EnginePlugin {
 			else if ( key.equals( "assign" ) && params.length == 1 )
 			{
 				Therm therm = (Therm) params[0];
-				getEngine().globalScope.set( this, therm );
+				getEngine().currentScope.set( this, therm );
 			}
 			else if ( key.equals( "do" ) )
 			{
-				Therm result = getEngine().globalScope.get( this );
+				Therm result = getEngine().currentScope.get( this );
 
 				if ( result == null )
 				{

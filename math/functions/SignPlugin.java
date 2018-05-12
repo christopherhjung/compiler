@@ -1,10 +1,17 @@
 package functions;
 
+import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;
 
 public class SignPlugin extends EnginePlugin {
+
+	@Override
+	public String getName()
+	{
+		return "sign";
+	}
 
 	@Override
 	public Therm handle( MathParser parser )
@@ -24,7 +31,17 @@ public class SignPlugin extends EnginePlugin {
 
 		if ( invert )
 		{
-			therm = new Negate( therm );
+			Therm negate = (Therm) handle( "negate", therm );
+
+			
+			if ( negate == null )
+			{
+				therm = new Negate( therm );
+			}
+			else
+			{
+				therm = negate;
+			}
 		}
 
 		return therm;
@@ -44,14 +61,11 @@ public class SignPlugin extends EnginePlugin {
 		{
 			if ( key.equals( "type" ) )
 			{
-				return therm.execute( key );
+				return "negate";
 			}
 			else if ( key.equals( "value" ) )
 			{
-				if ( therm.is( "const" ) )
-				{
-					return -therm.get( "value", Double.class );
-				}
+				return therm;
 			}
 
 			return super.execute( key, params );

@@ -1,10 +1,14 @@
 package tools;
 
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.TreeSet;
 
 public class ListComparer {
 
-	public static boolean containsSame( List<? extends Object> a, List<? extends Object> b )
+	public static <T> boolean containsSame( List<T> a, List<T> b, Comparator<T> comp )
 	{
 		if ( a.size() != b.size() )
 		{
@@ -19,7 +23,7 @@ public class ListComparer {
 		{
 			for ( int j = 0 ; j < size ; j++ )
 			{
-				if( !used[j] && a.get( i ).equals( b.get( j ) ) ){
+				if( !used[j] && comp.compare(a.get( i ), b.get( j ) ) == 0 ){
 					used[j] = true;
 					pairs++;
 					break;
@@ -29,5 +33,4 @@ public class ListComparer {
 
 		return pairs == size;
 	}
-
 }

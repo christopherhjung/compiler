@@ -1,11 +1,18 @@
 package functions;
 
+import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
 import therms.Therm;
 
 public class AssignmentPlugin extends EnginePlugin {
 
+	@Override
+	public String getName()
+	{
+		return "assign";
+	}
+	
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
