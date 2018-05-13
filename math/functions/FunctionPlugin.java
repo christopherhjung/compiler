@@ -10,6 +10,7 @@ import parser.EngineExecute;
 import parser.EnginePlugin;
 import parser.MathEngine;
 import parser.MathParser;
+import parser.MathProgram;
 import parser.ThermStringifier;
 import therms.Therm;
 import tools.ReflectionUtils;
@@ -22,7 +23,56 @@ public class FunctionPlugin extends EnginePlugin {
 	{
 		return "function";
 	}
-	
+
+	@Override
+	protected void onCreate( MathProgram program )
+	{
+		super.onCreate( program );
+		program.installPlugin( () -> new EnginePlugin() {
+
+			@Override
+			public String getName()
+			{
+				return "function.variable";
+			}
+
+			@Override
+			public Object handle( String key, Object... params )
+			{
+				if ( key.equals( "call" ) )
+				{
+					Therm left = (Therm) params[0];
+
+					if ( left.is( "variable" ) )
+					{
+						Object[] objs = (Object[]) params[1];
+						return super.handle( left.get( "value", String.class ), objs );
+					}
+				}
+
+				return super.handle( key, params );
+			}
+		} );
+
+		program.installPlugin( () -> new EnginePlugin() {
+
+			@Override
+			public String getName()
+			{
+				return "function.callable";
+			}
+
+			@Override
+			public Object handle( String key, Object... params )
+			{
+				Therm left = (Therm) params[0];
+				Object[] objs = (Object[]) params[1];
+
+				return left.execute( "call", objs );
+			}
+		} );
+	}
+
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
@@ -33,36 +83,22 @@ public class FunctionPlugin extends EnginePlugin {
 			return null;
 		}
 
-		if ( left.is( "variable" ) )
+		if ( parser.eat( '(' ) )
 		{
 			List<Therm> therms = new ArrayList<>();
 
-			if ( parser.eat( '(' ) )
+			for ( ; parser.isNot( ')' ) ; )
 			{
-
-				for ( ; parser.isNot( ')' ) ; )
-				{
-					Therm param = parser.parseWithLevelReset();
-					therms.add( param );
-					parser.eat( ',' );
-				}
-
-				parser.eat( ')' );
+				Therm param = parser.parseWithLevelReset();
+				therms.add( param );
+				parser.eat( ',' );
 			}
-			else
-			{
-				return null;
-			}
-			
-			String methodName = left.get( "value", String.class ).toLowerCase();
 
-			Object[] params =  therms.toArray();
-			therm = (Therm) handle( methodName, params );
-			
+			parser.eat( ')' );
 
-			/*if ( therm == null )
-			{
-				therm = 			}*/
+			Object[] params = therms.toArray();
+
+			return (Therm) super.handle( "call", left, params );
 		}
 
 		return therm;
@@ -70,13 +106,13 @@ public class FunctionPlugin extends EnginePlugin {
 
 	public class Chain extends Therm {
 
-		private final Therm outer;
-		private final Therm[] inner;
+		private final Therm[] outer;
+		private final Therm method;
 
-		public Chain( Therm outer, Therm... inner )
+		public Chain( Therm method, Therm... outer )
 		{
+			this.method = method;
 			this.outer = outer;
-			this.inner = inner;
 		}
 
 		@Override
@@ -85,14 +121,15 @@ public class FunctionPlugin extends EnginePlugin {
 			if ( key.equals( "derivate" ) )
 			{
 				ArrayList<Object> builder = new ArrayList<>();
-				builder.add( inner[0].execute( "derivate", params ) );
-				builder.add( "*" );
+				builder.add( "derivate(" );
+				builder.add( method );
+				builder.add( ")*" );
 				builder.add( outer.execute( "derivate" ) );
 				builder.add( '(' );
 				builder.add( inner[0] );
 				builder.add( ')' );
 
-				return eval( builder.toArray( new Object[builder.size()] ) );
+				return eval( builder );
 			}
 			else if ( key.equals( "reduce" ) )
 			{

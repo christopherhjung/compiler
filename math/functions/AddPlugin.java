@@ -79,22 +79,7 @@ public class AddPlugin extends EnginePlugin {
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "derivate" ) )
-			{
-				List<Object> builder = new ArrayList<>();
-				for ( Therm therm : this )
-				{
-					if ( builder.size() > 0 )
-					{
-						builder.add( '+' );
-					}
-
-					builder.add( therm.execute( key, params ) );
-				}
-
-				return eval( builder );
-			}
-			else if ( key.equals( "type" ) )
+			if ( key.equals( "type" ) )
 			{
 				return "add";
 			}
@@ -102,7 +87,7 @@ public class AddPlugin extends EnginePlugin {
 			{
 				return therms;
 			}
-			else if ( key.equals( "do" ) )
+			else if ( key.equals( "insert" ) )
 			{
 				List<Object> list = new ArrayList<>();
 
@@ -113,7 +98,7 @@ public class AddPlugin extends EnginePlugin {
 						list.add( "+" );
 					}
 
-					list.add( therms.get( i ).execute( "do" ) );
+					list.add( therms.get( i ).execute( "insert" ) );
 				}
 
 				return eval(list);

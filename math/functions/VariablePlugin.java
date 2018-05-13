@@ -63,7 +63,7 @@ public class VariablePlugin extends EnginePlugin {
 				Therm therm = (Therm) params[0];
 				getEngine().currentScope.set( this, therm );
 			}
-			else if ( key.equals( "do" ) )
+			else if ( key.equals( "insert" ) )
 			{
 				Therm result = getEngine().currentScope.get( this );
 

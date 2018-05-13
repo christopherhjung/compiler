@@ -11,7 +11,6 @@ import java.util.TreeSet;
 
 import parser.EngineExecute;
 import parser.EnginePlugin;
-import parser.PluginExtention;
 import therms.Therm;
 import tools.ListComparer;
 
@@ -31,7 +30,7 @@ public class ReducePlugin extends EnginePlugin {
 	@Override
 	public String getName()
 	{
-		return "function.reduce";
+		return "function.variable.reduce";
 	}
 
 	private Therm reduce( Therm therm )

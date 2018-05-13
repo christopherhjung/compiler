@@ -1,13 +1,17 @@
 package functions;
 
+import org.omg.IOP.ENCODING_CDR_ENCAPS;
+
 import functions.FunctionPlugin.Chain;
 import parser.EngineExecute;
 import parser.EnginePlugin;
+import parser.MathParser;
+import parser.MathProgram;
 import parser.PluginExtention;
 import parser.ThermStringifier;
 import therms.Therm;
 
-public class SinPlugin implements PluginExtention {
+public class SinPlugin extends EnginePlugin {
 
 	private final Sin instance = new Sin();
 
@@ -21,6 +25,32 @@ public class SinPlugin implements PluginExtention {
 	public Therm execute( Therm therm )
 	{
 		return new Chain( instance, therm );
+	}
+
+	@Override
+	protected void onCreate( MathProgram program )
+	{
+		super.onCreate( program );
+		program.installPlugin( () -> new EnginePlugin() {
+
+			@Override
+			public String getName()
+			{
+				return "function.derivate.sin";
+			}
+
+			@Override
+			public Object handle( String key, Object... params )
+			{
+				if ( key.equals( "derivate" ) )
+				{
+					return eval("cos");
+				}
+
+				return super.handle( key, params );
+			}
+
+		} );
 	}
 
 	public class Sin extends Therm {
@@ -44,7 +74,7 @@ public class SinPlugin implements PluginExtention {
 			}
 			else if ( key.equals( "derivate" ) )
 			{
-				return eval("cos");
+				return eval( "cos" );
 			}
 
 			return super.execute( key, params );

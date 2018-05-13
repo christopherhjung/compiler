@@ -1,6 +1,7 @@
 package functions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import parser.EngineExecute;
@@ -13,7 +14,7 @@ public class DerivatePlugin extends EnginePlugin {
 	@Override
 	public String getName()
 	{
-		return "function.derivate";
+		return "function.variable.derivate";
 	}
 
 	@Override
@@ -40,7 +41,7 @@ public class DerivatePlugin extends EnginePlugin {
 
 		if ( method != null && method.is( "method" ) )
 		{
-			return execute( method.get( "value", Therm.class ), method.get( "param", Therm.class ) );
+			return execute( method.get( "value", Therm.class ), (Therm)((Object[])method.execute( "params" ))[0] );
 		}
 
 		return null;
@@ -126,14 +127,7 @@ public class DerivatePlugin extends EnginePlugin {
 			String name = therm.get( "value", String.class );
 
 			String derivateVar = var.get( "value", String.class );
-			if ( derivateVar.equals( name ) )
-			{
-				return eval( 1 );
-			}
-			else
-			{
-				return eval( 0 );
-			}
+			return eval( derivateVar.equals( name ) ? 1 : 0 );
 		}
 		else if ( therm.is( "divide" ) )
 		{
@@ -144,6 +138,6 @@ public class DerivatePlugin extends EnginePlugin {
 					derivate( denominators, var ), ")/", denominators, "^2" );
 		}
 
-		throw new ParseException( "Unknow derivate to" + therm.execute( "type" ) );
+		return (Therm) handle( "derivate", therm, var );
 	}
 }

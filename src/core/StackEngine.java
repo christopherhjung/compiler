@@ -11,6 +11,7 @@ import functions.DerivatePlugin;
 import functions.DividePlugin;
 import functions.ExponentPlugin;
 import functions.FunctionPlugin;
+import functions.LogPlugin;
 import functions.MethodPlugin;
 import functions.MulPlugin;
 import functions.ParenthesisPlugin;
@@ -43,6 +44,7 @@ public class StackEngine {
 		program.installPlugin( 18, ParenthesisPlugin.class );
 		program.installPlugin( ConstPlugin.class );
 		
+		//program.installPlugin( LogPlugin.class );
 		program.installPlugin( ReducePlugin.class );
 		program.installPlugin( DerivatePlugin.class );
 
@@ -63,7 +65,7 @@ public class StackEngine {
 			{
 				long begin = System.currentTimeMillis();
 				Therm result = engine.eval( therm );
-				System.out.println( "Result:" + result.execute( "do" ) );
+				System.out.println( "Result:" + result.execute( "insert" ) );
 				long end = System.currentTimeMillis();
 
 				System.out.println( "Time need:" + (end - begin) );
@@ -71,7 +73,7 @@ public class StackEngine {
 			catch ( Throwable t )
 			{
 				System.out.println( t.getMessage() );
-				//t.printStackTrace();
+				t.printStackTrace();
 			}
 		}
 

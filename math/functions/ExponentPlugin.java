@@ -71,9 +71,9 @@ public class ExponentPlugin extends EnginePlugin {
 			{
 				return exponent;
 			}
-			else if ( key.equals( "do" ) )
+			else if ( key.equals( "insert" ) )
 			{
-				return eval( basis.execute( "do" ), "^", exponent.execute( "do" ) );
+				return eval( basis.execute( "insert" ), "^", exponent.execute( "insert" ) );
 			}
 
 			return super.execute( key, params );

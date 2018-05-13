@@ -77,7 +77,7 @@ public class MulPlugin extends EnginePlugin {
 			{
 				return therms;
 			}
-			else if ( key.equals( "do" ) )
+			else if ( key.equals( "insert" ) )
 			{
 				List<Object> list = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class MulPlugin extends EnginePlugin {
 						list.add( "*" );
 					}
 
-					list.add( therms.get( i ).execute( "do" ) );
+					list.add( therms.get( i ).execute( "insert" ) );
 				}
 
 				return eval( list );

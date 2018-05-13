@@ -45,8 +45,8 @@ public class AssignmentPlugin extends EnginePlugin {
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if( key.equals( "do" ) ){
-				Therm newRight = (Therm)right.execute( "do" );
+			if( key.equals( "insert" ) ){
+				Therm newRight = (Therm)right.execute( "insert" );
 				left.execute( "assign", newRight );
 				return newRight;
 			}

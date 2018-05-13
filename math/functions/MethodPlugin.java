@@ -31,7 +31,7 @@ public class MethodPlugin extends EnginePlugin {
 			@Override
 			public String getName()
 			{
-				return "function.method";
+				return "function.variable.method";
 			}
 
 			@Override
@@ -40,7 +40,7 @@ public class MethodPlugin extends EnginePlugin {
 				Therm therm = getEngine().currentScope.get( key );
 				if ( therm != null )
 				{
-					therm = (Therm) therm.execute( "call", params );
+					therm = (Therm) therm.execute( "call", params[0] );
 				}
 				return therm;
 			}
@@ -143,7 +143,7 @@ public class MethodPlugin extends EnginePlugin {
 					}
 				} );
 
-				Therm result = (Therm) inner.execute( "assign" );
+				Therm result = (Therm) inner.execute( "insert" );
 
 				getEngine().leaveScope();
 
@@ -156,9 +156,9 @@ public class MethodPlugin extends EnginePlugin {
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "do" ) )
+			if ( key.equals( "insert" ) )
 			{
-				getEngine().enterScope( new Scope() {
+				getEngine().enterScope( new Scope( getEngine().currentScope ) {
 					@Override
 					public Therm get( Object key )
 					{
@@ -170,8 +170,7 @@ public class MethodPlugin extends EnginePlugin {
 						return super.get( key );
 					}
 				} );
-
-				Therm result = (Therm) inner.execute( "do" );
+				Therm result = (Therm) inner.execute( "insert" );
 
 				getEngine().leaveScope();
 				return new Method( vars, result );
@@ -186,7 +185,7 @@ public class MethodPlugin extends EnginePlugin {
 			}
 			else if ( key.equals( "param" ) )
 			{
-				return vars[0];
+				return vars;
 			}
 
 			return super.execute( key, params );

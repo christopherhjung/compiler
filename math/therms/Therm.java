@@ -42,7 +42,7 @@ public abstract class Therm {
 
 	public Object execute( String key, Object... params )
 	{
-		if ( key.equals( "do" ) )
+		if ( key.equals( "insert" ) )
 		{
 			return this;
 		}
