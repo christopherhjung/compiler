@@ -2,6 +2,7 @@ package therms;
 
 import java.util.Objects;
 
+import parser.EnginePlugin;
 import parser.MathEngine;
 import parser.ThermStringifier;
 
@@ -13,7 +14,7 @@ public abstract class Therm {
 	public final static int EXPONENT_LEVEL = 4;
 	public final static int FUNCTION_LEVEL = 5;
 
-	public MathEngine getEngine()
+	public EnginePlugin getPlugin()
 	{
 		return null;
 	}
@@ -42,7 +43,7 @@ public abstract class Therm {
 
 	public Object execute( String key, Object... params )
 	{
-		if ( key.equals( "insert" ) )
+		if ( key.equals( "insert" ) || key.equals( "call" ) )
 		{
 			return this;
 		}
@@ -58,7 +59,12 @@ public abstract class Therm {
 
 	public int getLevel()
 	{
-		return FUNCTION_LEVEL;
+		if ( getPlugin() == null )
+		{
+			return 0;
+		}
+		
+		return getPlugin().getEngine().getLevel( getPlugin() );
 	}
 
 	public String toString()

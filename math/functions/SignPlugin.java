@@ -77,11 +77,5 @@ public class SignPlugin extends EnginePlugin {
 			builder.append( "-" );
 			builder.append( therm );
 		}
-
-		@Override
-		public int getLevel()
-		{
-			return MULTIPLY_LEVEL;
-		}
 	}
 }

@@ -13,6 +13,7 @@ import parser.Space.Scope;
 import parser.ThermStringifier;
 import therms.Therm;
 import tools.Run;
+import tools.Utils;
 
 public class MethodPlugin extends EnginePlugin {
 
@@ -40,7 +41,7 @@ public class MethodPlugin extends EnginePlugin {
 				Therm therm = getEngine().currentScope.get( key );
 				if ( therm != null )
 				{
-					therm = (Therm) therm.execute( "call", params[0] );
+					therm = (Therm) therm.execute( "call", params );
 				}
 				return therm;
 			}
@@ -105,6 +106,7 @@ public class MethodPlugin extends EnginePlugin {
 
 		private Therm[] vars;
 		private Therm inner;
+		private Scope scope;
 		private HashMap<Therm, Integer> varSet;
 
 		public Method( Therm[] vars, Therm inner )
@@ -120,9 +122,9 @@ public class MethodPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public MathEngine getEngine()
+		public EnginePlugin getPlugin()
 		{
-			return MethodPlugin.this.getEngine();
+			return MethodPlugin.this;
 		}
 
 		@Override
@@ -130,7 +132,7 @@ public class MethodPlugin extends EnginePlugin {
 		{
 			if ( vars.length == params.length )
 			{
-				getEngine().enterScope( new Scope() {
+				getPlugin().getEngine().enterScope( new Scope() {
 					@Override
 					public Therm get( Object key )
 					{
@@ -143,9 +145,9 @@ public class MethodPlugin extends EnginePlugin {
 					}
 				} );
 
-				Therm result = (Therm) inner.execute( "insert" );
+				Therm result = eval("update(",inner,")");
 
-				getEngine().leaveScope();
+				getPlugin().getEngine().leaveScope();
 
 				return result;
 			}
@@ -156,7 +158,7 @@ public class MethodPlugin extends EnginePlugin {
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "insert" ) )
+			/*if ( key.equals( "insert" ) )
 			{
 				getEngine().enterScope( new Scope( getEngine().currentScope ) {
 					@Override
@@ -170,12 +172,13 @@ public class MethodPlugin extends EnginePlugin {
 						return super.get( key );
 					}
 				} );
+				
 				Therm result = (Therm) inner.execute( "insert" );
 
 				getEngine().leaveScope();
 				return new Method( vars, result );
 			}
-			else if ( key.equals( "type" ) )
+			else */if ( key.equals( "type" ) )
 			{
 				return "method";
 			}
@@ -183,7 +186,7 @@ public class MethodPlugin extends EnginePlugin {
 			{
 				return inner;
 			}
-			else if ( key.equals( "param" ) )
+			else if ( key.equals( "params" ) )
 			{
 				return vars;
 			}
@@ -198,16 +201,8 @@ public class MethodPlugin extends EnginePlugin {
 			{
 				builder.append( "(" );
 			}
-
-			for ( int i = 0 ; i < vars.length ; i++ )
-			{
-				if ( i > 0 )
-				{
-					builder.append( "," );
-				}
-
-				builder.append( vars[i] );
-			}
+			
+			Utils.alternating( vars, ",", o -> builder.append( o ) );
 
 			if ( vars.length != 1 )
 			{
@@ -216,12 +211,6 @@ public class MethodPlugin extends EnginePlugin {
 
 			builder.append( "->" );
 			builder.append( inner );
-		}
-
-		@Override
-		public int getLevel()
-		{
-			return ZERO_LEVEL;
 		}
 	}
 }

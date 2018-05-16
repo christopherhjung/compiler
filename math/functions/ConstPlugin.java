@@ -25,7 +25,7 @@ public class ConstPlugin extends EnginePlugin {
 			@Override
 			public String getName()
 			{
-				return "sign." + ConstPlugin.this.getName();
+				return "sign.const";
 			}
 
 			@Override
@@ -82,9 +82,9 @@ public class ConstPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public MathEngine getEngine()
+		public EnginePlugin getPlugin()
 		{
-			return ConstPlugin.this.getEngine();
+			return ConstPlugin.this;
 		}
 
 		@Override
@@ -117,12 +117,6 @@ public class ConstPlugin extends EnginePlugin {
 		public void toString( ThermStringifier builder )
 		{
 			builder.append( value );
-		}
-
-		@Override
-		public int getLevel()
-		{
-			return FUNCTION_LEVEL;
 		}
 	}
 }

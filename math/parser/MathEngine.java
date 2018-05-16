@@ -1,16 +1,15 @@
 package parser;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import parser.Space.Scope;
 import therms.Therm;
-import tools.Run;
 
 public class MathEngine {
 	private Map<Integer, Set<EnginePlugin>> plugins;
+	private Map<EnginePlugin, Integer> levels;
 
 	public Scope globalScope = new Scope();
 	public Scope currentScope = globalScope;
@@ -20,28 +19,28 @@ public class MathEngine {
 		scope.setParentScope( currentScope );
 		currentScope = scope;
 	}
-	
+
 	public void leaveScope()
 	{
 		currentScope = currentScope.getParentScope();
 	}
 
-	public MathEngine( Map<Integer, Set<EnginePlugin>> plugins )
+	public MathEngine( Map<Integer, Set<EnginePlugin>> plugins, Map<EnginePlugin, Integer> levels )
 	{
 		this.plugins = plugins;
+		this.levels = levels;
 	}
 
-	public <T extends MathParser> T getParser( Class<T> parserClass )
+	public int getLevel( EnginePlugin plugin )
 	{
-		return Run.safe( () -> parserClass.getConstructor( Map.class ).newInstance( plugins ) );
+		return levels.get( plugin );
 	}
-
-	public Therm eval( String str )
+	
+	public Therm eval( String obj )
 	{
-
-		return new MathParser( plugins ).eval( str );
+		return new MathParser( plugins ).eval( obj );
 	}
-
+	
 	public Therm eval( Object... obj )
 	{
 
@@ -51,6 +50,6 @@ public class MathEngine {
 	public Therm eval( List<Object> list )
 	{
 
-		return new HybridMathParser( plugins ).eval( list.toArray() );
+		return eval( list.toArray() );
 	}
 }

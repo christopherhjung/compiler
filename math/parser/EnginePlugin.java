@@ -4,11 +4,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import therms.Therm;
+import tools.ReflectionUtils;
 
 public abstract class EnginePlugin {
 
 	private MathEngine engine;
-	private HashSet<EnginePlugin> extentions = new HashSet<>();
+	protected HashSet<EnginePlugin> extentions = new HashSet<>();
 
 	public abstract String getName();
 
@@ -20,7 +21,7 @@ public abstract class EnginePlugin {
 		{
 			return null;
 		}
-		
+
 		return name.substring( 0, position );
 	}
 
@@ -72,12 +73,26 @@ public abstract class EnginePlugin {
 
 	public Therm handle( MathParser parser, Therm left )
 	{
-		if ( left != null )
+		Therm result = null;
+
+		if ( left == null )
 		{
-			return null;
+			result = handle( parser );
 		}
 
-		return handle( parser );
+		if ( result == null )
+		{
+			for ( EnginePlugin extention : extentions )
+			{
+				result = ReflectionUtils.as( extention.handle( parser, left ), Therm.class );
+				if ( result != null )
+				{
+					break;
+				}
+			}
+		}
+
+		return result;
 	}
 
 	public Object handle( String key, Object... params )

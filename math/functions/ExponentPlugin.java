@@ -55,6 +55,13 @@ public class ExponentPlugin extends EnginePlugin {
 		{
 			return exponent;
 		}
+		
+
+		@Override
+		public EnginePlugin getPlugin()
+		{
+			return ExponentPlugin.this;
+		}
 
 		@Override
 		public Object execute( String key, Object... params )
@@ -70,10 +77,6 @@ public class ExponentPlugin extends EnginePlugin {
 			else if ( key.equals( "exponent" ) )
 			{
 				return exponent;
-			}
-			else if ( key.equals( "insert" ) )
-			{
-				return eval( basis.execute( "insert" ), "^", exponent.execute( "insert" ) );
 			}
 
 			return super.execute( key, params );
@@ -95,12 +98,6 @@ public class ExponentPlugin extends EnginePlugin {
 			builder.append( basis );
 			builder.append( " ^ " );
 			builder.append( exponent );
-		}
-
-		@Override
-		public int getLevel()
-		{
-			return EXPONENT_LEVEL;
 		}
 	}
 

@@ -87,22 +87,6 @@ public class AddPlugin extends EnginePlugin {
 			{
 				return therms;
 			}
-			else if ( key.equals( "insert" ) )
-			{
-				List<Object> list = new ArrayList<>();
-
-				for ( int i = 0 ; i < therms.size() ; i++ )
-				{
-					if ( i > 0 )
-					{
-						list.add( "+" );
-					}
-
-					list.add( therms.get( i ).execute( "insert" ) );
-				}
-
-				return eval(list);
-			}
 
 			return super.execute( key, params );
 		}
@@ -132,12 +116,6 @@ public class AddPlugin extends EnginePlugin {
 		public void toString( ThermStringifier builder )
 		{
 			builder.append( therms, " + " );
-		}
-
-		@Override
-		public int getLevel()
-		{
-			return ADDITION_LEVEL;
 		}
 	}
 

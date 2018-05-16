@@ -11,12 +11,15 @@ import functions.DerivatePlugin;
 import functions.DividePlugin;
 import functions.ExponentPlugin;
 import functions.FunctionPlugin;
+import functions.InsertPlugin;
 import functions.LogPlugin;
 import functions.MethodPlugin;
 import functions.MulPlugin;
+import functions.ObjectPlugin;
 import functions.ParenthesisPlugin;
 import functions.ReducePlugin;
 import functions.SignPlugin;
+import functions.UpdatePlugin;
 import functions.VariablePlugin;
 import parser.HybridMathParser;
 import parser.MathEngine;
@@ -24,10 +27,11 @@ import parser.MathParser;
 import parser.MathProgram;
 import parser.PluginExtention;
 import therms.Therm;
+import tools.Run;
 
 public class StackEngine {
 
-	public static void main( String[] args ) throws Exception
+	public static MathEngine startEngine()
 	{
 		MathProgram program = new MathProgram();
 
@@ -36,19 +40,26 @@ public class StackEngine {
 		program.installPlugin( 12, MulPlugin.class );
 		program.installPlugin( 12, DividePlugin.class );
 		program.installPlugin( 14, SignPlugin.class );
-		//program.installPlugin( 14, IncrementPlugin.class );
+		// program.installPlugin( 14, IncrementPlugin.class );
 		program.installPlugin( 15, ExponentPlugin.class );
 		program.installPlugin( 16, MethodPlugin.class );
-		program.installPlugin( 17, VariablePlugin.class );
 		program.installPlugin( 17, FunctionPlugin.class );
 		program.installPlugin( 18, ParenthesisPlugin.class );
+		program.installPlugin( 18, ObjectPlugin.class );
+
 		program.installPlugin( ConstPlugin.class );
-		
-		//program.installPlugin( LogPlugin.class );
+		program.installPlugin( VariablePlugin.class );
+
 		program.installPlugin( ReducePlugin.class );
 		program.installPlugin( DerivatePlugin.class );
+		program.installPlugin( UpdatePlugin.class );
 
-		MathEngine engine = program.start();
+		return Run.safe( program::start );
+	}
+
+	public static void main( String[] args ) throws Exception
+	{
+		MathEngine engine = startEngine();
 		Scanner scanner = new Scanner( System.in );
 		while ( true )
 		{
@@ -65,7 +76,9 @@ public class StackEngine {
 			{
 				long begin = System.currentTimeMillis();
 				Therm result = engine.eval( therm );
-				System.out.println( "Result:" + result.execute( "insert" ) );
+				result = (Therm) engine.eval( "(update(", result, "))" );
+
+				System.out.println( "Result:" + result );
 				long end = System.currentTimeMillis();
 
 				System.out.println( "Time need:" + (end - begin) );
@@ -73,7 +86,7 @@ public class StackEngine {
 			catch ( Throwable t )
 			{
 				System.out.println( t.getMessage() );
-				t.printStackTrace();
+				//t.printStackTrace();
 			}
 		}
 

@@ -12,7 +12,7 @@ public class AssignmentPlugin extends EnginePlugin {
 	{
 		return "assign";
 	}
-	
+
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
@@ -31,7 +31,7 @@ public class AssignmentPlugin extends EnginePlugin {
 		return null;
 	}
 
-	public static class Assignment extends Therm {
+	public class Assignment extends Therm {
 
 		Therm left;
 		Therm right;
@@ -43,14 +43,29 @@ public class AssignmentPlugin extends EnginePlugin {
 		}
 		
 		@Override
+		public EnginePlugin getPlugin()
+		{
+			return AssignmentPlugin.this;
+		}
+
+		@Override
+		public String getType()
+		{
+			return "assignment";
+		}
+
+		@Override
 		public Object execute( String key, Object... params )
 		{
-			if( key.equals( "insert" ) ){
-				Therm newRight = (Therm)right.execute( "insert" );
-				left.execute( "assign", newRight );
-				return newRight;
+			if ( key.equals( "left" ) )
+			{
+				return left;
 			}
-			
+			else if ( key.equals( "right" ) )
+			{
+				return right;
+			}
+
 			return super.execute( key, params );
 		}
 
@@ -60,12 +75,6 @@ public class AssignmentPlugin extends EnginePlugin {
 			builder.append( left );
 			builder.append( "=" );
 			builder.append( right );
-		}
-
-		@Override
-		public int getLevel()
-		{
-			return EQUATION_LEVEL;
 		}
 	}
 }

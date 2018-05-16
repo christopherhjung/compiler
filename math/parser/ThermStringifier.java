@@ -24,6 +24,19 @@ public class ThermStringifier {
 		return builder;
 	}
 
+	public ThermStringifier append( Object obj )
+	{
+		if ( obj instanceof Therm )
+		{
+			append( (Therm) obj );
+		}
+		else
+		{
+			append( obj.toString() );
+		}
+		return this;
+	}
+
 	public ThermStringifier append( String str )
 	{
 		builder.append( str );

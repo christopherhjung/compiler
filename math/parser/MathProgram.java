@@ -44,6 +44,7 @@ public class MathProgram {
 		Map<Integer, Set<EnginePlugin>> plugins = new HashMap<>();
 		Map<String, EnginePlugin> parents = new HashMap<>();
 		Map<String, Set<EnginePlugin>> children = new HashMap<>();
+		Map<EnginePlugin, Integer> levels = new HashMap<>();
 
 		for ( Source entry : this.plugins )
 		{
@@ -64,6 +65,7 @@ public class MathProgram {
 
 			if ( parent == null )
 			{
+				levels.put( plugin, level );
 				Set<EnginePlugin> target = plugins.computeIfAbsent( level, $ -> new HashSet<>() );
 				target.add( plugin );
 				parents.put( plugin.getName(), plugin );
@@ -89,14 +91,12 @@ public class MathProgram {
 			throw new RuntimeException( "Missing Plugins: " + children.values() );
 		}
 
-		MathEngine engine = new MathEngine( plugins );
+		MathEngine engine = new MathEngine( plugins, levels );
 
 		plugins.keySet().forEach( level -> plugins.get( level ).forEach( plugin -> plugin.onStart( engine ) ) );
 
 		return engine;
 	}
-	
-	
 
 	public static class Source {
 		Supplier<EnginePlugin> supplier;

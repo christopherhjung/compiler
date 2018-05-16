@@ -54,6 +54,7 @@ public class FunctionPlugin extends EnginePlugin {
 			}
 		} );
 
+		/*
 		program.installPlugin( () -> new EnginePlugin() {
 
 			@Override
@@ -70,7 +71,7 @@ public class FunctionPlugin extends EnginePlugin {
 
 				return left.execute( "call", objs );
 			}
-		} );
+		} );*/
 	}
 
 	@Override
@@ -96,8 +97,11 @@ public class FunctionPlugin extends EnginePlugin {
 
 			parser.eat( ')' );
 
-			Object[] params = therms.toArray();
+			Therm[] params = therms.toArray( new Therm[therms.size()] );
 
+			//Therm result = new Chain( left, params );
+			//return result;
+			
 			return (Therm) super.handle( "call", left, params );
 		}
 
@@ -106,65 +110,49 @@ public class FunctionPlugin extends EnginePlugin {
 
 	public class Chain extends Therm {
 
-		private final Therm[] outer;
+		private final Therm[] params;
 		private final Therm method;
 
-		public Chain( Therm method, Therm... outer )
+		public Chain( Therm method, Therm... params )
 		{
 			this.method = method;
-			this.outer = outer;
+			this.params = params;
+		}
+
+		@Override
+		public String getType()
+		{
+			return "chain";
+		}
+		
+		@Override
+		public EnginePlugin getPlugin()
+		{
+			return FunctionPlugin.this;
 		}
 
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "derivate" ) )
+			if ( key.equals( "method" ) )
 			{
-				ArrayList<Object> builder = new ArrayList<>();
-				builder.add( "derivate(" );
-				builder.add( method );
-				builder.add( ")*" );
-				builder.add( outer.execute( "derivate" ) );
-				builder.add( '(' );
-				builder.add( inner[0] );
-				builder.add( ')' );
-
-				return eval( builder );
+				return method;
 			}
-			else if ( key.equals( "reduce" ) )
+			else if ( key.equals( "params" ) )
 			{
-				Object[] reducedParams = new Object[inner.length];
-				for ( int i = 0 ; i < inner.length ; i++ )
-				{
-					reducedParams[i] = inner[i].execute( "reduce" );
-				}
-				return outer.execute( key, reducedParams );
+				return this.params;
 			}
 
 			return super.execute( key, params );
 		}
 
 		@Override
-		public boolean equals( Object obj )
-		{
-			if ( super.equals( obj ) ) return true;
-			if ( !(obj instanceof Chain) ) return false;
-
-			Chain other = (Chain) obj;
-			return inner.equals( other.inner ) && outer.equals( other.outer );
-		}
-
-		@Override
 		public void toString( ThermStringifier builder )
 		{
-			outer.toString( builder );
-			builder.append( inner, "," );
-		}
-
-		@Override
-		public int getLevel()
-		{
-			return FUNCTION_LEVEL;
+			builder.append( method );
+			builder.append( "(" );
+			builder.append( params, "," );
+			builder.append( ")" );
 		}
 	}
 

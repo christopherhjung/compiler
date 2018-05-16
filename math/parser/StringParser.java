@@ -1,5 +1,6 @@
 package parser;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
@@ -22,7 +23,7 @@ public abstract class StringParser<T> {
 
 		resetBuffer( chars );
 		reset();
-		
+
 		T result;
 		try
 		{
@@ -40,7 +41,7 @@ public abstract class StringParser<T> {
 
 	public T eval( String str )
 	{
-		return eval( str.replace( " ", "" ).toCharArray() );
+		return eval( str.toCharArray() );
 	}
 
 	protected void reset()
@@ -63,14 +64,14 @@ public abstract class StringParser<T> {
 		this.position = position;
 	}
 
-	public void resetBuffer( String str )
-	{
-		resetBuffer( str.toCharArray() );
-	}
-
 	public void resetBuffer( char[] str )
 	{
-		this.chars = str;
+		resetBuffer( new String( str ) );
+	}
+
+	public void resetBuffer( String str )
+	{
+		this.chars = str.replace( " ", "" ).toCharArray();
 		this.position = 0;
 	}
 
@@ -184,11 +185,13 @@ public abstract class StringParser<T> {
 	protected RestoreAction getRestorePoint()
 	{
 		int position = getPosition();
+		char[] chars = this.chars;
 		return new RestoreAction() {
 			@Override
 			public void restore()
 			{
 				setPosition( position );
+				StringParser.this.chars = chars;
 			}
 		};
 	}

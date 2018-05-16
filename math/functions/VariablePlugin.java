@@ -13,7 +13,7 @@ public class VariablePlugin extends EnginePlugin {
 	{
 		return "variable";
 	}
-	
+
 	@Override
 	public Therm handle( MathParser parser )
 	{
@@ -37,9 +37,9 @@ public class VariablePlugin extends EnginePlugin {
 		}
 
 		@Override
-		public MathEngine getEngine()
+		public EnginePlugin getPlugin()
 		{
-			return VariablePlugin.this.getEngine();
+			return VariablePlugin.this;
 		}
 
 		public String getName()
@@ -61,18 +61,17 @@ public class VariablePlugin extends EnginePlugin {
 			else if ( key.equals( "assign" ) && params.length == 1 )
 			{
 				Therm therm = (Therm) params[0];
-				getEngine().currentScope.set( this, therm );
+				getPlugin().getEngine().currentScope.set( this, therm );
 			}
-			else if ( key.equals( "insert" ) )
+			else if ( key.equals( "call" ) )
 			{
-				Therm result = getEngine().currentScope.get( this );
-
-				if ( result == null )
+				Therm therm = getPlugin().getEngine().currentScope.get( name );
+				if ( therm != null )
 				{
-					throw new RuntimeException( "Variable " + name + " not found" );
+					therm = (Therm) therm.execute( "call", params );
 				}
-
-				return result;
+				System.out.println( therm );
+				return therm;
 			}
 
 			return super.execute( key, params );
@@ -92,12 +91,6 @@ public class VariablePlugin extends EnginePlugin {
 		public void toString( ThermStringifier builder )
 		{
 			builder.append( name );
-		}
-
-		@Override
-		public int getLevel()
-		{
-			return FUNCTION_LEVEL;
 		}
 
 		@Override

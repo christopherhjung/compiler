@@ -83,7 +83,14 @@ public class HybridMathParser extends MathParser {
 	{
 		this.objs = objs;
 		reset();
-		return parse();
+		Therm result = parse();
+
+		if ( hasNext() )
+		{
+			throw new ParseException( "Not all from input parsed" );
+		}
+
+		return result;
 	}
 
 	@Override

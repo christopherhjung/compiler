@@ -29,7 +29,7 @@ public class DividePlugin extends EnginePlugin {
 		return null;
 	}
 
-	public static class Divide extends Therm {
+	public class Divide extends Therm {
 
 		Therm numerators;
 		Therm denominators;
@@ -38,6 +38,12 @@ public class DividePlugin extends EnginePlugin {
 		{
 			this.numerators = numerators;
 			this.denominators = denominators;
+		}
+		
+		@Override
+		public EnginePlugin getPlugin()
+		{
+			return DividePlugin.this;
 		}
 
 		@Override
@@ -65,12 +71,6 @@ public class DividePlugin extends EnginePlugin {
 			builder.append( numerators );
 			builder.append( "/" );
 			builder.append( denominators );
-		}
-
-		@Override
-		public int getLevel()
-		{
-			return EXPONENT_LEVEL;
 		}
 	}
 }

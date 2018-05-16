@@ -8,14 +8,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import parser.EngineExecute;
 import parser.EnginePlugin;
+import parser.MathProgram;
 import therms.Therm;
 import tools.ListComparer;
+import tools.Utils;
 
 public class ReducePlugin extends EnginePlugin {
 
+	
 	@Override
 	public Object handle( String key, Object... params )
 	{
@@ -24,7 +28,7 @@ public class ReducePlugin extends EnginePlugin {
 			return reduce( (Therm) params[0] );
 		}
 
-		return null;
+		return super.handle( key, params );
 	}
 
 	@Override
@@ -90,12 +94,18 @@ public class ReducePlugin extends EnginePlugin {
 		}
 		else if ( therm.is( "method" ) )
 		{
+			Therm[] params = therm.get( "params", Therm[].class );
 			Therm value = therm.get( "value", Therm.class );
-			Therm param = therm.get( "param", Therm.class );
 
 			value = reduce( value );
 
-			return eval( param, "->", value );
+			List<Object> list = new ArrayList<>();
+			list.add( "(" );
+			Utils.alternating( params, ",", o -> list.add( o ) );
+			list.add( ")->" );
+			list.add( value );
+
+			return eval( list );
 		}
 
 		return therm;
