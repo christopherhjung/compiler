@@ -6,12 +6,12 @@ import parser.ThermStringifier;
 import therms.BiTherm;
 import therms.Therm;
 
-public class ObjectPlugin extends EnginePlugin {
+public class TypePlugin extends EnginePlugin {
 
 	@Override
 	public String getName()
 	{
-		return "object";
+		return "declare";
 	}
 
 	@Override
@@ -22,31 +22,36 @@ public class ObjectPlugin extends EnginePlugin {
 			return null;
 		}
 
-		parser.eatAll( ' ' );
-		if ( parser.eat( '.' ) )
+		if ( parser.eatAll( ' ' ) )
 		{
+			Therm variable = parser.parse();
 
-			Therm right = parser.parse();
-
-			if ( right != null )
+			if ( variable != null && variable.is( "variable" ) )
 			{
-				return new Obj( left, right );
+				return new Declaration( left, variable );
 			}
 		}
 
 		return null;
 	}
 
-	private class Obj extends BiTherm {
-		public Obj( Therm left, Therm right )
+	private class Declaration extends BiTherm {
+
+		public Declaration( Therm type, Therm variable )
 		{
-			super( left, right, "." );
+			super( type, variable, " " );
+		}
+		
+		@Override
+		public String getType()
+		{
+			return "declare";
 		}
 
 		@Override
 		public EnginePlugin getPlugin()
 		{
-			return ObjectPlugin.this;
+			return TypePlugin.this;
 		}
 	}
 }

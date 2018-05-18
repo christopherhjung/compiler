@@ -3,6 +3,7 @@ package functions;
 import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
+import therms.BiTherm;
 import therms.Therm;
 
 public class AssignmentPlugin extends EnginePlugin {
@@ -20,7 +21,7 @@ public class AssignmentPlugin extends EnginePlugin {
 		{
 			return null;
 		}
-
+		parser.eatAll( ' ' );
 		if ( parser.eat( '=' ) )
 		{
 			Therm right = parser.parse();
@@ -31,17 +32,13 @@ public class AssignmentPlugin extends EnginePlugin {
 		return null;
 	}
 
-	public class Assignment extends Therm {
-
-		Therm left;
-		Therm right;
+	public class Assignment extends BiTherm {
 
 		public Assignment( Therm left, Therm right )
 		{
-			this.left = left;
-			this.right = right;
+			super( left, right, "=" );
 		}
-		
+
 		@Override
 		public EnginePlugin getPlugin()
 		{
@@ -52,29 +49,6 @@ public class AssignmentPlugin extends EnginePlugin {
 		public String getType()
 		{
 			return "assignment";
-		}
-
-		@Override
-		public Object execute( String key, Object... params )
-		{
-			if ( key.equals( "left" ) )
-			{
-				return left;
-			}
-			else if ( key.equals( "right" ) )
-			{
-				return right;
-			}
-
-			return super.execute( key, params );
-		}
-
-		@Override
-		public void toString( ThermStringifier builder )
-		{
-			builder.append( left );
-			builder.append( "=" );
-			builder.append( right );
 		}
 	}
 }

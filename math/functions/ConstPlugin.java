@@ -45,24 +45,25 @@ public class ConstPlugin extends EnginePlugin {
 	}
 
 	@Override
-	public Therm handle( MathParser engine )
+	public Therm handle( MathParser parser )
 	{
 		StringBuilder builder = new StringBuilder();
 
-		if ( engine.is( Character::isDigit ) )
+		parser.eatAll( ' ' );
+		if ( parser.is( Character::isDigit ) )
 		{
-			while ( engine.is( Character::isDigit ) )
+			while ( parser.is( Character::isDigit ) )
 			{
-				builder.append( engine.nextChar() );
+				builder.append( parser.nextChar() );
 			}
 
-			if ( engine.is( '.' ) )
+			if ( parser.is( '.' ) )
 			{
-				builder.append( engine.nextChar() );
+				builder.append( parser.nextChar() );
 
-				while ( engine.is( Character::isDigit ) )
+				while ( parser.is( Character::isDigit ) )
 				{
-					builder.append( engine.nextChar() );
+					builder.append( parser.nextChar() );
 				}
 			}
 

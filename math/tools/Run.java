@@ -25,7 +25,7 @@ public class Run {
 		}
 		catch ( Exception e )
 		{
-			e.printStackTrace();
+
 		}
 
 		return defaultValue;
@@ -40,7 +40,6 @@ public class Run {
 		}
 		catch ( Exception e )
 		{
-			e.printStackTrace();
 			return false;
 		}
 	}

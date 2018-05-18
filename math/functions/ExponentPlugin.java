@@ -3,6 +3,7 @@ package functions;
 import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
+import therms.BiTherm;
 import therms.Therm;
 
 public class ExponentPlugin extends EnginePlugin {
@@ -12,7 +13,7 @@ public class ExponentPlugin extends EnginePlugin {
 	{
 		return "exponent";
 	}
-	
+
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
@@ -35,27 +36,12 @@ public class ExponentPlugin extends EnginePlugin {
 		return null;
 	}
 
-	public class Exponenional extends Therm {
-
-		private final Therm basis;
-		private final Therm exponent;
+	public class Exponenional extends BiTherm {
 
 		public Exponenional( Therm basis, Therm exponent )
 		{
-			this.basis = basis;
-			this.exponent = exponent;
+			super( basis, exponent, "^" );
 		}
-
-		public Therm getBasis()
-		{
-			return basis;
-		}
-
-		public Therm getExponent()
-		{
-			return exponent;
-		}
-		
 
 		@Override
 		public EnginePlugin getPlugin()
@@ -64,40 +50,9 @@ public class ExponentPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object execute( String key, Object... params )
+		public String getType()
 		{
-			if ( key.equals( "type" ) )
-			{
-				return "exponent";
-			}
-			else if ( key.equals( "basis" ) )
-			{
-				return basis;
-			}
-			else if ( key.equals( "exponent" ) )
-			{
-				return exponent;
-			}
-
-			return super.execute( key, params );
-		}
-
-		@Override
-		public boolean equals( Object obj )
-		{
-			if ( super.equals( obj ) ) return true;
-			if ( !(obj instanceof Exponenional) ) return false;
-			Exponenional other = (Exponenional) obj;
-
-			return basis.equals( other.basis ) && exponent.equals( other.exponent );
-		}
-
-		@Override
-		public void toString( ThermStringifier builder )
-		{
-			builder.append( basis );
-			builder.append( " ^ " );
-			builder.append( exponent );
+			return "exponent";
 		}
 	}
 

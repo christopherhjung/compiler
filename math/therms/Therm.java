@@ -7,12 +7,6 @@ import parser.MathEngine;
 import parser.ThermStringifier;
 
 public abstract class Therm {
-	public final static int ZERO_LEVEL = 0;
-	public final static int EQUATION_LEVEL = 1;
-	public final static int ADDITION_LEVEL = 2;
-	public final static int MULTIPLY_LEVEL = 3;
-	public final static int EXPONENT_LEVEL = 4;
-	public final static int FUNCTION_LEVEL = 5;
 
 	public EnginePlugin getPlugin()
 	{

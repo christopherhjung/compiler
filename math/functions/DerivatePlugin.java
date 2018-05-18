@@ -37,14 +37,14 @@ public class DerivatePlugin extends EnginePlugin {
 
 	public Therm execute( Therm therm )
 	{
-		Therm method = getEngine().currentScope.get( therm );
+		therm = eval( "update(", therm, ")" );
 
-		if ( method != null && method.is( "method" ) )
+		if ( therm != null && therm.is( "method" ) )
 		{
-			return execute( method.get( "value", Therm.class ), (Therm)((Object[])method.execute( "params" ))[0] );
+			return execute( therm.get( "value", Therm.class ), (Therm) ((Object[]) therm.execute( "params" ))[0] );
 		}
 
-		return null;
+		return (Therm) super.handle( "derivate", therm );
 	}
 
 	public Therm execute( Therm therm, Therm var )
@@ -114,13 +114,17 @@ public class DerivatePlugin extends EnginePlugin {
 		}
 		else if ( therm.is( "exponent" ) )
 		{
-			// return eval( this, "*", "derivate(", exponent, "*", "log(",
-			// basis, "),", Utils.concat( params, "," ), ")" );
+			Therm basis = (Therm) therm.execute( "left" );
+			Therm exponent = (Therm) therm.execute( "right" );
 
-			Therm basis = (Therm) therm.execute( "basis" );
-			Therm exponent = (Therm) therm.execute( "exponent" );
-
-			return eval( exponent, "*", basis, "^(", exponent, "-1)" );
+			if ( exponent.is( "const" ) )
+			{
+				return eval( exponent, "*", basis, "^(", exponent, "-1)" );
+			}
+			else
+			{
+				return eval( therm, "*", derivate( eval( exponent, "*log(", basis, ")" ), var ) );
+			}
 		}
 		else if ( therm.is( "variable" ) )
 		{
@@ -131,13 +135,20 @@ public class DerivatePlugin extends EnginePlugin {
 		}
 		else if ( therm.is( "divide" ) )
 		{
-			Therm numerators = therm.get( "numerators", Therm.class );
-			Therm denominators = therm.get( "denominators", Therm.class );
+			Therm numerators = therm.get( "left", Therm.class );
+			Therm denominators = therm.get( "right", Therm.class );
 
 			return eval( "(", denominators, "*", derivate( numerators, var ), "-", numerators, "*",
 					derivate( denominators, var ), ")/", denominators, "^2" );
 		}
+		else if ( therm.is( "chain" ) )
+		{
+			Therm[] params = therm.get( "params", Therm[].class );
+			Therm method = therm.get( "method", Therm.class );
 
-		return (Therm) handle( "derivate", therm, var );
+			return eval( derivate( params[0], var ), "*", execute( method ), "(", params[0], ")" );
+		}
+
+		return (Therm) super.handle( "derivate", therm, var );
 	}
 }

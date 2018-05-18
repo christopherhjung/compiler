@@ -17,11 +17,19 @@ public class VariablePlugin extends EnginePlugin {
 	@Override
 	public Therm handle( MathParser parser )
 	{
+		parser.eatAll( ' ' );
 		if ( parser.is( Character::isAlphabetic ) )
 		{
 			String name = parser.eatWhile( Character::isAlphabetic );
 
-			return new Variable( name );
+			Therm therm = (Therm) handle( name );
+
+			if ( therm == null )
+			{
+				therm = new Variable( name );
+			}
+
+			return therm;
 		}
 
 		return null;
@@ -61,7 +69,7 @@ public class VariablePlugin extends EnginePlugin {
 			else if ( key.equals( "assign" ) && params.length == 1 )
 			{
 				Therm therm = (Therm) params[0];
-				getPlugin().getEngine().currentScope.set( this, therm );
+				getPlugin().getEngine().currentScope.set( name, therm );
 			}
 			else if ( key.equals( "call" ) )
 			{
@@ -70,7 +78,6 @@ public class VariablePlugin extends EnginePlugin {
 				{
 					therm = (Therm) therm.execute( "call", params );
 				}
-				System.out.println( therm );
 				return therm;
 			}
 

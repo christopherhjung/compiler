@@ -1,6 +1,7 @@
 package tools;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 
 public class Utils {
+
+	
 
 	public static <T> Iterator<T> toIterator( T[] array )
 	{
@@ -96,21 +99,20 @@ public class Utils {
 
 	public static <T> Collector<T, ArrayList<Object>, ArrayList<Object>> alternatingCollector( Object element )
 	{
-		return Collector.of( ArrayList<Object>::new, 
-			( left, right ) ->
-			{
-				if ( left.size() > 0 )
-				{
-					left.add( element );
-				}
-	
-				left.add( right );
-			}, ( left, right ) ->
+		return Collector.of( ArrayList<Object>::new, ( left, right ) ->
+		{
+			if ( left.size() > 0 )
 			{
 				left.add( element );
-				left.addAll( right );
-				return left;
-			} );
+			}
+
+			left.add( right );
+		}, ( left, right ) ->
+		{
+			left.add( element );
+			left.addAll( right );
+			return left;
+		} );
 	}
 
 	public static <T> void forEach( Consumer<Object> consumer, T[] elements, String limiter )

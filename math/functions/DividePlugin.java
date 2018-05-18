@@ -3,6 +3,7 @@ package functions;
 import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
+import therms.BiTherm;
 import therms.Therm;
 
 public class DividePlugin extends EnginePlugin {
@@ -12,7 +13,7 @@ public class DividePlugin extends EnginePlugin {
 	{
 		return "divide";
 	}
-	
+
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
@@ -21,6 +22,7 @@ public class DividePlugin extends EnginePlugin {
 			return null;
 		}
 
+		parser.eatAll( ' ' );
 		if ( parser.eat( '/' ) )
 		{
 			return new Divide( left, parser.parse() );
@@ -29,17 +31,13 @@ public class DividePlugin extends EnginePlugin {
 		return null;
 	}
 
-	public class Divide extends Therm {
-
-		Therm numerators;
-		Therm denominators;
+	public class Divide extends BiTherm {
 
 		public Divide( Therm numerators, Therm denominators )
 		{
-			this.numerators = numerators;
-			this.denominators = denominators;
+			super( numerators, denominators, "/" );
 		}
-		
+
 		@Override
 		public EnginePlugin getPlugin()
 		{
@@ -47,30 +45,9 @@ public class DividePlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object execute( String key, Object... params )
+		public String getType()
 		{
-			if ( key.equals( "numerators" ) )
-			{
-				return numerators;
-			}
-			else if ( key.equals( "denominators" ) )
-			{
-				return denominators;
-			}
-			else if ( key.equals( "type" ) )
-			{
-				return "divide";
-			}
-
-			return super.execute( key, params );
-		}
-
-		@Override
-		public void toString( ThermStringifier builder )
-		{
-			builder.append( numerators );
-			builder.append( "/" );
-			builder.append( denominators );
+			return "divide";
 		}
 	}
 }

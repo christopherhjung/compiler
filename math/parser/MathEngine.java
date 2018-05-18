@@ -33,17 +33,23 @@ public class MathEngine {
 
 	public int getLevel( EnginePlugin plugin )
 	{
-		return levels.get( plugin );
+		Integer result = levels.get( plugin );
+
+		if ( result == null )
+		{
+			return Integer.MIN_VALUE;
+		}
+
+		return result;
 	}
-	
+
 	public Therm eval( String obj )
 	{
 		return new MathParser( plugins ).eval( obj );
 	}
-	
+
 	public Therm eval( Object... obj )
 	{
-
 		return new HybridMathParser( plugins ).eval( obj );
 	}
 

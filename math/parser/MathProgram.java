@@ -63,12 +63,11 @@ public class MathProgram {
 				children.remove( name );
 			}
 
+			levels.put( plugin, level );
 			if ( parent == null )
 			{
-				levels.put( plugin, level );
 				Set<EnginePlugin> target = plugins.computeIfAbsent( level, $ -> new HashSet<>() );
 				target.add( plugin );
-				parents.put( plugin.getName(), plugin );
 			}
 			else
 			{
@@ -83,12 +82,15 @@ public class MathProgram {
 				}
 			}
 
+			parents.put( plugin.getName(), plugin );
+
 			plugin.onCreate( this );
 		}
 
 		if ( children.size() > 0 )
 		{
 			throw new RuntimeException( "Missing Plugins: " + children.values() );
+			
 		}
 
 		MathEngine engine = new MathEngine( plugins, levels );

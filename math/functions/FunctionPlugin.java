@@ -55,23 +55,15 @@ public class FunctionPlugin extends EnginePlugin {
 		} );
 
 		/*
-		program.installPlugin( () -> new EnginePlugin() {
-
-			@Override
-			public String getName()
-			{
-				return "function.callable";
-			}
-
-			@Override
-			public Object handle( String key, Object... params )
-			{
-				Therm left = (Therm) params[0];
-				Object[] objs = (Object[]) params[1];
-
-				return left.execute( "call", objs );
-			}
-		} );*/
+		 * program.installPlugin( () -> new EnginePlugin() {
+		 * 
+		 * @Override public String getName() { return "function.callable"; }
+		 * 
+		 * @Override public Object handle( String key, Object... params ) {
+		 * Therm left = (Therm) params[0]; Object[] objs = (Object[]) params[1];
+		 * 
+		 * return left.execute( "call", objs ); } } );
+		 */
 	}
 
 	@Override
@@ -84,6 +76,7 @@ public class FunctionPlugin extends EnginePlugin {
 			return null;
 		}
 
+		parser.eatAll( ' ' );
 		if ( parser.eat( '(' ) )
 		{
 			List<Therm> therms = new ArrayList<>();
@@ -92,6 +85,7 @@ public class FunctionPlugin extends EnginePlugin {
 			{
 				Therm param = parser.parseWithLevelReset();
 				therms.add( param );
+				parser.eatAll( ' ' );
 				parser.eat( ',' );
 			}
 
@@ -99,10 +93,16 @@ public class FunctionPlugin extends EnginePlugin {
 
 			Therm[] params = therms.toArray( new Therm[therms.size()] );
 
-			//Therm result = new Chain( left, params );
-			//return result;
-			
-			return (Therm) super.handle( "call", left, params );
+			// Therm result = new Chain( left, params );
+			// return result;
+			Therm result = (Therm) super.handle( "call", left, params );
+
+			if ( result == null )
+			{
+				result = new Chain( left, params );
+			}
+
+			return result;
 		}
 
 		return therm;
@@ -124,7 +124,7 @@ public class FunctionPlugin extends EnginePlugin {
 		{
 			return "chain";
 		}
-		
+
 		@Override
 		public EnginePlugin getPlugin()
 		{

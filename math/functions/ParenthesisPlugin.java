@@ -15,6 +15,7 @@ public class ParenthesisPlugin extends EnginePlugin {
 	public Therm handle( MathParser parser )
 	{
 		Therm therm = null;
+		parser.eatAll( ' ' );
 		if ( parser.eat( '(' ) )
 		{
 			therm = parser.parseWithLevelReset();

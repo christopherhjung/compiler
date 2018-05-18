@@ -7,6 +7,7 @@ import java.util.Scanner;
 import functions.AddPlugin;
 import functions.AssignmentPlugin;
 import functions.ConstPlugin;
+import functions.CosPlugin;
 import functions.DerivatePlugin;
 import functions.DividePlugin;
 import functions.ExponentPlugin;
@@ -19,6 +20,8 @@ import functions.ObjectPlugin;
 import functions.ParenthesisPlugin;
 import functions.ReducePlugin;
 import functions.SignPlugin;
+import functions.SinPlugin;
+import functions.TypePlugin;
 import functions.UpdatePlugin;
 import functions.VariablePlugin;
 import parser.HybridMathParser;
@@ -36,11 +39,11 @@ public class StackEngine {
 		MathProgram program = new MathProgram();
 
 		program.installPlugin( 1, AssignmentPlugin.class );
+		program.installPlugin( 2, TypePlugin.class );
 		program.installPlugin( 11, AddPlugin.class );
 		program.installPlugin( 12, MulPlugin.class );
 		program.installPlugin( 12, DividePlugin.class );
 		program.installPlugin( 14, SignPlugin.class );
-		// program.installPlugin( 14, IncrementPlugin.class );
 		program.installPlugin( 15, ExponentPlugin.class );
 		program.installPlugin( 16, MethodPlugin.class );
 		program.installPlugin( 17, FunctionPlugin.class );
@@ -53,6 +56,10 @@ public class StackEngine {
 		program.installPlugin( ReducePlugin.class );
 		program.installPlugin( DerivatePlugin.class );
 		program.installPlugin( UpdatePlugin.class );
+
+		program.installPlugin( SinPlugin.class );
+		program.installPlugin( CosPlugin.class );
+		program.installPlugin( LogPlugin.class );
 
 		return Run.safe( program::start );
 	}
@@ -76,9 +83,10 @@ public class StackEngine {
 			{
 				long begin = System.currentTimeMillis();
 				Therm result = engine.eval( therm );
-				result = (Therm) engine.eval( "(update(", result, "))" );
 
 				System.out.println( "Result:" + result );
+				result = engine.eval( "reduce(update(", therm , "))" );
+				System.out.println( "Result2:" + result );
 				long end = System.currentTimeMillis();
 
 				System.out.println( "Time need:" + (end - begin) );
@@ -86,7 +94,7 @@ public class StackEngine {
 			catch ( Throwable t )
 			{
 				System.out.println( t.getMessage() );
-				//t.printStackTrace();
+				t.printStackTrace();
 			}
 		}
 

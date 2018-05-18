@@ -1,5 +1,7 @@
 package functions;
 
+import java.util.Arrays;
+
 import org.omg.IOP.ENCODING_CDR_ENCAPS;
 
 import functions.FunctionPlugin.Chain;
@@ -13,38 +15,44 @@ import therms.Therm;
 
 public class SinPlugin extends EnginePlugin {
 
-	private final Sin instance = new Sin();
+	private Sin instance = null;
 
-	@EngineExecute
-	public Therm execute()
+	@Override
+	public String getName()
 	{
-		return instance;
+		return "variable.sin";
 	}
 
-	@EngineExecute
-	public Therm execute( Therm therm )
+	@Override
+	public Object handle( String key, Object... params )
 	{
-		return new Chain( instance, therm );
+		if ( key.equals( "sin" ) )
+		{
+			return instance;
+		}
+
+		return super.handle( key, params );
 	}
 
 	@Override
 	protected void onCreate( MathProgram program )
 	{
 		super.onCreate( program );
+		instance = new Sin();
 		program.installPlugin( () -> new EnginePlugin() {
 
 			@Override
 			public String getName()
 			{
-				return "function.derivate.sin";
+				return "function.variable.derivate.sin";
 			}
 
 			@Override
 			public Object handle( String key, Object... params )
 			{
-				if ( key.equals( "derivate" ) )
+				if ( key.equals( "derivate" ) && params[0] == instance )
 				{
-					return eval("cos");
+					return eval( "cos" );
 				}
 
 				return super.handle( key, params );
@@ -61,7 +69,7 @@ public class SinPlugin extends EnginePlugin {
 		@Override
 		public Object execute( String key, Object... params )
 		{
-			if ( key.equals( "reduce" ) && params.length == 1 )
+			if ( key.equals( "call" ) && params.length == 1 )
 			{
 				Therm therm = (Therm) params[0];
 				if ( therm.is( "const" ) )
@@ -70,14 +78,16 @@ public class SinPlugin extends EnginePlugin {
 					return eval( Math.sin( value ) );
 				}
 
-				return new Chain( this, (Therm) params[0] );
-			}
-			else if ( key.equals( "derivate" ) )
-			{
-				return eval( "cos" );
+				return null;
 			}
 
 			return super.execute( key, params );
+		}
+		
+		@Override
+		public EnginePlugin getPlugin()
+		{
+			return SinPlugin.this;
 		}
 
 		@Override

@@ -64,7 +64,7 @@ public class Space {
 			map.put( getKey( key ), value );
 		}
 
-		public String getKey( Object key )
+		public static String getKey( Object key )
 		{
 			if ( key instanceof Therm )
 			{

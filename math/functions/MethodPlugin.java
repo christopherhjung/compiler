@@ -1,6 +1,7 @@
 package functions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,7 +9,6 @@ import parser.EnginePlugin;
 import parser.MathEngine;
 import parser.MathParser;
 import parser.MathProgram;
-import parser.PluginExtention;
 import parser.Space.Scope;
 import parser.ThermStringifier;
 import therms.Therm;
@@ -63,12 +63,13 @@ public class MethodPlugin extends EnginePlugin {
 				{
 					Therm param = parser.parse();
 
-					if ( !param.is( "variable" ) )
+					if ( param == null && !param.is( "variable" ) )
 					{
 						return null;
 					}
 
 					therms.add( param );
+					parser.eatAll( ' ' );
 					parser.eat( ',' );
 				}
 
@@ -92,6 +93,7 @@ public class MethodPlugin extends EnginePlugin {
 			};
 		}
 
+		parser.eatAll( ' ' );
 		if ( parser.eat( "->" ) )
 		{
 			Therm therm = parser.parseWithLevelReset();
@@ -107,7 +109,7 @@ public class MethodPlugin extends EnginePlugin {
 		private Therm[] vars;
 		private Therm inner;
 		private Scope scope;
-		private HashMap<Therm, Integer> varSet;
+		private HashMap<String, Integer> varSet;
 
 		public Method( Therm[] vars, Therm inner )
 		{
@@ -117,7 +119,7 @@ public class MethodPlugin extends EnginePlugin {
 
 			for ( int i = 0 ; i < vars.length ; i++ )
 			{
-				varSet.put( vars[i], i );
+				varSet.put( Scope.getKey( vars[i] ), i );
 			}
 		}
 
@@ -138,7 +140,7 @@ public class MethodPlugin extends EnginePlugin {
 					{
 						if ( varSet.containsKey( key ) )
 						{
-							return (Therm) params[varSet.get( key )];
+							return (Therm) params[varSet.get( getKey( key ) )];
 						}
 
 						return super.get( key );

@@ -66,13 +66,19 @@ public abstract class StringParser<T> {
 
 	public void resetBuffer( char[] str )
 	{
-		resetBuffer( new String( str ) );
+		this.chars = str;
+		this.position = 0;
 	}
 
 	public void resetBuffer( String str )
 	{
-		this.chars = str.replace( " ", "" ).toCharArray();
-		this.position = 0;
+		resetBuffer( str.toCharArray() );
+	}
+
+	private void setBuffer( int position, char[] str )
+	{
+		resetBuffer( new String( str ) );
+		this.position = position;
 	}
 
 	public char getChar()
@@ -184,17 +190,42 @@ public abstract class StringParser<T> {
 
 	protected RestoreAction getRestorePoint()
 	{
-		int position = getPosition();
-		char[] chars = this.chars;
-		return new RestoreAction() {
-			@Override
-			public void restore()
-			{
-				setPosition( position );
-				StringParser.this.chars = chars;
-			}
-		};
+		return new RestoreActionImpl( getPosition(), chars );
 	}
+
+	private class RestoreActionImpl extends RestoreAction {
+
+		private int position = getPosition();
+		private char[] chars = this.chars;
+
+		public RestoreActionImpl( int position, char[] chars )
+		{
+			this.position = position;
+			this.chars = chars;
+		}
+
+		@Override
+		public void restore()
+		{
+			setBuffer( position, chars );
+		}
+
+		@Override
+		public int hashCode()
+		{
+			return position * chars.hashCode();
+		}
+
+		@Override
+		public boolean equals( Object obj )
+		{
+			if ( super.equals( obj ) ) return true;
+			if ( !(obj instanceof StringParser.RestoreActionImpl) ) return false;
+			StringParser<T>.RestoreActionImpl other = (StringParser<T>.RestoreActionImpl) obj;
+
+			return other.position == this.position && other.chars == this.chars;
+		}
+	};
 
 	@Override
 	public String toString()

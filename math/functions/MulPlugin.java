@@ -34,6 +34,10 @@ public class MulPlugin extends EnginePlugin {
 		loop: while ( parser.hasCurrent() )
 		{
 			switch ( parser.getChar() ) {
+				case ' ':
+					parser.next();
+					break;
+				
 				case '*':
 					parser.next();
 					builder.add( parser.parse() );
@@ -85,16 +89,6 @@ public class MulPlugin extends EnginePlugin {
 		public Iterator<Therm> iterator()
 		{
 			return therms.iterator();
-		}
-
-		@Override
-		public boolean equals( Object obj )
-		{
-			if ( super.equals( obj ) ) return true;
-			if ( !(obj instanceof Multiply) ) return false;
-			Multiply other = (Multiply) obj;
-
-			return ListComparer.containsSame( therms, other.therms );
 		}
 
 		@Override

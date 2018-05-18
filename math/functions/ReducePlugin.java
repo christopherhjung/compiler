@@ -19,7 +19,6 @@ import tools.Utils;
 
 public class ReducePlugin extends EnginePlugin {
 
-	
 	@Override
 	public Object handle( String key, Object... params )
 	{
@@ -37,20 +36,65 @@ public class ReducePlugin extends EnginePlugin {
 		return "function.variable.reduce";
 	}
 
+	private List<Therm> fetchElements( Therm therm, String type )
+	{
+		List<Therm> list = new ArrayList<>();
+		fetchElements( therm, type, list );
+		return list;
+	}
+
+	private void fetchElements( Therm therm, String type, List<Therm> therms )
+	{
+		if ( therm.is( type ) )
+		{
+			Therm left = therm.get( "left", Therm.class );
+			Therm right = therm.get( "right", Therm.class );
+			fetchElements( left, type, therms );
+			fetchElements( right, type, therms );
+		}
+		else
+		{
+			therms.add( therm );
+		}
+	}
+
 	private Therm reduce( Therm therm )
 	{
 		if ( therm.is( "add" ) )
 		{
-			List<Therm> list = (List<Therm>) therm.execute( "value" );
+			List<Therm> list = fetchElements();
 
-			Therm result = reduce( list.get( 0 ) );
+			List<Therm> reducedTherms = new ArrayList<>();
 
-			for ( int i = 1 ; i < list.size() ; i++ )
+			loop: for ( int i = 0 ; i < list.size() ; i++ )
 			{
-				result = addReduce( result, reduce( (Therm) list.get( i ) ) );
-			}
+				Therm current = reduce( list.get( i ) );
 
-			return result;
+				for ( int j = 0 ; j < reducedTherms.size() ; j++ )
+				{
+					Therm reducedTherm = addReduce( reducedTherms.get( j ), current );
+
+					if ( reducedTherm != null )
+					{
+						reducedTherms.set( j, reducedTherm );
+						continue loop;
+					}
+					else
+					{
+						reducedTherm = addReduce( current, reducedTherms.get( j ) );
+
+						if ( reducedTherm != null )
+						{
+							reducedTherms.set( j, reducedTherm );
+							continue loop;
+						}
+					}
+				}
+
+				reducedTherms.add( current );
+			}
+			System.out.println( reducedTherms );
+			return alternatingEval( reducedTherms, "+" );
 		}
 		else if ( therm.is( "mul" ) )
 		{
@@ -67,8 +111,8 @@ public class ReducePlugin extends EnginePlugin {
 		}
 		else if ( therm.is( "exponent" ) )
 		{
-			Therm basis = therm.get( "basis", Therm.class );
-			Therm exponent = therm.get( "exponent", Therm.class );
+			Therm basis = therm.get( "left", Therm.class );
+			Therm exponent = therm.get( "right", Therm.class );
 
 			Therm reducedBasis = reduce( basis );
 			Therm reducedExponent = reduce( exponent );
@@ -84,8 +128,8 @@ public class ReducePlugin extends EnginePlugin {
 		}
 		else if ( therm.is( "divide" ) )
 		{
-			Therm numerators = therm.get( "numerators", Therm.class );
-			Therm denominators = therm.get( "denominators", Therm.class );
+			Therm numerators = therm.get( "left", Therm.class );
+			Therm denominators = therm.get( "right", Therm.class );
 
 			numerators = reduce( numerators );
 			denominators = reduce( denominators );
@@ -121,6 +165,17 @@ public class ReducePlugin extends EnginePlugin {
 			return eval( leftValue / rightValue );
 		}
 
+		if ( left.is( "exponent" ) && right.is( "variable" ) )
+		{
+			Therm basis = left.get( "left", Therm.class );
+
+			if ( equals( basis, right ) )
+			{
+				Therm exponent = left.get( "right", Therm.class );
+				return eval( basis, "^(", addReduce( exponent, eval( -1 ) ), ")" );
+			}
+		}
+
 		return eval( left, "/", right );
 	}
 
@@ -147,18 +202,6 @@ public class ReducePlugin extends EnginePlugin {
 		return eval( basis, "^", exponent );
 	}
 
-	private Therm mulReduce( List<Therm> therms )
-	{
-		List<Object> objs = new ArrayList<>( therms );
-
-		for ( int i = objs.size() - 1 ; i > 0 ; i-- )
-		{
-			objs.add( i, "+" );
-		}
-
-		return eval( objs );
-	}
-
 	private Collection<Therm> split( Therm therm, String method )
 	{
 		if ( therm.is( method ) )
@@ -181,6 +224,17 @@ public class ReducePlugin extends EnginePlugin {
 			return eval( leftValue * rightValue );
 		}
 
+		if ( left.is( "exponent" ) && right.is( "variable" ) )
+		{
+			Therm basis = left.get( "left", Therm.class );
+
+			if ( equals( basis, right ) )
+			{
+				Therm exponent = left.get( "right", Therm.class );
+				return eval( basis, "^(", addReduce( exponent, eval( 1 ) ), ")" );
+			}
+		}
+
 		if ( left.is( "mul" ) || right.is( "mul" ) )
 		{
 			List<Therm> newOne = new ArrayList<>();
@@ -188,7 +242,7 @@ public class ReducePlugin extends EnginePlugin {
 			newOne.addAll( split( left, "mul" ) );
 			newOne.addAll( split( right, "mul" ) );
 
-			return mulReduce( newOne );
+			return alternatingEval( newOne, "*" );
 		}
 
 		if ( left.is( "add" ) || right.is( "add" ) )
@@ -205,7 +259,7 @@ public class ReducePlugin extends EnginePlugin {
 				}
 			}
 
-			return addReduce( therms );
+			return alternatingEval( therms, "+" );
 		}
 
 		if ( left.is( "const" ) )
@@ -237,13 +291,13 @@ public class ReducePlugin extends EnginePlugin {
 		return eval( left, "*", right );
 	}
 
-	private Therm addReduce( List<Therm> therms )
+	private Therm alternatingEval( List<Therm> therms, String limiter )
 	{
 		List<Object> objs = new ArrayList<>( therms );
 
 		for ( int i = objs.size() - 1 ; i > 0 ; i-- )
 		{
-			objs.add( i, "+" );
+			objs.add( i, limiter );
 		}
 
 		return eval( objs );
@@ -266,7 +320,7 @@ public class ReducePlugin extends EnginePlugin {
 			newOne.addAll( split( left, "add" ) );
 			newOne.addAll( split( right, "add" ) );
 
-			return addReduce( newOne );
+			return alternatingEval( newOne, "+" );
 		}
 
 		if ( left.is( "const" ) )
@@ -277,15 +331,7 @@ public class ReducePlugin extends EnginePlugin {
 			}
 		}
 
-		if ( right.is( "const" ) )
-		{
-			if ( right.get( "value", Double.class ) == 0 )
-			{
-				return left;
-			}
-		}
-
-		return eval( left, "+", right );
+		return null;
 	}
 
 	public static boolean equals( Therm left, Therm right )

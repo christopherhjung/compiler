@@ -18,7 +18,7 @@ public class AddPlugin extends EnginePlugin {
 	{
 		return "add";
 	}
-	
+
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
@@ -41,7 +41,14 @@ public class AddPlugin extends EnginePlugin {
 				case '+':
 					parser.next();
 				case '-':
-					builder.add( parser.parse() );
+					Therm therm = parser.parse();
+
+					if ( therm == null )
+					{
+						return null;
+					}
+
+					builder.add( therm );
 					break;
 
 				default:
@@ -100,16 +107,6 @@ public class AddPlugin extends EnginePlugin {
 		public Iterator<Therm> iterator()
 		{
 			return therms.iterator();
-		}
-
-		@Override
-		public boolean equals( Object obj )
-		{
-			if ( super.equals( obj ) ) return true;
-			if ( !(obj instanceof Additional) ) return false;
-
-			Additional other = (Additional) obj;
-			return ListComparer.containsSame( therms, other.therms );
 		}
 
 		@Override

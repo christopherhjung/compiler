@@ -29,7 +29,7 @@ public class SignPlugin extends EnginePlugin {
 
 		Therm therm = parser.parse();
 
-		if ( invert )
+		if ( invert && therm != null )
 		{
 			Therm negate = (Therm) handle( "negate", therm );
 

@@ -1,88 +1,99 @@
 package functions;
 
+import java.util.Arrays;
+
+import org.omg.IOP.ENCODING_CDR_ENCAPS;
+
 import functions.FunctionPlugin.Chain;
 import parser.EngineExecute;
 import parser.EnginePlugin;
+import parser.MathParser;
 import parser.MathProgram;
+import parser.PluginExtention;
 import parser.ThermStringifier;
 import therms.Therm;
-import tools.ReflectionUtils;
 
-public class LogPlugin extends EnginePlugin {
+public class CosPlugin extends EnginePlugin {
 
-	private Log instance;
+	private Cos instance = null;
 
 	@Override
 	public String getName()
 	{
-		return "variable.log";
+		return "variable.cos";
 	}
 
 	@Override
 	public Object handle( String key, Object... params )
 	{
-		if ( key.equals( "log" ) )
+		if ( key.equals( "cos" ) )
 		{
 			return instance;
 		}
 
-		return null;
+		return super.handle( key, params );
 	}
 
 	@Override
 	protected void onCreate( MathProgram program )
 	{
 		super.onCreate( program );
-		instance = new Log();
+		instance = new Cos();
 		program.installPlugin( () -> new EnginePlugin() {
 
 			@Override
 			public String getName()
 			{
-				return "function.variable.derivate.log";
+				return "function.variable.derivate.cos";
 			}
 
 			@Override
 			public Object handle( String key, Object... params )
 			{
-				if ( key.contains( "derivate" ) )
+				if ( key.equals( "derivate" ) && params[0] == instance )
 				{
-					return eval( "x->1/x" );
+					return eval( "x->-sin(x)" );
 				}
 
-				return null;
+				return super.handle( key, params );
 			}
+
 		} );
 	}
 
-	public class Log extends Therm {
+	public class Cos extends Therm {
 
-		@Override
-		public EnginePlugin getPlugin()
-		{
-			return LogPlugin.this;
-		}
+		private Cos()
+		{}
 
 		@Override
 		public Object execute( String key, Object... params )
 		{
 			if ( key.equals( "call" ) && params.length == 1 )
 			{
-				Therm therm = ReflectionUtils.as( params[0], Therm.class );
-				if ( therm != null )
+				Therm therm = (Therm) params[0];
+				if ( therm.is( "const" ) )
 				{
-					double value = therm.get( "value", Double.class );
-					return eval( Math.log( value ) );
+					Double value = therm.get( "value", Double.class );
+					return eval( Math.cos( value ) );
 				}
+
+				return null;
 			}
 
 			return super.execute( key, params );
+		}
+		
+		@Override
+		public EnginePlugin getPlugin()
+		{
+			return CosPlugin.this;
 		}
 
 		@Override
 		public void toString( ThermStringifier builder )
 		{
-			builder.append( "log" );
+			builder.append( "cos" );
 		}
 	}
 }
