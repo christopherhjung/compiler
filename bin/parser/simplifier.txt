@@ -1,13 +1,23 @@
-//x*(a + b + c + ...) = x*a + x*b + x*c  + x*...
-//a+b+c = a + ( b+ c)
+//x*(a + b) = x*a + x*b x,a,b elementof T
+//a+b+c = a + ( b + c)
 
 //N: natürliche
 //Z: ganzen zahlen
 //Q: rationale 
 //R: relelle zahlen
 
-(a+b)^2 = a^2 + 2ab + b^2
-(a-b)^2 = a^2 - 2ab + b^2
+//(x)->x^2
+
+//Real e = 2
+//Q a = 3
+//R p = 9
+//T s = x+1 
+//R e = s with x = 9
+//s=(R)s
+//F =x->x^2
+
+(a+b)^2 = a^2 + 2*a*b + b^2
+(a-b)^2 = a^2 - 2*a*b + b^2
 (a-b)(a+b) = a^2 - b^2
 
 //sinus als taylor
@@ -28,7 +38,7 @@ derivate(sin) := cos;
 //Fourier
 fourier(function f){
 	a[k] := 1/pi * integrate(-pi,pi,f(t)*cos(k*t),t) for k >= 0
-	b[k] := 1/pi * integrate(-pi,pi,f(t)*sin(k*t),t) for k>= 1	
+	b[k] := 1/pi * integrate(-pi,pi,f(t)*sin(k*t),t) for k >= 1	
 	return a,b
 }
 
@@ -42,7 +52,7 @@ fourier(function f){
 	integrate(derivate(f) * g) = f*g - integrate(f * derivate(g))
 	f: R -> R
 	g: R -> R
-	x elementof R
+	x: R
 }
 sin(0) = 0
 sin(pi/2) = 1

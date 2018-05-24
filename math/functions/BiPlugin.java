@@ -1,6 +1,5 @@
 package functions;
 
-import functions.DividePlugin.Divide;
 import parser.EnginePlugin;
 import parser.MathParser;
 import parser.ThermStringifier;
@@ -23,12 +22,27 @@ public class BiPlugin extends EnginePlugin {
 		return name;
 	}
 
+	private String getLinker()
+	{
+		return linker;
+	}
+
+	protected boolean hasRightType( int index, String type )
+	{
+		return true;
+	}
+
 	@Override
 	public Therm handle( MathParser parser, Therm left )
 	{
-		if ( left == null )
+		if ( left == null || !hasRightType( 0, left.getType() ) )
 		{
 			return null;
+		}
+
+		if ( !linker.startsWith( " " ) )
+		{
+			parser.eatAll( ' ' );
 		}
 
 		while ( !parser.eat( linker ) )
@@ -39,26 +53,36 @@ public class BiPlugin extends EnginePlugin {
 			}
 		}
 
-		return new BiTherm( this, left, parser.parse(), linker );
+		Therm right = parser.parse();
+
+		if ( right == null || !hasRightType( 1, right.getType() ) )
+		{
+			return null;
+		}
+
+		return create( left, right );
+	}
+
+	private Therm create( Therm left, Therm right )
+	{
+		return new BiTherm( this, left, right );
 	}
 
 	public static class BiTherm extends Therm {
 
-		EnginePlugin plugin;
+		private BiPlugin plugin;
 		private Therm left;
 		private Therm right;
-		private String linker;
 
-		public BiTherm( EnginePlugin plugin, Therm left, Therm right, String linker )
+		public BiTherm( BiPlugin plugin, Therm left, Therm right )
 		{
 			this.plugin = plugin;
 			this.left = left;
 			this.right = right;
-			this.linker = linker;
 		}
 
 		@Override
-		public Object execute( String key, Object... params )
+		public Object get( String key, Object... params )
 		{
 			if ( key.equals( "left" ) )
 			{
@@ -68,8 +92,16 @@ public class BiPlugin extends EnginePlugin {
 			{
 				return this.right;
 			}
+			else if ( key.equals( "size" ) )
+			{
+				return 2;
+			}
+			else if ( key.equals( "linker" ) )
+			{
+				return plugin.getLinker();
+			}
 
-			return super.execute( key, params );
+			return super.get( key, params );
 		}
 
 		@Override
@@ -79,10 +111,16 @@ public class BiPlugin extends EnginePlugin {
 		}
 
 		@Override
+		public String getType()
+		{
+			return plugin.getName();
+		}
+
+		@Override
 		public void toString( ThermStringifier builder )
 		{
 			builder.append( left );
-			builder.append( linker );
+			builder.append( plugin.getLinker() );
 			builder.append( right );
 		}
 	}

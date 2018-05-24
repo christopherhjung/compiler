@@ -36,20 +36,19 @@ public class UpdatePlugin extends EnginePlugin {
 
 	private Therm update( Therm therm )
 	{
-		if ( therm.is( "assignment" ) )
+		if ( therm.is( "assign" ) )
 		{
 			Therm left = therm.get( "left", Therm.class );
 			Therm right = therm.get( "right", Therm.class );
 
 			Therm newRight = update( right );
-			left.execute( "assign", newRight );
+			left.get( "assign", newRight );
 
 			return newRight;
 		}
 
 		if ( therm.is( "method" ) )
 		{
-
 			Therm[] params = therm.get( "params", Therm[].class );
 			Therm inner = therm.get( "value", Therm.class );
 
@@ -99,7 +98,7 @@ public class UpdatePlugin extends EnginePlugin {
 					updatedTherms[i] = update( params[i] );
 				}
 
-				Therm result = (Therm) method.execute( "call", updatedTherms );
+				Therm result = (Therm) method.get( "call", updatedTherms );
 				if ( result == null )
 				{
 					List<Object> objs = new ArrayList<>();
@@ -120,46 +119,39 @@ public class UpdatePlugin extends EnginePlugin {
 
 			if ( result == null )
 			{
-				throw new RuntimeException( "Variable " + therm.get( "value", String.class ) + " not found" );
+				result = therm;
 			}
 
 			return result;
 		}
 
-		if ( therm.is( "add" ) )
+		Therm left = therm.get( "left", Therm.class );
+		Therm right = therm.get( "right", Therm.class );
+
+		if ( left != null && right != null )
 		{
-			List<Therm> therms = (List<Therm>) therm.execute( "value" );
-			return eval( therms.stream().map( e -> update( e ) ).collect( Utils.alternatingCollector( "+" ) ) );
+			Therm newLeft = update(left);
+			Therm newRight = update(right);
+			if( left == newLeft && right == newRight ){
+				return therm;
+			}
+			
+			String linker = therm.get( "linker", String.class );
+			return eval( newLeft, linker, newRight );
 		}
 
-		if ( therm.is( "mul" ) )
+		Therm inner = therm.get( "value", Therm.class );
+		if ( inner != null )
 		{
-			List<Therm> therms = (List<Therm>) therm.execute( "value" );
-			return eval( therms.stream().map( e -> update( e ) ).collect( Utils.alternatingCollector( "*" ) ) );
-		}
+			Therm updated = update( inner );
 
-		if ( therm.is( "exponent" ) )
-		{
-			Therm basis = therm.get( "left", Therm.class );
-			Therm exponent = therm.get( "right", Therm.class );
-			return eval( update( basis ), "^", update( exponent ) );
-		}
-
-		if ( therm.is( "negate" ) )
-		{
-			Therm inner = therm.get( "value", Therm.class );
-			return eval( "-", update( inner ) );
-		}
-
-		if ( therm.is( "divide" ) )
-		{
-			Therm left = therm.get( "left", Therm.class );
-			Therm right = therm.get( "right", Therm.class );
-
-			left = update( left );
-			right = update( right );
-
-			return eval( left, "/", right );
+			if ( inner != updated )
+			{
+				String pre = therm.get( "pre", String.class );
+				String post = therm.get( "post", String.class );
+				return eval( pre, updated, post );
+			}
+			return therm;
 		}
 
 		return therm;

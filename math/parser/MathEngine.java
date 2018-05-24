@@ -43,11 +43,6 @@ public class MathEngine {
 		return result;
 	}
 
-	public Therm eval( String obj )
-	{
-		return new MathParser( plugins ).eval( obj );
-	}
-
 	public Therm eval( Object... obj )
 	{
 		return new HybridMathParser( plugins ).eval( obj );

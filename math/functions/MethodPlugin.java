@@ -41,7 +41,7 @@ public class MethodPlugin extends EnginePlugin {
 				Therm therm = getEngine().currentScope.get( key );
 				if ( therm != null )
 				{
-					therm = (Therm) therm.execute( "call", params );
+					therm = (Therm) therm.get( "call", params );
 				}
 				return therm;
 			}
@@ -158,7 +158,7 @@ public class MethodPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object execute( String key, Object... params )
+		public Object get( String key, Object... params )
 		{
 			/*if ( key.equals( "insert" ) )
 			{
@@ -193,7 +193,7 @@ public class MethodPlugin extends EnginePlugin {
 				return vars;
 			}
 
-			return super.execute( key, params );
+			return super.get( key, params );
 		}
 
 		@Override

@@ -16,7 +16,7 @@ public class BiTherm extends Therm {
 	}
 
 	@Override
-	public Object execute( String key, Object... params )
+	public Object get( String key, Object... params )
 	{
 		if ( key.equals( "left" ) )
 		{
@@ -27,7 +27,7 @@ public class BiTherm extends Therm {
 			return this.right;
 		}
 
-		return super.execute( key, params );
+		return super.get( key, params );
 	}
 	
 	@Override

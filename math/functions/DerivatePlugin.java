@@ -41,7 +41,7 @@ public class DerivatePlugin extends EnginePlugin {
 
 		if ( therm != null && therm.is( "method" ) )
 		{
-			return execute( therm.get( "value", Therm.class ), (Therm) ((Object[]) therm.execute( "params" ))[0] );
+			return execute( therm.get( "value", Therm.class ), (Therm) ((Object[]) therm.get( "params" ))[0] );
 		}
 
 		return (Therm) super.handle( "derivate", therm );
@@ -61,7 +61,7 @@ public class DerivatePlugin extends EnginePlugin {
 	{
 		if ( therm.is( "add" ) )
 		{
-			List<Therm> list = (List<Therm>) therm.execute( "value" );
+			List<Therm> list = (List<Therm>) therm.get( "value" );
 
 			List<Object> builder = new ArrayList<>();
 			for ( Therm element : list )
@@ -78,7 +78,7 @@ public class DerivatePlugin extends EnginePlugin {
 		}
 		else if ( therm.is( "mul" ) )
 		{
-			List<Therm> list = (List<Therm>) therm.execute( "value" );
+			List<Therm> list = (List<Therm>) therm.get( "value" );
 
 			ArrayList<Object> builder = new ArrayList<>();
 			for ( int i = 0 ; i < list.size() ; i++ )
@@ -114,8 +114,8 @@ public class DerivatePlugin extends EnginePlugin {
 		}
 		else if ( therm.is( "exponent" ) )
 		{
-			Therm basis = (Therm) therm.execute( "left" );
-			Therm exponent = (Therm) therm.execute( "right" );
+			Therm basis = (Therm) therm.get( "left" );
+			Therm exponent = (Therm) therm.get( "right" );
 
 			if ( exponent.is( "const" ) )
 			{

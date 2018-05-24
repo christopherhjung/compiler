@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import parser.EngineExecute;
@@ -15,6 +17,7 @@ import parser.EnginePlugin;
 import parser.MathProgram;
 import therms.Therm;
 import tools.ListComparer;
+import tools.ReflectionUtils;
 import tools.Utils;
 
 public class ReducePlugin extends EnginePlugin {
@@ -36,105 +39,86 @@ public class ReducePlugin extends EnginePlugin {
 		return "function.variable.reduce";
 	}
 
-	private List<Therm> fetchElements( Therm therm, String type )
-	{
-		List<Therm> list = new ArrayList<>();
-		fetchElements( therm, type, list );
-		return list;
-	}
-
-	private void fetchElements( Therm therm, String type, List<Therm> therms )
-	{
-		if ( therm.is( type ) )
-		{
-			Therm left = therm.get( "left", Therm.class );
-			Therm right = therm.get( "right", Therm.class );
-			fetchElements( left, type, therms );
-			fetchElements( right, type, therms );
-		}
-		else
-		{
-			therms.add( therm );
-		}
-	}
-
 	private Therm reduce( Therm therm )
 	{
 		if ( therm.is( "add" ) )
 		{
-			List<Therm> list = fetchElements();
+			Therm left = therm.get( "left", Therm.class );
+			Therm right = therm.get( "right", Therm.class );
 
-			List<Therm> reducedTherms = new ArrayList<>();
+			Therm temp = addReduce( reduce( left ), reduce( right ) );
 
-			loop: for ( int i = 0 ; i < list.size() ; i++ )
+			if ( temp != null )
 			{
-				Therm current = reduce( list.get( i ) );
-
-				for ( int j = 0 ; j < reducedTherms.size() ; j++ )
-				{
-					Therm reducedTherm = addReduce( reducedTherms.get( j ), current );
-
-					if ( reducedTherm != null )
-					{
-						reducedTherms.set( j, reducedTherm );
-						continue loop;
-					}
-					else
-					{
-						reducedTherm = addReduce( current, reducedTherms.get( j ) );
-
-						if ( reducedTherm != null )
-						{
-							reducedTherms.set( j, reducedTherm );
-							continue loop;
-						}
-					}
-				}
-
-				reducedTherms.add( current );
+				return temp;
 			}
-			System.out.println( reducedTherms );
-			return alternatingEval( reducedTherms, "+" );
+
+		}
+		else if ( therm.is( "sub" ) )
+		{
+			Therm left = therm.get( "left", Therm.class );
+			Therm right = therm.get( "right", Therm.class );
+
+			Therm temp = subReduce( reduce( left ), reduce( right ) );
+
+			if ( temp != null )
+			{
+				return temp;
+			}
+			/*
+			 * List<Therm> list = fetchElements( therm, t -> t.is( "add" ) );
+			 * 
+			 * 
+			 * 
+			 * List<Therm> reducedTherms = new ArrayList<>();
+			 * 
+			 * loop: for ( int i = 0 ; i < list.size() ; i++ ) { Therm current =
+			 * reduce( list.get( i ) );
+			 * 
+			 * for ( int j = 0 ; j < reducedTherms.size() ; j++ ) { Therm
+			 * reducedTherm = addReduce( reducedTherms.get( j ), current );
+			 * 
+			 * if ( reducedTherm != null ) { reducedTherms.set( j, reducedTherm
+			 * ); continue loop; } else { reducedTherm = addReduce( current,
+			 * reducedTherms.get( j ) );
+			 * 
+			 * if ( reducedTherm != null ) { reducedTherms.set( j, reducedTherm
+			 * ); continue loop; } } }
+			 * 
+			 * reducedTherms.add( current ); } System.out.println( reducedTherms
+			 * ); return alternatingEval( reducedTherms, "+" );
+			 */
 		}
 		else if ( therm.is( "mul" ) )
 		{
-			List<Therm> list = (List<Therm>) therm.execute( "value" );
+			Therm left = therm.get( "left", Therm.class );
+			Therm right = therm.get( "right", Therm.class );
 
-			Therm result = reduce( list.get( 0 ) );
+			Therm temp = mulReduce( reduce( left ), reduce( right ) );
 
-			for ( int i = 1 ; i < list.size() ; i++ )
+			if ( temp != null )
 			{
-				result = mulReduce( result, reduce( (Therm) list.get( i ) ) );
+				return temp;
 			}
-
-			return result;
 		}
 		else if ( therm.is( "exponent" ) )
 		{
 			Therm basis = therm.get( "left", Therm.class );
 			Therm exponent = therm.get( "right", Therm.class );
 
-			Therm reducedBasis = reduce( basis );
-			Therm reducedExponent = reduce( exponent );
-
-			return powReduce( reducedBasis, reducedExponent );
+			return powReduce( reduce( basis ), reduce( exponent ) );
 		}
 		else if ( therm.is( "negate" ) )
 		{
 			Therm inner = therm.get( "value", Therm.class );
-			inner = reduce( inner );
-
-			return eval( "-", inner );
+			return eval( "-", reduce( inner ) );
 		}
 		else if ( therm.is( "divide" ) )
 		{
 			Therm numerators = therm.get( "left", Therm.class );
 			Therm denominators = therm.get( "right", Therm.class );
 
-			numerators = reduce( numerators );
-			denominators = reduce( denominators );
-
-			return divReduce( numerators, denominators );
+			return divReduce( reduce( numerators ), reduce( denominators ) );
 		}
 		else if ( therm.is( "method" ) )
 		{
@@ -206,7 +190,7 @@ public class ReducePlugin extends EnginePlugin {
 	{
 		if ( therm.is( method ) )
 		{
-			return (List<Therm>) therm.execute( "value" );
+			return (List<Therm>) therm.get( "value" );
 		}
 		else
 		{
@@ -235,32 +219,6 @@ public class ReducePlugin extends EnginePlugin {
 			}
 		}
 
-		if ( left.is( "mul" ) || right.is( "mul" ) )
-		{
-			List<Therm> newOne = new ArrayList<>();
-
-			newOne.addAll( split( left, "mul" ) );
-			newOne.addAll( split( right, "mul" ) );
-
-			return alternatingEval( newOne, "*" );
-		}
-
-		if ( left.is( "add" ) || right.is( "add" ) )
-		{
-			Collection<Therm> leftElements = split( left, "add" );
-			Collection<Therm> rightElements = split( right, "add" );
-
-			List<Therm> therms = new ArrayList<>();
-			for ( Therm leftInner : leftElements )
-			{
-				for ( Therm rightInner : rightElements )
-				{
-					therms.add( mulReduce( leftInner, rightInner ) );
-				}
-			}
-
-			return alternatingEval( therms, "+" );
-		}
 
 		if ( left.is( "const" ) )
 		{
@@ -303,70 +261,177 @@ public class ReducePlugin extends EnginePlugin {
 		return eval( objs );
 	}
 
-	private Therm addReduce( Therm left, Therm right )
+	private Therm subReduce( Therm left, Therm right )
 	{
 		if ( left.is( "const" ) && right.is( "const" ) )
 		{
 			double leftValue = left.get( "value", Double.class );
 			double rightValue = right.get( "value", Double.class );
 
-			return eval( leftValue + rightValue );
+			return eval( leftValue - rightValue );
 		}
 
-		if ( left.is( "add" ) || right.is( "add" ) )
+		return null;
+	}
+	
+	private Therm addReduce( Therm left, Therm right )
+	{
+		Therm result = addReduceImpl( left, right );
+		if ( result == null )
 		{
-			List<Therm> newOne = new ArrayList<>();
-
-			newOne.addAll( split( left, "add" ) );
-			newOne.addAll( split( right, "add" ) );
-
-			return alternatingEval( newOne, "+" );
+			result = addReduceImpl( right, left );
 		}
 
+		return result;
+	}
+
+	private Therm addReduceImpl( Therm left, Therm right )
+	{
 		if ( left.is( "const" ) )
 		{
-			if ( left.get( "value", Double.class ) == 0 )
+			if ( right.is( "const" ) )
+			{
+				double leftValue = left.get( "value", Double.class );
+				double rightValue = right.get( "value", Double.class );
+
+				return eval( leftValue + rightValue );
+			}
+			else if ( left.get( "value", Double.class ) == 0 )
 			{
 				return right;
+			}
+		}
+
+		if ( equals( left, right ) )
+		{
+			return eval( "2*", left );
+		}
+
+		if ( left.is( "add" ) )
+		{
+			Therm tempLeft = left.get( "left", Therm.class );
+			Therm tempRight = left.get( "right", Therm.class );
+
+			Therm result = switching( tempLeft, tempRight, ( a, b ) ->
+			{
+				Therm temp = addReduce( right, a );
+				
+				if ( temp != null )
+				{
+					return eval( temp, "+", tempRight );
+				}
+				
+				return null;
+			} );
+
+			if ( result != null )
+			{
+				return result;
+			}
+		}
+
+		if ( left.is( "mul" ) )
+		{
+			Therm mulLeft = left.get( "left", Therm.class );
+			Therm mulRight = left.get( "right", Therm.class );
+
+			Therm result = switching( mulLeft, mulRight, ( a, b ) ->
+			{
+				if ( equals( a, right ) && b.is( "const" ) )
+				{
+					return eval( addReduce( b, eval( 1 ) ), "*", a );
+				}
+
+				return null;
+			} );
+
+			if ( result != null )
+			{
+				return result;
+			}
+
+			/*
+			 * if ( equals( mulLeft, right ) && mulRight.is( "const" ) ) {
+			 * return eval( addReduce( mulRight, eval( 1 ) ), "*", mulLeft ); }
+			 * else if ( equals( mulRight, right ) && mulLeft.is( "const" ) ) {
+			 * return eval( addReduce( mulLeft, eval( 1 ) ), "*", mulRight ); }
+			 */
+		}
+
+		if ( right.is( "sub" ) )
+		{
+			Therm tempLeft = right.get( "left", Therm.class );
+			Therm tempRight = right.get( "right", Therm.class );
+
+			Therm temp = addReduce( left, tempLeft );
+
+			if ( temp != null )
+			{
+				return eval( temp, "-", tempRight );
+			}
+			else
+			{
+				temp = subReduce( left, tempRight );
+				if ( temp != null )
+				{
+					return eval( tempLeft, "+", temp );
+				}
 			}
 		}
 
 		return null;
 	}
 
-	public static boolean equals( Therm left, Therm right )
+	private <T> T switching( T left, T right, BiFunction<T, T, T> function )
 	{
+		T result = function.apply( left, right );
+		if ( result == null )
+		{
+			result = function.apply( right, left );
+		}
+
+		return result;
+	}
+
+	public static boolean equals( Object leftObj, Object rightObj )
+	{
+		if ( !(leftObj instanceof Therm) )
+		{
+			if ( rightObj instanceof Therm )
+			{
+				return false;
+			}
+			else
+			{
+				return leftObj.equals( rightObj );
+			}
+		}
+
+		Therm left = (Therm) leftObj;
+		Therm right = (Therm) rightObj;
+
 		String type = right.get( "type", String.class );
 		if ( !left.is( type ) )
 		{
 			return false;
 		}
 
-		if ( left.is( "const" ) || left.is( "variable" ) )
-		{
-			return left.execute( "value" ).equals( right.execute( "value" ) );
-		}
-		else if ( left.is( "negate" ) )
-		{
-			return equals( (Therm) left.execute( "value" ), (Therm) right.execute( "value" ) );
-		}
+		Object leftValue = left.get( "value" );
+		Object rightValue = right.get( "value" );
 
-		if ( left.is( "add" ) || left.is( "mul" ) )
+		if ( leftValue != null && rightValue != null )
 		{
-			List<Therm> leftTherms = (List<Therm>) left.execute( "value" );
-			List<Therm> rightTherms = (List<Therm>) right.execute( "value" );
-
-			return ListComparer.containsSame( leftTherms, rightTherms, ( a, b ) -> equals( a, b ) ? 0 : 1 );
+			return equals( leftValue, rightValue );
 		}
 
-		if ( left.is( "exponent" ) )
-		{
-			Therm leftExponent = left.get( "exponent", Therm.class );
-			Therm leftBasis = left.get( "basis", Therm.class );
-			Therm rightExponent = right.get( "exponent", Therm.class );
-			Therm rightBasis = right.get( "basis", Therm.class );
+		Therm leftLeft = left.get( "left", Therm.class );
+		Therm leftRight = left.get( "right", Therm.class );
+		Therm rightLeft = right.get( "left", Therm.class );
+		Therm rightRight = right.get( "right", Therm.class );
 
-			return equals( leftExponent, rightExponent ) && equals( leftBasis, rightBasis );
+		if ( leftLeft != null && leftRight != null && rightLeft != null && rightRight != null )
+		{
+			return equals( leftRight, rightRight ) && equals( leftLeft, rightLeft );
 		}
 
 		return false;

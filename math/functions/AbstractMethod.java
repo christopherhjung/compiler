@@ -8,7 +8,7 @@ import therms.Therm;
 public abstract class AbstractMethod extends Therm {
 
 	@Override
-	public Object execute( String key, Object... params )
+	public Object get( String key, Object... params )
 	{
 		if ( key.equals( "call" ) )
 		{
@@ -21,7 +21,7 @@ public abstract class AbstractMethod extends Therm {
 			return call( therms );
 		}
 
-		return super.execute( key, params );
+		return super.get( key, params );
 	}
 
 	public abstract Therm call( Therm[] params );

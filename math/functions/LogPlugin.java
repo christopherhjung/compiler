@@ -64,7 +64,7 @@ public class LogPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object execute( String key, Object... params )
+		public Object get( String key, Object... params )
 		{
 			if ( key.equals( "call" ) && params.length == 1 )
 			{
@@ -76,7 +76,7 @@ public class LogPlugin extends EnginePlugin {
 				}
 			}
 
-			return super.execute( key, params );
+			return super.get( key, params );
 		}
 
 		@Override

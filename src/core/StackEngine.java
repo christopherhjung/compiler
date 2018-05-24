@@ -3,6 +3,8 @@ package core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import functions.AddPlugin;
 import functions.AssignmentPlugin;
@@ -21,6 +23,7 @@ import functions.ParenthesisPlugin;
 import functions.ReducePlugin;
 import functions.SignPlugin;
 import functions.SinPlugin;
+import functions.SubPlugin;
 import functions.TypePlugin;
 import functions.UpdatePlugin;
 import functions.VariablePlugin;
@@ -41,6 +44,7 @@ public class StackEngine {
 		program.installPlugin( 1, AssignmentPlugin.class );
 		program.installPlugin( 2, TypePlugin.class );
 		program.installPlugin( 11, AddPlugin.class );
+		program.installPlugin( 11, SubPlugin.class );
 		program.installPlugin( 12, MulPlugin.class );
 		program.installPlugin( 12, DividePlugin.class );
 		program.installPlugin( 14, SignPlugin.class );
@@ -85,7 +89,7 @@ public class StackEngine {
 				Therm result = engine.eval( therm );
 
 				System.out.println( "Result:" + result );
-				result = engine.eval( "reduce(update(", therm , "))" );
+				result = engine.eval( "(update(", therm , "))" );
 				System.out.println( "Result2:" + result );
 				long end = System.currentTimeMillis();
 

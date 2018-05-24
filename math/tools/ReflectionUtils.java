@@ -69,15 +69,20 @@ public class ReflectionUtils {
 
 	public static <T> T as( Object obj, Class<T> clazz )
 	{
+		return as( obj, clazz, null );
+	}
+
+	public static <T> T as( Object obj, Class<T> clazz, T defaultValue )
+	{
 		if ( clazz.isInstance( obj ) )
 		{
 			return clazz.cast( obj );
 		}
 
-		return null;
+		return defaultValue;
 	}
 
-	public static <T> T safeInvoke( T defaultValue,  Class<T> clazz, Object obj, Method method, Object... args )
+	public static <T> T safeInvoke( T defaultValue, Class<T> clazz, Object obj, Method method, Object... args )
 	{
 		return Run.safe( () -> method == null ? null : as( method.invoke( obj, args ), clazz ), defaultValue );
 	}

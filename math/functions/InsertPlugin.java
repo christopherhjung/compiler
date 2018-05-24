@@ -56,7 +56,7 @@ public class InsertPlugin extends EnginePlugin {
 		if ( therm.is( "add" ) )
 		{
 			List<Object> list = new ArrayList<>();
-			List<Therm> therms = (List<Therm>) therm.execute( "value" );
+			List<Therm> therms = (List<Therm>) therm.get( "value" );
 
 			Utils.alternating( therms, "+", o -> list.add( o ) );
 			return eval( list );
@@ -65,7 +65,7 @@ public class InsertPlugin extends EnginePlugin {
 		if ( therm.is( "mul" ) )
 		{
 			List<Object> list = new ArrayList<>();
-			List<Therm> therms = (List<Therm>) therm.execute( "value" );
+			List<Therm> therms = (List<Therm>) therm.get( "value" );
 			Utils.alternating( therms, "*", o -> list.add( o ) );
 
 			return eval( list );
@@ -100,7 +100,7 @@ public class InsertPlugin extends EnginePlugin {
 			Therm right = therm.get( "right", Therm.class );
 
 			Therm newRight = insert( right );
-			left.execute( "assign", newRight );
+			left.get( "assign", newRight );
 			return newRight;
 		}
 

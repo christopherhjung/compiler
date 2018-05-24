@@ -87,8 +87,6 @@ public class MathParser extends StringParser<Therm> {
 
 			if ( result != null )
 			{
-				
-				
 				return result;
 			}
 			else

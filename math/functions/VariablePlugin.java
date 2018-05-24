@@ -56,7 +56,7 @@ public class VariablePlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object execute( String key, Object... params )
+		public Object get( String key, Object... params )
 		{
 			if ( key.equals( "value" ) )
 			{
@@ -76,12 +76,12 @@ public class VariablePlugin extends EnginePlugin {
 				Therm therm = getPlugin().getEngine().currentScope.get( name );
 				if ( therm != null )
 				{
-					therm = (Therm) therm.execute( "call", params );
+					therm = (Therm) therm.get( "call", params );
 				}
 				return therm;
 			}
 
-			return super.execute( key, params );
+			return super.get( key, params );
 		}
 
 		@Override

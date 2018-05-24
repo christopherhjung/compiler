@@ -12,10 +12,10 @@ public abstract class Therm {
 	{
 		return null;
 	}
-
+	
 	public <T> T get( String key, Class<T> type )
 	{
-		Object result = execute( key );
+		Object result = get( key );
 
 		if ( result != null && type.isAssignableFrom( result.getClass() ) )
 		{
@@ -32,10 +32,10 @@ public abstract class Therm {
 
 	public boolean is( String type )
 	{
-		return Objects.equals( type, execute( "type" ) );
+		return Objects.equals( type, get( "type" ) );
 	}
 
-	public Object execute( String key, Object... params )
+	public Object get( String key, Object... params )
 	{
 		if ( key.equals( "insert" ) || key.equals( "call" ) )
 		{
