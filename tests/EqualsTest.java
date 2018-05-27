@@ -1,23 +1,11 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import functions.AddPlugin;
-import functions.AssignmentPlugin;
-import functions.ConstPlugin;
-import functions.DividePlugin;
-import functions.ExponentPlugin;
-import functions.FunctionPlugin;
-import functions.MethodPlugin;
-import functions.MulPlugin;
-import functions.ParenthesisPlugin;
 import functions.ReducePlugin;
-import functions.SignPlugin;
-import functions.VariablePlugin;
 import parser.MathEngine;
-import parser.MathProgram;
-import therms.Therm;
-import tools.Run;
+import parser.Statement;
 
 public class EqualsTest {
 
@@ -25,7 +13,7 @@ public class EqualsTest {
 	public void equalsTestConst()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "1" );
+		Statement therm = engine.eval( "1" );
 		
 		assertTrue( ReducePlugin.equals( therm, therm ) );	
 	}
@@ -34,7 +22,7 @@ public class EqualsTest {
 	public void equalsTestVariable()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "x" );
+		Statement therm = engine.eval( "x" );
 		
 		assertTrue( ReducePlugin.equals( therm, therm ) );	
 	}
@@ -43,7 +31,7 @@ public class EqualsTest {
 	public void equalsTestAdditional()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "1+x" );
+		Statement therm = engine.eval( "1+x" );
 		assertTrue( ReducePlugin.equals( therm, therm ) );	
 	}
 	
@@ -51,7 +39,7 @@ public class EqualsTest {
 	public void equalsTestExponential()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "x^4" );
+		Statement therm = engine.eval( "x^4" );
 		assertTrue( ReducePlugin.equals( therm, therm ) );	
 	}
 	
@@ -59,7 +47,7 @@ public class EqualsTest {
 	public void equalsTestCalc()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "x^4" );
+		Statement therm = engine.eval( "x^4" );
 		assertTrue( ReducePlugin.equals( therm, therm ) );	
 	}
 	
@@ -67,7 +55,7 @@ public class EqualsTest {
 	public void equalsTestNegate()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "-5" );
+		Statement therm = engine.eval( "-5" );
 		assertTrue( ReducePlugin.equals( therm, therm ) );	
 	}
 	
@@ -75,7 +63,7 @@ public class EqualsTest {
 	public void equalsTestBig()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "x^4 + 3 * x - 5" );
+		Statement therm = engine.eval( "x^4 + 3 * x - 5" );
 		assertTrue( ReducePlugin.equals( therm, therm ) );	
 	}
 	
@@ -83,8 +71,8 @@ public class EqualsTest {
 	public void equalsTestBig2()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "x^4 + 3 * x - 5" );
-		Therm therm2 = engine.eval( "x^4 + 3 * x + 5" );
+		Statement therm = engine.eval( "x^4 + 3 * x - 5" );
+		Statement therm2 = engine.eval( "x^4 + 3 * x + 5" );
 		assertFalse( ReducePlugin.equals( therm, therm2 ) );	
 	}
 }

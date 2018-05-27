@@ -1,14 +1,14 @@
 import functions.AddPlugin;
 import functions.AssignmentPlugin;
-import functions.ConstPlugin;
 import functions.DividePlugin;
 import functions.ExponentPlugin;
 import functions.FunctionPlugin;
+import functions.IntegerPlugin;
 import functions.MethodPlugin;
 import functions.MulPlugin;
+import functions.NamePlugin;
 import functions.ParenthesisPlugin;
 import functions.SignPlugin;
-import functions.VariablePlugin;
 import parser.MathEngine;
 import parser.MathProgram;
 import tools.Run;
@@ -26,8 +26,8 @@ public class Util {
 		program.installPlugin( 16, MethodPlugin.class );
 		program.installPlugin( 17, FunctionPlugin.class );
 		program.installPlugin( 18, ParenthesisPlugin.class );
-		program.installPlugin( VariablePlugin.class );
-		program.installPlugin( ConstPlugin.class );
+		program.installPlugin( NamePlugin.class );
+		program.installPlugin( IntegerPlugin.class );
 
 		return Run.safe( () -> program.start() );
 	}

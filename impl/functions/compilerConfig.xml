@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+	<type>binary</type>
+	<sign>+</sign>
+
+	<asm>
+	    ldi R{x[20:63]},1
+		ldi R{y},2
+		add R{x},R{y}
+		push R{x}
+	</asm>
+</add>

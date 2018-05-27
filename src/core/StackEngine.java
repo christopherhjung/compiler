@@ -1,39 +1,25 @@
 package core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import functions.AddPlugin;
 import functions.AssignmentPlugin;
-import functions.ConstPlugin;
-import functions.CosPlugin;
-import functions.DerivatePlugin;
+import functions.BlockPlugin;
+import functions.DeclarePlugin;
 import functions.DividePlugin;
-import functions.ExponentPlugin;
 import functions.FunctionPlugin;
-import functions.InsertPlugin;
-import functions.LogPlugin;
+import functions.IntegerPlugin;
 import functions.MethodPlugin;
 import functions.MulPlugin;
+import functions.NamePlugin;
 import functions.ObjectPlugin;
 import functions.ParenthesisPlugin;
-import functions.ReducePlugin;
 import functions.SignPlugin;
-import functions.SinPlugin;
 import functions.SubPlugin;
-import functions.TypePlugin;
-import functions.UpdatePlugin;
-import functions.VariablePlugin;
-import parser.HybridMathParser;
+import functions.VectorPlugin;
 import parser.MathEngine;
-import parser.MathParser;
 import parser.MathProgram;
-import parser.PluginExtention;
-import therms.Therm;
-import tools.Run;
+import parser.Statement;
 
 public class StackEngine {
 
@@ -41,35 +27,37 @@ public class StackEngine {
 	{
 		MathProgram program = new MathProgram();
 
+		program.installPlugin( 0, BlockPlugin.class );
 		program.installPlugin( 1, AssignmentPlugin.class );
-		program.installPlugin( 2, TypePlugin.class );
+		program.installPlugin( 2, DeclarePlugin.class );
 		program.installPlugin( 11, AddPlugin.class );
 		program.installPlugin( 11, SubPlugin.class );
 		program.installPlugin( 12, MulPlugin.class );
 		program.installPlugin( 12, DividePlugin.class );
 		program.installPlugin( 14, SignPlugin.class );
-		program.installPlugin( 15, ExponentPlugin.class );
 		program.installPlugin( 16, MethodPlugin.class );
 		program.installPlugin( 17, FunctionPlugin.class );
 		program.installPlugin( 18, ParenthesisPlugin.class );
 		program.installPlugin( 18, ObjectPlugin.class );
 
-		program.installPlugin( ConstPlugin.class );
-		program.installPlugin( VariablePlugin.class );
+		program.installPlugin( VectorPlugin.class );
+		program.installPlugin( IntegerPlugin.class );
+		program.installPlugin( NamePlugin.class );
 
-		program.installPlugin( ReducePlugin.class );
-		program.installPlugin( DerivatePlugin.class );
-		program.installPlugin( UpdatePlugin.class );
+		//program.installPlugin( ReducePlugin.class );
+		//program.installPlugin( UpdatePlugin.class );
 
-		program.installPlugin( SinPlugin.class );
-		program.installPlugin( CosPlugin.class );
-		program.installPlugin( LogPlugin.class );
-
-		return Run.safe( program::start );
+		try{
+			return program.start();
+		}catch(Exception e){
+			e.printStackTrace( );
+			return null;
+		}
 	}
-
+	
 	public static void main( String[] args ) throws Exception
 	{
+		
 		MathEngine engine = startEngine();
 		Scanner scanner = new Scanner( System.in );
 		while ( true )
@@ -86,11 +74,9 @@ public class StackEngine {
 			try
 			{
 				long begin = System.currentTimeMillis();
-				Therm result = engine.eval( therm );
+				Statement result = engine.eval( therm );
 
 				System.out.println( "Result:" + result );
-				result = engine.eval( "(update(", therm , "))" );
-				System.out.println( "Result2:" + result );
 				long end = System.currentTimeMillis();
 
 				System.out.println( "Time need:" + (end - begin) );

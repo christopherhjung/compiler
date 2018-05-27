@@ -1,9 +1,0 @@
-x^n = x^(n-1)/(n+1)
-1/x = log(abs(x))
-1/sin(x)^2 = -cot(x)
-sinh(x) = cosh(x)
-cosh(x) = sinh(x)
-e^x=e^x
-a^x = a^x/log(a)
-1/sqrt(1-x^2) = arcsin(x)
-1/(1+x^2) = arctan(x)

@@ -1,24 +1,11 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import core.StackEngine;
-import functions.AddPlugin;
-import functions.AssignmentPlugin;
-import functions.ConstPlugin;
-import functions.DividePlugin;
-import functions.ExponentPlugin;
-import functions.FunctionPlugin;
-import functions.MethodPlugin;
-import functions.MulPlugin;
-import functions.ParenthesisPlugin;
-import functions.ReducePlugin;
-import functions.SignPlugin;
-import functions.VariablePlugin;
 import parser.MathEngine;
-import parser.MathProgram;
-import therms.Therm;
-import tools.Run;
+import parser.Statement;
 
 public class ConstTest {
 
@@ -34,7 +21,7 @@ public class ConstTest {
 	public void constTest()
 	{
 		MathEngine engine = Util.startEngine();
-		Therm therm = engine.eval( "1" );
+		Statement therm = engine.eval( "1" );
 		
 		assertTrue( therm.is( "const" ) );
 		assertTrue( therm.get( "value", Double.class ) == 1.0 );
@@ -46,7 +33,7 @@ public class ConstTest {
 		MathEngine engine = StackEngine.startEngine();
 		engine.eval( "update(f=x->x(2))" );
 		engine.eval( "update(g=x->x)" );
-		Therm therm = engine.eval( "update(f(g))" );
+		Statement therm = engine.eval( "update(f(g))" );
 				
 		assertTrue( therm.is( "const" ) );
 		assertTrue( therm.get( "value", Double.class ) == 2.0 );
@@ -56,7 +43,7 @@ public class ConstTest {
 	public void sinusTest()
 	{
 		MathEngine engine = StackEngine.startEngine();
-		Therm therm = engine.eval( "update(sin(0))" );
+		Statement therm = engine.eval( "update(sin(0))" );
 		
 		assertTrue( therm.is( "const" ) );
 		assertTrue( therm.get( "value", Double.class ) == 0.0 );
@@ -68,7 +55,7 @@ public class ConstTest {
 	{
 		MathEngine engine = StackEngine.startEngine();
 		engine.eval( "update(f=x->sin(x))" );
-		Therm therm = engine.eval( "update(f(0))" );
+		Statement therm = engine.eval( "update(f(0))" );
 		
 		System.out.println( therm );
 		
@@ -80,7 +67,7 @@ public class ConstTest {
 	public void reduceTest()
 	{
 		MathEngine engine = StackEngine.startEngine();
-		Therm therm = engine.eval( "reduce(x->(x^x * x * (1.0 * (x->(1.0/x))(x))))" );
+		Statement therm = engine.eval( "reduce(x->(x^x * x * (1.0 * (x->(1.0/x))(x))))" );
 		
 		System.out.println( therm );
 	}

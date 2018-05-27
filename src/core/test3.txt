@@ -1,0 +1,16 @@
+String{
+
+	private int test( int a, int b=9) {
+		int a=9;
+		float b=3;
+	};
+	
+	public int e = 0;
+	
+	static{
+		int e = ++a;
+		e = 9 + e(2,3) * 3 - 2;
+		intfunc t = (int a, int b) -> ++a+b;
+	};
+
+}
