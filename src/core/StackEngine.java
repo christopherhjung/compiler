@@ -17,13 +17,13 @@ import functions.ParenthesisPlugin;
 import functions.SignPlugin;
 import functions.SubPlugin;
 import functions.VectorPlugin;
-import parser.MathEngine;
+import parser.ScriptParser;
 import parser.MathProgram;
 import parser.Statement;
 
 public class StackEngine {
 
-	public static MathEngine startEngine()
+	public static ScriptParser startEngine()
 	{
 		MathProgram program = new MathProgram();
 
@@ -58,7 +58,7 @@ public class StackEngine {
 	public static void main( String[] args ) throws Exception
 	{
 		
-		MathEngine engine = startEngine();
+		ScriptParser engine = startEngine();
 		Scanner scanner = new Scanner( System.in );
 		while ( true )
 		{

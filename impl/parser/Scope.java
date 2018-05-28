@@ -48,19 +48,27 @@ public class Scope {
 		registerUsage = new int[32];
 	}
 
+	public void unuseAll()
+	{
+		for ( int i = 0 ; i <= 25 ; i++ )
+		{
+			registerUsage[i] = UNUSED;
+		}
+
+		override( 25, 26 );
+	}
+
 	public int getVarOffset()
 	{
 		return varOffset;
 	}
 
-	public void useRegister( int register )
+	public void useRegister( int register, int size )
 	{
-		if ( registerUsage[register] == HOLDING )
+		for ( int i = 0 ; i < size ; i++ )
 		{
-			throw new RuntimeException( "Registe is already used " + register );
+			registerUsage[register - i] = HOLDING;
 		}
-
-		registerUsage[register] = HOLDING;
 	}
 
 	public void registerVariable( String name, int size )
@@ -112,28 +120,44 @@ public class Scope {
 		return -1;
 	}
 
-	public void allocRegister( int register, int size )
+	public void override( int register, int size )
+	{
+		for ( VarAnchor anchor : variables.values() )
+		{
+			if ( anchor.register >= 0 && anchor.register + anchor.size > register && anchor.register < register + size )
+			{
+				for ( int pos = 0 ; pos < anchor.size ; pos++ )
+				{
+					if ( registerUsage[anchor.register - pos] == PRESET )
+					{
+						registerUsage[anchor.register - pos] = UNUSED;
+					}
+				}
+				anchor.register = -1;
+			}
+		}
+	}
+
+	public boolean allocRegister( int register, int size )
 	{
 		for ( int offset = 0 ; offset < size ; offset++ )
 		{
 			int byteRegister = register - offset;
 
-			for ( VarAnchor anchor : variables.values() )
+			if ( registerUsage[byteRegister] == HOLDING )
 			{
-				if ( anchor.register >= 0 && anchor.register + anchor.size > byteRegister
-						&& anchor.register < byteRegister + size )
-				{
-					for ( int pos = 0 ; pos < anchor.size ; pos++ )
-					{
-						registerUsage[pos + anchor.register] = UNUSED;
-					}
-
-					anchor.register = -1;
-				}
+				return false;
 			}
+		}
 
+		override( register, size );
+		for ( int offset = 0 ; offset < size ; offset++ )
+		{
+			int byteRegister = register - offset;
 			registerUsage[byteRegister] = HOLDING;
 		}
+
+		return true;
 	}
 
 	public VarAnchor getByRegister( int register )

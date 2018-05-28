@@ -7,7 +7,7 @@ import tools.ReflectionUtils;
 
 public abstract class EnginePlugin {
 
-	private MathEngine engine;
+	private ScriptParser engine;
 	protected HashSet<EnginePlugin> extentions = new HashSet<>();
 
 	public abstract String getName();
@@ -29,7 +29,7 @@ public abstract class EnginePlugin {
 		extentions.add( extention );
 	}
 
-	public MathEngine getEngine()
+	public ScriptParser getEngine()
 	{
 		return engine;
 	}
@@ -54,7 +54,7 @@ public abstract class EnginePlugin {
 		extentions.forEach( extention -> extention.onCreate( program ) );
 	}
 
-	protected void onStart( MathEngine engine )
+	protected void onStart( ScriptParser engine )
 	{
 		this.engine = engine;
 		extentions.forEach( extention -> extention.onStart( engine ) );

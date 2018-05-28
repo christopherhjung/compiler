@@ -6,11 +6,11 @@ import java.util.Set;
 
 import parser.Space.Scope;
 
-public class MathEngine {
+public class ScriptParser {
 	private Map<Integer, Set<EnginePlugin>> plugins;
 	private Map<EnginePlugin, Integer> levels;
 
-	public MathEngine( Map<Integer, Set<EnginePlugin>> plugins, Map<EnginePlugin, Integer> levels )
+	public ScriptParser( Map<Integer, Set<EnginePlugin>> plugins, Map<EnginePlugin, Integer> levels )
 	{
 		this.plugins = plugins;
 		this.levels = levels;

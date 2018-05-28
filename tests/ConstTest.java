@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import core.StackEngine;
-import parser.MathEngine;
+import parser.ScriptParser;
 import parser.Statement;
 
 public class ConstTest {
@@ -20,7 +20,7 @@ public class ConstTest {
 	@Test
 	public void constTest()
 	{
-		MathEngine engine = Util.startEngine();
+		ScriptParser engine = Util.startEngine();
 		Statement therm = engine.eval( "1" );
 		
 		assertTrue( therm.is( "const" ) );
@@ -30,7 +30,7 @@ public class ConstTest {
 	@Test
 	public void methodTest()
 	{
-		MathEngine engine = StackEngine.startEngine();
+		ScriptParser engine = StackEngine.startEngine();
 		engine.eval( "update(f=x->x(2))" );
 		engine.eval( "update(g=x->x)" );
 		Statement therm = engine.eval( "update(f(g))" );
@@ -42,7 +42,7 @@ public class ConstTest {
 	@Test
 	public void sinusTest()
 	{
-		MathEngine engine = StackEngine.startEngine();
+		ScriptParser engine = StackEngine.startEngine();
 		Statement therm = engine.eval( "update(sin(0))" );
 		
 		assertTrue( therm.is( "const" ) );
@@ -53,7 +53,7 @@ public class ConstTest {
 	@Test
 	public void sinusTest2()
 	{
-		MathEngine engine = StackEngine.startEngine();
+		ScriptParser engine = StackEngine.startEngine();
 		engine.eval( "update(f=x->sin(x))" );
 		Statement therm = engine.eval( "update(f(0))" );
 		
@@ -66,7 +66,7 @@ public class ConstTest {
 	@Test
 	public void reduceTest()
 	{
-		MathEngine engine = StackEngine.startEngine();
+		ScriptParser engine = StackEngine.startEngine();
 		Statement therm = engine.eval( "reduce(x->(x^x * x * (1.0 * (x->(1.0/x))(x))))" );
 		
 		System.out.println( therm );

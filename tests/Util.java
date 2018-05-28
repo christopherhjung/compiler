@@ -9,12 +9,12 @@ import functions.MulPlugin;
 import functions.NamePlugin;
 import functions.ParenthesisPlugin;
 import functions.SignPlugin;
-import parser.MathEngine;
+import parser.ScriptParser;
 import parser.MathProgram;
 import tools.Run;
 
 public class Util {
-	public static MathEngine startEngine(){
+	public static ScriptParser startEngine(){
 		MathProgram program = new MathProgram();
 
 		program.installPlugin( 1, AssignmentPlugin.class );

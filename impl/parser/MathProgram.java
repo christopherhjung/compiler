@@ -33,7 +33,7 @@ public class MathProgram {
 		plugins.add( new Source( plugin, level ) );
 	}
 
-	public MathEngine start() throws Exception
+	public ScriptParser start() throws Exception
 	{
 		Map<Integer, Set<EnginePlugin>> plugins = new HashMap<>();
 		Map<String, EnginePlugin> parents = new HashMap<>();
@@ -87,7 +87,7 @@ public class MathProgram {
 			
 		}
 
-		MathEngine engine = new MathEngine( plugins, levels );
+		ScriptParser engine = new ScriptParser( plugins, levels );
 
 		plugins.keySet().forEach( level -> plugins.get( level ).forEach( plugin -> plugin.onStart( engine ) ) );
 

@@ -1,4 +1,16 @@
-int main(){
-	int k=9
-	k+9
+class Main{
+
+	int main(){
+		int k=9
+		int a = 8
+		a=k+a-2
+		test(2+k+a)
+	}
+	
+	
+	int test(int a){
+		int t = 0
+	}
+
+
 }

@@ -23,14 +23,14 @@ import functions.StringPlugin;
 import functions.SubPlugin;
 import functions.TemplatePlugin;
 import functions.VectorPlugin;
-import parser.MathEngine;
+import parser.ScriptParser;
 import parser.MathProgram;
 import parser.Statement;
 import tools.Run;
 
 public class Files {
 
-	public static MathEngine startEngine()
+	public static ScriptParser startEngine()
 	{
 		MathProgram program = new MathProgram();
 
@@ -79,7 +79,7 @@ public class Files {
 	public static void main( String[] args ) throws Exception
 	{
 		String str = getString();
-		MathEngine engine = startEngine();
+		ScriptParser engine = startEngine();
 		Statement result = engine.eval( str );
 		
 		Compiler compiler = new Compiler();

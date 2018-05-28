@@ -67,7 +67,7 @@ public class VectorPlugin extends EnginePlugin {
 		@Override
 		public Object getImpl( String key)
 		{
-			if ( key.equals( "params" ) )
+			if ( key.equals( "value" ) )
 			{
 				return this.params;
 			}
