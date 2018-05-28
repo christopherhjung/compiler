@@ -19,7 +19,10 @@ public class NamePlugin extends EnginePlugin {
 		parser.eatAll( ' ' );
 		if ( parser.is( Character::isAlphabetic ) )
 		{
-			String name = parser.eatWhile( Character::isAlphabetic );
+			String name = parser.eatWhile( 
+					(cha) -> 
+						Character.isAlphabetic( cha ) ||
+						Character.isDigit( cha ));
 
 			Statement therm = (Statement) handle( name );
 
@@ -55,14 +58,14 @@ public class NamePlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object get( String key, Object... params )
+		public Object getImpl( String key)
 		{
 			if ( key.equals( "value" ) )
 			{
 				return name;
 			}
 
-			return super.get( key, params );
+			return super.getImpl( key );
 		}
 
 		@Override

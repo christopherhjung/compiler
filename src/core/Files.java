@@ -1,6 +1,7 @@
 package core;
 
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Scanner;
 
 import compiler.Compiler;
@@ -25,6 +26,7 @@ import functions.VectorPlugin;
 import parser.MathEngine;
 import parser.MathProgram;
 import parser.Statement;
+import tools.Run;
 
 public class Files {
 
@@ -82,9 +84,16 @@ public class Files {
 		
 		Compiler compiler = new Compiler();
 		
-		compiler.compile(result);
+		String code = compiler.compile(result);
 		
-		System.out.println( result );
+		System.out.println( code );
+	}
+	
+	public void runAvr(){
+		 ProcessBuilder pb = new ProcessBuilder("avrdude");
+		 //Map<String, String> env = pb.environment();
+		 //env.put("VAR1", "myValue");
+		 Process p = Run.safe( pb::start );
 	}
 
 }

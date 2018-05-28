@@ -1,9 +1,5 @@
-/ConstTest.class
-/DerivateTest.class
-/EqualsTest.class
-/Util.class
-/compiler/
 /core/
 /functions/
+/compiler/
 /parser/
 /tools/

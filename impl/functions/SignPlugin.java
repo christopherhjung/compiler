@@ -57,7 +57,7 @@ public class SignPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object get( String key, Object... params )
+		public Object getImpl( String key)
 		{
 			if ( key.equals( "type" ) )
 			{
@@ -68,7 +68,7 @@ public class SignPlugin extends EnginePlugin {
 				return therm;
 			}
 
-			return super.get( key, params );
+			return super.getImpl( key );
 		}
 
 		@Override

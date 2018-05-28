@@ -7,10 +7,10 @@ import parser.StatementStringifier;
 
 public class BinaryPlugin extends EnginePlugin {
 
-	public enum Index{
-		LEFT,RIGHT
+	public enum Index {
+		LEFT, RIGHT
 	}
-	
+
 	private String name;
 	private String linker;
 
@@ -80,7 +80,7 @@ public class BinaryPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object get( String key, Object... params )
+		public Object getImpl( String key )
 		{
 			if ( key.equals( "left" ) )
 			{
@@ -99,7 +99,7 @@ public class BinaryPlugin extends EnginePlugin {
 				return plugin.getLinker();
 			}
 
-			return super.get( key, params );
+			return super.getImpl( key );
 		}
 
 		@Override

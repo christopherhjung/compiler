@@ -72,7 +72,7 @@ public class BlockPlugin extends EnginePlugin {
 		}
 		
 		@Override
-		public Object get( String key, Object... params )
+		public Object getImpl( String key )
 		{
 			if ( key.equals( "left" ) )
 			{
@@ -87,7 +87,7 @@ public class BlockPlugin extends EnginePlugin {
 				return 2;
 			}
 			
-			return super.get( key, params );
+			return super.getImpl( key);
 		}
 
 		@Override

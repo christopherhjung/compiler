@@ -35,7 +35,7 @@ public class IntegerPlugin extends EnginePlugin {
 				{
 					Integer value = therm.get( "value", Integer.class );
 
-					return new Const( -value );
+					return new IntegerStatement( -value );
 				}
 
 				return super.handle( key, params );
@@ -55,34 +55,24 @@ public class IntegerPlugin extends EnginePlugin {
 			{
 				builder.append( parser.nextChar() );
 			}
-/*
-			if ( parser.is( '.' ) )
-			{
-				builder.append( parser.nextChar() );
 
-				while ( parser.is( Character::isDigit ) )
-				{
-					builder.append( parser.nextChar() );
-				}
-			}*/
-
-			return new Const(Integer.parseInt( builder.toString() ));
+			return new IntegerStatement( Integer.parseInt( builder.toString() ) );
 		}
 
 		return null;
 	}
-	
-	
-	public class Const extends Statement {
+
+	public class IntegerStatement extends Statement {
 
 		private Integer value;
 
-		public Const( Integer value )
+		public IntegerStatement( Integer value )
 		{
 			this.value = value;
 		}
+
 		@Override
-		public Object get( String key, Object... params )
+		public Object getImpl( String key )
 		{
 			if ( key.equals( "value" ) )
 			{
@@ -93,7 +83,7 @@ public class IntegerPlugin extends EnginePlugin {
 				return 1;
 			}
 
-			return super.get( key, params );
+			return super.getImpl( key );
 		}
 
 		@Override

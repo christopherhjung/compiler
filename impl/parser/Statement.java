@@ -11,7 +11,7 @@ public abstract class Statement {
 	
 	public <T> T get( String key, Class<T> type )
 	{
-		Object result = get( key );
+		Object result = getImpl( key );
 
 		if ( result != null && type.isAssignableFrom( result.getClass() ) )
 		{
@@ -21,6 +21,18 @@ public abstract class Statement {
 		return null;
 	}
 
+	public Statement get( String key )
+	{
+		Object result = getImpl( key );
+
+		if ( result != null && Statement.class.isAssignableFrom( result.getClass() ) )
+		{
+			return(Statement) result ;
+		}
+
+		return null;
+	}
+	
 	public String getType()
 	{
 		return getPlugin().getName();
@@ -28,10 +40,10 @@ public abstract class Statement {
 
 	public boolean is( String type )
 	{
-		return Objects.equals( type, get( "type" ) );
+		return Objects.equals( type, getImpl( "type" ) );
 	}
 
-	public Object get( String key, Object... params )
+	protected Object getImpl( String key )
 	{
 		if ( key.equals( "insert" ) || key.equals( "call" ) )
 		{

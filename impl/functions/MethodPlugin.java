@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import parser.EnginePlugin;
 import parser.MathParser;
-import parser.Space.Scope;
 import parser.Statement;
 import parser.StatementStringifier;
 
@@ -35,7 +34,7 @@ public class MethodPlugin extends EnginePlugin {
 		return super.handle( parser );
 	}
 
-	public class Method extends AbstractMethod {
+	public class Method extends Statement {
 
 		private Statement vector;
 		private Statement inner;
@@ -53,36 +52,7 @@ public class MethodPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Statement call( Statement[] params )
-		{
-			/*if ( vars.length == params.length )
-			{
-				getPlugin().getEngine().enterScope( new Scope() {
-					@Override
-					public Statement get( Object key )
-					{
-						if ( varSet.containsKey( key ) )
-						{
-							return (Statement) params[varSet.get( getKey( key ) )];
-						}
-
-						return super.get( key );
-					}
-				} );
-
-				Statement result = eval( "update(", inner, ")" );
-
-				getPlugin().getEngine().leaveScope();
-
-				return result;
-			}
-
-			return null;*/
-			return null;
-		}
-
-		@Override
-		public Object get( String key, Object... params )
+		public Object getImpl( String key )
 		{
 			if ( key.equals( "type" ) )
 			{
@@ -97,7 +67,7 @@ public class MethodPlugin extends EnginePlugin {
 				return vector;
 			}
 
-			return super.get( key, params );
+			return super.getImpl( key );
 		}
 
 		@Override

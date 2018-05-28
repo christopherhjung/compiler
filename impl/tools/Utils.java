@@ -1,5 +1,6 @@
 package tools;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -144,7 +145,7 @@ public class Utils {
 			element = generator.apply( key );
 			map.put( key, element );
 		}
-
+		
 		return element;
 	}
 }

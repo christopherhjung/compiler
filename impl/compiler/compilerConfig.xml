@@ -4,7 +4,7 @@
 	<sign>+</sign>
 
 	<asm>
-	    ldi R{x[20:63]},1
+	    ldi R{x[20:25]},1
 		ldi R{y},2
 		add R{x},R{y}
 		push R{x}

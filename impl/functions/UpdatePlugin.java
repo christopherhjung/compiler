@@ -38,7 +38,7 @@ public class UpdatePlugin extends EnginePlugin {
 			Statement right = therm.get( "right", Statement.class );
 
 			Statement newRight = update( right );
-			left.get( "assign", newRight );
+			left.getImpl( "assign", newRight );
 
 			return newRight;
 		}
@@ -94,7 +94,7 @@ public class UpdatePlugin extends EnginePlugin {
 					updatedTherms[i] = update( params[i] );
 				}
 
-				Statement result = (Statement) method.get( "call", updatedTherms );
+				Statement result = (Statement) method.getImpl( "call", updatedTherms );
 				if ( result == null )
 				{
 					List<Object> objs = new ArrayList<>();
@@ -111,7 +111,7 @@ public class UpdatePlugin extends EnginePlugin {
 
 		if ( therm.is( "name" ) )
 		{
-			Statement result = getEngine().currentScope.get( therm );
+			Statement result = getEngine().currentScope.getImpl( therm );
 
 			if ( result == null )
 			{

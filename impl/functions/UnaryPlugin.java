@@ -84,7 +84,7 @@ public class UnaryPlugin extends EnginePlugin {
 		}
 
 		@Override
-		public Object get( String key, Object... params )
+		public Object getImpl( String key )
 		{
 			if ( key.equals( "value" ) )
 			{
@@ -103,7 +103,7 @@ public class UnaryPlugin extends EnginePlugin {
 				return UnaryPlugin.this.getPost();
 			}
 
-			return super.get( key, params );
+			return super.getImpl( key );
 		}
 
 		@Override
