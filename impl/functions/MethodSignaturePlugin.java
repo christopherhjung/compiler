@@ -5,7 +5,7 @@ import parser.MathParser;
 import parser.Statement;
 import parser.StatementStringifier;
 
-public class FunctionPlugin extends EnginePlugin {
+public class MethodSignaturePlugin extends EnginePlugin {
 
 	@Override
 	public String getName()
@@ -27,18 +27,18 @@ public class FunctionPlugin extends EnginePlugin {
 
 		if ( vector != null && vector.is( "vector" ) )
 		{
-			therm = new Chain( left, vector );
+			therm = new MethodSignature( left, vector );
 		}
 
 		return therm;
 	}
 
-	public class Chain extends Statement {
+	public class MethodSignature extends Statement {
 
 		private final Statement vector;
 		private final Statement method;
 
-		public Chain( Statement method, Statement vector )
+		public MethodSignature( Statement method, Statement vector )
 		{
 			this.method = method;
 			this.vector = vector;
@@ -53,7 +53,7 @@ public class FunctionPlugin extends EnginePlugin {
 		@Override
 		public EnginePlugin getPlugin()
 		{
-			return FunctionPlugin.this;
+			return MethodSignaturePlugin.this;
 		}
 
 		@Override

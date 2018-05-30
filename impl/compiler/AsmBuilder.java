@@ -7,11 +7,13 @@ public class AsmBuilder {
 	public static class Asm extends AbstractCommand {
 		public String params;
 		public String opcode;
+		public int cycles;
 
-		public Asm( String opcode, String params )
+		public Asm( String opcode, int cycles, String params )
 		{
 			this.opcode = opcode;
 			this.params = params;
+			this.cycles = cycles;
 		}
 
 		@Override
@@ -22,10 +24,12 @@ public class AsmBuilder {
 	}
 
 	private List<AbstractCommand> commands;
+	private int cycles = 0;
 
 	public AsmBuilder()
 	{
 		commands = new ArrayList<>();
+		cycles = 0;
 	}
 
 	public List<AbstractCommand> getCommands()
@@ -37,15 +41,16 @@ public class AsmBuilder {
 	{
 		this.commands.addAll( builder.commands );
 	}
-	
+
 	public void addCommand( AbstractCommand command )
 	{
 		this.commands.add( command );
 	}
 
-	public Asm add( String opcode, String format, Object... args )
+	public Asm add( String opcode, int cycles, String format, Object... args )
 	{
-		Asm asm = new Asm( opcode, String.format( format, args ) );
+		Asm asm = new Asm( opcode, cycles, String.format( format, args ) );
+		this.cycles += cycles;
 		commands.add( asm );
 		return asm;
 	}
@@ -53,80 +58,80 @@ public class AsmBuilder {
 	public Asm ldi( int register, int value )
 	{
 		override( register, 1 );
-		return add( "ldi", "r%d,%d", register, value );
+		return add( "ldi", 1, "r%d,%d", register, value );
 	}
 
 	public Asm std( int offset, int register )
 	{
-		return add( "std", "Y+%d,r%d", offset, register );
+		return add( "std", 2, "Y+%d,r%d", offset, register );
 	}
 
 	public Asm ldd( int register, int offset )
 	{
 		override( register, 1 );
-		return add( "ldd", "r%d,Y+%d", register, offset );
+		return add( "ldd", 2, "r%d,Y+%d", register, offset );
 	}
 
 	public Asm push( int register )
 	{
-		return add( "push", "r%d", register );
+		return add( "push", 2, "r%d", register );
 	}
 
 	public Asm pop( int register )
 	{
-		return add( "pop", "r%d", register );
+		return add( "pop", 2, "r%d", register );
 	}
 
 	public Asm ret()
 	{
-		return add( "ret", "" );
+		return add( "ret", 4, "" );
 	}
 
 	public Asm rcall( String method )
 	{
-		return add( "rcall", "%s", method );
+		return add( "rcall", 3, "%s", method );
 	}
 
 	public Asm subi( int register, int value )
 	{
 		override( register, 1 );
-		return add( "subi", "r%d,%d", register, value );
+		return add( "subi", 1, "r%d,%d", register, value );
 	}
 
 	public Asm sbci( int register, int value )
 	{
 		override( register, 1 );
-		return add( "sbci", "r%d,%d", register, value );
+		return add( "sbci", 1, "r%d,%d", register, value );
 	}
 
 	public Asm add( int dest, int src )
 	{
 		override( dest, 1 );
-		return add( "add", "r%d,r%d", dest, src );
+		return add( "add", 1, "r%d,r%d", dest, src );
 	}
 
 	public Asm adc( int dest, int src )
 	{
 		override( dest, 1 );
-		return add( "adc", "r%d,r%d", dest, src );
+		return add( "adc", 1, "r%d,r%d", dest, src );
 	}
-	
+
 	public Asm sub( int dest, int src )
 	{
 		override( dest, 1 );
-		return add( "sub", "r%d,r%d", dest, src );
+		return add( "sub", 1, "r%d,r%d", dest, src );
 	}
 
 	public Asm sbc( int dest, int src )
 	{
 		override( dest, 1 );
-		return add( "sbc", "r%d,r%d", dest, src );
+		return add( "sbc", 1, "r%d,r%d", dest, src );
 	}
 
 	public Asm mov( int dest, int src )
 	{
 		override( dest, 1 );
-		return add( "mov", "r%d,r%d", dest, src );
+		return add( "mov", 1, "r%d,r%d", dest, src );
 	}
 
 	public void override( int register, int size )
@@ -144,6 +149,6 @@ public class AsmBuilder {
 	public Asm sbiw( int register, int value )
 	{
 		override( register + 1, 2 );
-		return add( "sbiw", "r%d,%d", register, value );
+		return add( "sbiw", 2, "r%d,%d", register, value );
 	}
 }

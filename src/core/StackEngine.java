@@ -7,7 +7,7 @@ import functions.AssignmentPlugin;
 import functions.BlockPlugin;
 import functions.DeclarePlugin;
 import functions.DividePlugin;
-import functions.FunctionPlugin;
+import functions.MethodSignaturePlugin;
 import functions.IntegerPlugin;
 import functions.MethodPlugin;
 import functions.MulPlugin;
@@ -36,7 +36,7 @@ public class StackEngine {
 		program.installPlugin( 12, DividePlugin.class );
 		program.installPlugin( 14, SignPlugin.class );
 		program.installPlugin( 16, MethodPlugin.class );
-		program.installPlugin( 17, FunctionPlugin.class );
+		program.installPlugin( 17, MethodSignaturePlugin.class );
 		program.installPlugin( 18, ParenthesisPlugin.class );
 		program.installPlugin( 18, ObjectPlugin.class );
 

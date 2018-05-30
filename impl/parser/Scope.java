@@ -9,9 +9,9 @@ import java.util.TreeMap;
 
 public class Scope {
 
-	private static final int UNUSED = 0;
-	private static final int PRESET = 1;
-	private static final int HOLDING = 2;
+	public static final int UNUSED = 0;
+	public static final int PRESET = 1;
+	public static final int HOLDING = 2;
 
 	private Scope parent;
 	private Map<String, Statement> map;
@@ -46,6 +46,16 @@ public class Scope {
 		this.variables = new HashMap<>();
 		this.register = new HashMap<>();
 		registerUsage = new int[32];
+	}
+
+	public int getMode( int register )
+	{
+		registerUsage[register] ;
+	}
+	
+	public void setMode( int register, int mode )
+	{
+		registerUsage[register] = mode;
 	}
 
 	public void unuseAll()
@@ -174,6 +184,11 @@ public class Scope {
 
 	public void freeRegister( int register, int size )
 	{
+		if ( register < 0 )
+		{
+			return;
+		}
+
 		VarAnchor anchor = getByRegister( register );
 
 		for ( int offset = 0 ; offset < size ; offset++ )

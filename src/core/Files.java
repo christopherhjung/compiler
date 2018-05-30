@@ -5,13 +5,15 @@ import java.util.Map;
 import java.util.Scanner;
 
 import compiler.Compiler;
+import compiler.CompilerBackwards;
 import functions.AddPlugin;
 import functions.AssignmentPlugin;
 import functions.BlockPlugin;
 import functions.DeclarePlugin;
 import functions.DividePlugin;
-import functions.FunctionPlugin;
+import functions.MethodSignaturePlugin;
 import functions.IntegerPlugin;
+import functions.MethodDefinitionPlugin;
 import functions.MethodPlugin;
 import functions.MulPlugin;
 import functions.NamePlugin;
@@ -34,9 +36,7 @@ public class Files {
 	{
 		MathProgram program = new MathProgram();
 
-		program.installPlugin( 0, BlockPlugin.class );
 		program.installPlugin( 1, AssignmentPlugin.class );
-		program.installPlugin( 2, DeclarePlugin.class );
 		program.installPlugin( 11, AddPlugin.class );
 		program.installPlugin( 11, SubPlugin.class );
 		program.installPlugin( 12, MulPlugin.class );
@@ -44,13 +44,20 @@ public class Files {
 		program.installPlugin( 14, SignPlugin.class );
 		program.installPlugin( 14, PreIncrementPlugin.class );
 		program.installPlugin( 16, MethodPlugin.class );
-		program.installPlugin( 17, FunctionPlugin.class );
-		program.installPlugin( 18, ParenthesisPlugin.class );
+
+		program.installPlugin( 17, ObjectPlugin.class );
+
+		program.installPlugin( 18, MethodDefinitionPlugin.class );
+
+		program.installPlugin( 50, BlockPlugin.class );
+		program.installPlugin( 55, DeclarePlugin.class );
+		program.installPlugin( 60, MethodSignaturePlugin.class );
+
+		program.installPlugin( 70, ParenthesisPlugin.class );
 
 		//program.installPlugin( 19,TemplatePlugin.class );
-		program.installPlugin( 20, ObjectPlugin.class );
 
-		program.installPlugin( 21, StringPlugin.class );
+		program.installPlugin( 80, StringPlugin.class );
 		
 		program.installPlugin( VectorPlugin.class );
 		program.installPlugin( IntegerPlugin.class );
@@ -82,11 +89,11 @@ public class Files {
 		ScriptParser engine = startEngine();
 		Statement result = engine.eval( str );
 		
-		Compiler compiler = new Compiler();
+		//CompilerBackwards compiler = new CompilerBackwards();
 		
-		String code = compiler.compile(result);
+		//String code = compiler.compile(result);
 		
-		System.out.println( code );
+		System.out.println(  result );
 	}
 	
 	public void runAvr(){

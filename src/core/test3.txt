@@ -1,16 +1,38 @@
-String{
+preincrement= ++${reference}
+predecrement= --${reference}
+postincrement= ${reference}++
+postdecrement= ${reference}--
 
-	private int test( int a, int b=9) {
-		int a=9;
-		float b=3;
-	};
-	
-	public int e = 0;
-	
-	static{
-		int e = ++a;
-		e = 9 + e(2,3) * 3 - 2;
-		intfunc t = (int a, int b) -> ++a+b;
-	};
+${therm}+${therm}
+${therm}-${therm}
+${therm}*${therm}
+${therm}/${therm}
+
+bigger-compare = ${therm}>${therm}
+smaller-compare = ${therm}<${therm}
+bigger-equals-compare = ${therm}>=${therm}
+${therm}<=${therm}
+
+method = ${modifier.visibility}? ${modifier.type}! ${variable}(){
+	${reference} ${arithmetik}= ${therm};
+	${assignment};
+	${preincrement};
+	${predecrement};
+	${postincrement};
+	${postdecrement};
+}
+
+${modifier.visibility} class ${variable}{
+	${assignment};
+	${method};
+}
+
+arithmetik = [+,-,/,*,>>,<<,>>>]
+
+assignment = ${modifier.type} ${reference} = ${therm};
+
+
+
+function ${variable}(${(modifier.type variable){}}}){
 
 }

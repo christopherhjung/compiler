@@ -2,7 +2,7 @@ import functions.AddPlugin;
 import functions.AssignmentPlugin;
 import functions.DividePlugin;
 import functions.ExponentPlugin;
-import functions.FunctionPlugin;
+import functions.MethodSignaturePlugin;
 import functions.IntegerPlugin;
 import functions.MethodPlugin;
 import functions.MulPlugin;
@@ -24,7 +24,7 @@ public class Util {
 		program.installPlugin( 14, SignPlugin.class );
 		program.installPlugin( 15, ExponentPlugin.class );
 		program.installPlugin( 16, MethodPlugin.class );
-		program.installPlugin( 17, FunctionPlugin.class );
+		program.installPlugin( 17, MethodSignaturePlugin.class );
 		program.installPlugin( 18, ParenthesisPlugin.class );
 		program.installPlugin( NamePlugin.class );
 		program.installPlugin( IntegerPlugin.class );

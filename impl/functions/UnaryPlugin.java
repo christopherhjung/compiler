@@ -65,22 +65,24 @@ public class UnaryPlugin extends EnginePlugin {
 		{
 			return null;
 		}
-
+		
 		return create( statement );
 	}
 
 	protected Statement create( Statement value )
 	{
-		return new UnaryStatement( value );
+		return new UnaryStatement( this, value );
 	}
 
-	public class UnaryStatement extends Statement {
+	public static class UnaryStatement extends Statement {
 
 		private Statement value;
+		private UnaryPlugin plugin;
 
-		public UnaryStatement( Statement value )
+		public UnaryStatement( UnaryPlugin plugin, Statement value )
 		{
 			this.value = value;
+			this.plugin = plugin;
 		}
 
 		@Override
@@ -96,11 +98,11 @@ public class UnaryPlugin extends EnginePlugin {
 			}
 			else if ( key.equals( "pre" ) )
 			{
-				return UnaryPlugin.this.getPre();
+				return plugin.getPre();
 			}
 			else if ( key.equals( "post" ) )
 			{
-				return UnaryPlugin.this.getPost();
+				return plugin.getPost();
 			}
 
 			return super.getImpl( key );
@@ -109,15 +111,15 @@ public class UnaryPlugin extends EnginePlugin {
 		@Override
 		public EnginePlugin getPlugin()
 		{
-			return UnaryPlugin.this;
+			return plugin;
 		}
 
 		@Override
 		public void toString( StatementStringifier builder )
 		{
-			builder.append( get( "pre" ) );
+			builder.append( get( "pre", String.class ) );
 			builder.append( value );
-			builder.append( get( "post" ) );
+			builder.append( get( "post", String.class ) );
 		}
 	}
 }

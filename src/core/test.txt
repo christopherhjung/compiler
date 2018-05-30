@@ -1,16 +1,27 @@
-class Main{
+{
+	function lesen(){
+		var text = new form.ein.value();
+		
+		text = text + " ";
+		
+		form.aus.value = "";
+		
+		for( int i = 0 , i + 20 , ++i ){
+			a=++a		
+		}
+		
+		
+		wort = "";
+		n = text.indexOf(" ");
+		
+		wort = text.substring(0,n);
+		
+		innen = wort.substring(1,n-1);
+		
+		form.aus.value = wort.charAt(0) + vertausche(innen) + wort.charAt(n-1) + " ";
+		int t = ((a,b)->x+b)(1,2)
+	}
 
-	int main(){
-		int k=9
-		int a = 8
-		a=k+a-2
-		test(2+k+a)
-	}
-	
-	
-	int test(int a){
-		int t = 0
-	}
 
 
 }

@@ -2,6 +2,7 @@ package compiler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,12 +17,12 @@ import parser.Scope;
 import parser.Scope.VarAnchor;
 import parser.Statement;
 
-public class Compiler {
+public class CompilerBackwards {
 
 	private Scope scope = null;
 	private CompilerAsmBuilder asm;
-
-	public Compiler()
+	
+	public CompilerBackwards()
 	{
 		asm = new CompilerAsmBuilder();
 	}
@@ -31,6 +32,7 @@ public class Compiler {
 		StringBuilder sb = new StringBuilder();
 		compileImpl( statement );
 		List<AbstractCommand> result = asm.getCommands();
+		Collections.reverse( result );
 		for ( AbstractCommand command : result )
 		{
 			sb.append( command );
@@ -69,36 +71,6 @@ public class Compiler {
 		}
 
 		return scope.allocRegister( size );
-	}
-
-	private Runnable allocOrStack( int register, int size )
-	{
-		HashMap<Integer,Integer> map = new HashMap<>();
-
-		for ( int i = 0 ; i < size ; i++ )
-		{
-			int byteRegister = register - i;
-			
-			if ( scope.getMode(byteRegister) == Scope.HOLDING )
-			{
-				asm.push( byteRegister );
-				scope.setMode( byteRegister, Scope.UNUSED );
-				map.put( byteRegister, scope.getMode( byteRegister ) );
-			}
-
-			scope.allocRegister( byteRegister );
-		}
-
-		return () ->
-		{
-			for ( int restoreRegister : map.keySet() )
-			{
-				int mode = map.get( restoreRegister );
-				
-				asm.pop( restoreRegister );
-				scope.setMode( restoreRegister, mode );
-			}
-		};
 	}
 
 	public int load( Statement statement, int register )
@@ -152,8 +124,6 @@ public class Compiler {
 
 			// Scope nextScope = new Scope( scope );
 
-			Runnable restore = allocOrStack( 25, 4 * params.length );
-
 			for ( int i = 0 ; i < params.length ; i++ )
 			{
 				Statement param = params[i];
@@ -175,7 +145,7 @@ public class Compiler {
 		return load( add );
 	}
 
-	public void compileAssign( Statement assign )
+	public void compileAssign( Statement assign ) 
 	{
 		Statement target = assign.get( "left" );
 		Statement source = assign.get( "right" );
@@ -216,32 +186,27 @@ public class Compiler {
 			Statement methodName = signature.get( "left" );
 			Statement params = signature.get( "right" );
 
-			asm.addCommand( StringCommand.from( ".global {0}", methodName ) );
-			asm.addCommand( StringCommand.from( "\t.type\t{0}, @function", methodName ) );
-			asm.addCommand( StringCommand.from( "{0}:", methodName ) );
 
-			asm.push( 29 );
-			asm.push( 28 );
+			asm.ret();
+			asm.pop( 29 );
+			asm.pop( 28 );			
 
 			scope = new Scope( scope );
-			CompilerAsmBuilder temp = asm;
-			asm = new CompilerAsmBuilder();
 			compileCommands( commands );
 
-			temp.sbiw( 28, scope.getVarOffset() );
+			asm.sbiw( 28, scope.getVarOffset() );
 
-			temp.addCommands( asm );
-			asm = temp;
-
-			asm.pop( 29 );
-			asm.pop( 28 );
-			asm.ret();
+			asm.push( 28 );
+			asm.push( 29 );
+			asm.addCommand( StringCommand.from( "{0}:", methodName ) );
+			asm.addCommand( StringCommand.from( "\t.type\t{0}, @function", methodName ) );
+			asm.addCommand( StringCommand.from( ".global {0}", methodName ) );			
 		}
 		else if ( signature.is( "name" ) )
 		{
 			for ( Statement command : commands )
 			{
-				compile( command );
+				compileImpl( command );
 			}
 		}
 
@@ -286,9 +251,9 @@ public class Compiler {
 	{
 		List<AbstractCommand> result = new ArrayList<>();
 
-		for ( Statement command : commands )
+		for ( int i = commands.length - 1 ; i >= 0 ;i-- )
 		{
-			compileImpl( command );
+			compileImpl( commands[i] );
 		}
 
 		return result;

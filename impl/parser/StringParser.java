@@ -122,6 +122,19 @@ public abstract class StringParser<T> {
 		return false;
 	}
 
+	public boolean eat( Predicate<Character> predicate )
+	{
+		StringBuilder sb = new StringBuilder();
+
+		while ( hasCurrent() && predicate.test( getChar() ) )
+		{
+			nextChar();
+			return true;
+		}
+
+		return false;
+	}
+	
 	public String eatWhile( Predicate<Character> predicate )
 	{
 		StringBuilder sb = new StringBuilder();

@@ -46,11 +46,13 @@ public class BinaryPlugin extends EnginePlugin {
 
 		while ( !parser.eat( linker ) )
 		{
-			if ( !parser.eat( ' ' ) )
+			if ( !parser.eat( Character::isWhitespace ) )
 			{
 				return null;
 			}
 		}
+		
+		parser.eatWhile( Character::isWhitespace );
 
 		Statement right = parser.parse();
 		if ( right == null || !checkStatement( Index.RIGHT, right ) )
@@ -112,9 +114,9 @@ public class BinaryPlugin extends EnginePlugin {
 		public void toString( StatementStringifier builder )
 		{
 			builder.append( left );
-			builder.append( " " );
+			//builder.append( " " );
 			builder.append( plugin.getLinker() );
-			builder.append( " " );
+			//builder.append( " " );
 			builder.append( right );
 		}
 	}
